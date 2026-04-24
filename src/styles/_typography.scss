@@ -1,0 +1,57 @@
+@use "variables" as *;
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: $font-heading;
+  color: $text-primary;
+  line-height: $leading-tight;
+  font-weight: $font-bold;
+  margin: 0;
+}
+
+h1 {
+  font-size: $text-4xl;
+}
+h2 {
+  font-size: $text-3xl;
+}
+h3 {
+  font-size: $text-2xl;
+}
+h4 {
+  font-size: $text-xl;
+}
+h5 {
+  font-size: $text-lg;
+}
+h6 {
+  font-size: $text-md;
+}
+
+p {
+  font-family: $font-primary;
+  font-size: $text-base;
+  color: $text-secondary;
+  line-height: $leading-relaxed;
+  margin: 0;
+}
+
+a {
+  color: $primary;
+  text-decoration: none;
+  transition: $transition-fast;
+  &:hover {
+    color: $primary-dark;
+  }
+}
+
+small {
+  font-size: $text-sm;
+  color: $text-secondary;
+}
