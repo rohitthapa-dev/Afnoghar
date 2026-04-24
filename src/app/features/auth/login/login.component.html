@@ -1,0 +1,113 @@
+<div class="auth-container">
+  <div class="auth-form-section">
+    <div class="auth-form-wrapper">
+      <div class="brand">
+        <h1 class="logo">Afnoghar</h1>
+        <p class="tagline">Find your dream property</p>
+      </div>
+
+      <div class="form-card">
+        <h2 class="title">Welcome Back</h2>
+        <p class="subtitle">Sign in to continue</p>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          @if (errorMessage) {
+            <div class="error-banner">
+              <mat-icon>error_outline</mat-icon>
+              <span>{{ errorMessage }}</span>
+            </div>
+          }
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email</mat-label>
+            <input
+              matInput
+              formControlName="email"
+              type="email"
+              placeholder="Enter your email"
+            />
+            <mat-icon matSuffix>email</mat-icon>
+            @if (email?.invalid && email?.touched) {
+              <mat-error>
+                @if (email?.hasError("required")) {
+                  Email is required
+                } @else if (email?.hasError("email")) {
+                  Please enter a valid email
+                }
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <input
+              matInput
+              formControlName="password"
+              [type]="hidePassword ? 'password' : 'text'"
+              placeholder="Enter your password"
+            />
+            <button
+              mat-icon-button
+              matSuffix
+              (click)="hidePassword = !hidePassword"
+              type="button"
+            >
+              <mat-icon>{{
+                hidePassword ? "visibility_off" : "visibility"
+              }}</mat-icon>
+            </button>
+            @if (password?.invalid && password?.touched) {
+              <mat-error>
+                @if (password?.hasError("required")) {
+                  Password is required
+                } @else if (password?.hasError("minlength")) {
+                  Password must be at least 6 characters
+                }
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <div class="form-options">
+            <mat-checkbox formControlName="remember" color="primary"
+              >Remember me</mat-checkbox
+            >
+            <a routerLink="/forgot-password" class="forgot-link"
+              >Forgot password?</a
+            >
+          </div>
+
+          <button
+            mat-flat-button
+            color="primary"
+            class="submit-btn"
+            type="submit"
+            [disabled]="loading"
+          >
+            @if (loading) {
+              <mat-spinner diameter="20"></mat-spinner>
+            } @else {
+              SIGN IN
+            }
+          </button>
+        </form>
+
+        <div class="auth-footer">
+          <p>Don't have an account? <a routerLink="/register">Sign up</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-image-section">
+    <div class="image-overlay"></div>
+    <img
+      src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200"
+      alt="Luxury Property"
+      class="auth-bg-image"
+    />
+    <div class="image-content">
+      <h2>Find Your Perfect Home</h2>
+      <p>Discover thousands of properties across Nepal</p>
+    </div>
+  </div>
+</div>
