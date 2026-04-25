@@ -1,0 +1,615 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Admin User",
+      "email": "admin@afnoghar.com",
+      "password": "admin123",
+      "role": "admin",
+      "phone": "9800000001",
+      "avatar": "",
+      "createdAt": "2025-01-01T00:00:00.000Z",
+      "isActive": true
+    },
+    {
+      "id": 2,
+      "name": "Rajesh Sharma",
+      "email": "seller@afnoghar.com",
+      "password": "seller123",
+      "role": "seller",
+      "phone": "9800000002",
+      "avatar": "",
+      "createdAt": "2025-01-02T00:00:00.000Z",
+      "isActive": true
+    },
+    {
+      "id": 3,
+      "name": "Sita Thapa",
+      "email": "buyer@afnoghar.com",
+      "password": "buyer123",
+      "role": "buyer",
+      "phone": "9800000003",
+      "avatar": "",
+      "createdAt": "2025-01-03T00:00:00.000Z",
+      "isActive": true
+    },
+    {
+      "id": 4,
+      "name": "Bikash Gurung",
+      "email": "bikash@gmail.com",
+      "password": "bikash123",
+      "role": "seller",
+      "phone": "9800000004",
+      "avatar": "",
+      "createdAt": "2025-01-04T00:00:00.000Z",
+      "isActive": true
+    },
+    {
+      "id": 5,
+      "name": "Anita Rai",
+      "email": "anita@gmail.com",
+      "password": "anita123",
+      "role": "buyer",
+      "phone": "9800000005",
+      "avatar": "",
+      "createdAt": "2025-01-05T00:00:00.000Z",
+      "isActive": true
+    }
+  ],
+
+  "properties": [
+    {
+      "id": 1,
+      "title": "Modern Villa in Bansbari",
+      "description": "A stunning modern villa located in the heart of Bansbari, Kathmandu. Features spacious rooms, a rooftop terrace, and beautiful mountain views. Perfect for families looking for a premium living experience.",
+      "type": "house",
+      "listingType": "sale",
+      "price": 25000000,
+      "area": 2400,
+      "aana": 6,
+      "bedrooms": 4,
+      "bathrooms": 3,
+      "floors": 3,
+      "location": {
+        "district": "Kathmandu",
+        "city": "Bansbari",
+        "address": "Bansbari Road, Ward No. 4",
+        "lat": 27.7395,
+        "lng": 85.3212
+      },
+      "images": [
+        "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800",
+        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800",
+        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800"
+      ],
+      "features": ["Parking", "Garden", "Rooftop", "Security", "Water Tank"],
+      "sellerId": 2,
+      "status": "approved",
+      "isFeatured": true,
+      "createdAt": "2025-02-01T00:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "title": "Cozy Apartment in Lazimpat",
+      "description": "A well maintained 2 bedroom apartment in the prime location of Lazimpat. Walking distance to embassies, restaurants, and shops. Ideal for young professionals and small families.",
+      "type": "apartment",
+      "listingType": "rent",
+      "price": 35000,
+      "area": 900,
+      "aana": 0,
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "floors": 1,
+      "location": {
+        "district": "Kathmandu",
+        "city": "Lazimpat",
+        "address": "Lazimpat, Ward No. 2",
+        "lat": 27.72,
+        "lng": 85.3192
+      },
+      "images": [
+        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800",
+        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800"
+      ],
+      "features": ["Parking", "Security", "Water Tank", "Lift"],
+      "sellerId": 2,
+      "status": "approved",
+      "isFeatured": true,
+      "createdAt": "2025-02-05T00:00:00.000Z"
+    },
+    {
+      "id": 3,
+      "title": "Land Plot in Godawari",
+      "description": "Prime land plot in the scenic Godawari area of Lalitpur. Surrounded by greenery with easy road access. Perfect for building your dream home away from the city noise.",
+      "type": "land",
+      "listingType": "sale",
+      "price": 8000000,
+      "area": 0,
+      "aana": 8,
+      "bedrooms": 0,
+      "bathrooms": 0,
+      "floors": 0,
+      "location": {
+        "district": "Lalitpur",
+        "city": "Godawari",
+        "address": "Godawari Road, Ward No. 12",
+        "lat": 27.5936,
+        "lng": 85.3681
+      },
+      "images": [
+        "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800",
+        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800"
+      ],
+      "features": ["Road Access", "Electricity", "Water Supply"],
+      "sellerId": 4,
+      "status": "approved",
+      "isFeatured": false,
+      "createdAt": "2025-02-10T00:00:00.000Z"
+    },
+    {
+      "id": 4,
+      "title": "Luxury Penthouse in Jhamsikhel",
+      "description": "Exclusive penthouse apartment on the top floor of a premium building in Jhamsikhel, Lalitpur. Features a private terrace, premium finishes, and panoramic views of the Kathmandu valley.",
+      "type": "apartment",
+      "listingType": "sale",
+      "price": 45000000,
+      "area": 3200,
+      "aana": 0,
+      "bedrooms": 4,
+      "bathrooms": 4,
+      "floors": 1,
+      "location": {
+        "district": "Lalitpur",
+        "city": "Jhamsikhel",
+        "address": "Jhamsikhel Road, Ward No. 3",
+        "lat": 27.6826,
+        "lng": 85.3163
+      },
+      "images": [
+        "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800",
+        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800"
+      ],
+      "features": [
+        "Parking",
+        "Gym",
+        "Rooftop",
+        "Security",
+        "Lift",
+        "Generator"
+      ],
+      "sellerId": 4,
+      "status": "approved",
+      "isFeatured": true,
+      "createdAt": "2025-02-15T00:00:00.000Z"
+    },
+    {
+      "id": 5,
+      "title": "Family Home in Patan Mangalbazar",
+      "description": "Beautiful family home in the culturally rich Mangalbazar area of Patan. Enjoy the charm of historic Newari architecture blended with modern interiors. Walking distance to Patan Durbar Square.",
+      "type": "house",
+      "listingType": "sale",
+      "price": 18000000,
+      "area": 1800,
+      "aana": 5,
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "floors": 2,
+      "location": {
+        "district": "Lalitpur",
+        "city": "Patan",
+        "address": "Mangalbazar Road, Ward No. 3",
+        "lat": 27.671,
+        "lng": 85.3248
+      },
+      "images": [
+        "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800",
+        "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800"
+      ],
+      "features": ["Garden", "Parking", "Rooftop", "Water Tank"],
+      "sellerId": 2,
+      "status": "approved",
+      "isFeatured": true,
+      "createdAt": "2025-02-20T00:00:00.000Z"
+    },
+    {
+      "id": 6,
+      "title": "Commercial Space in New Road",
+      "description": "Prime commercial space available for rent in the bustling New Road area of Kathmandu. High foot traffic location ideal for retail, office, or restaurant use.",
+      "type": "commercial",
+      "listingType": "rent",
+      "price": 80000,
+      "area": 1200,
+      "aana": 0,
+      "bedrooms": 0,
+      "bathrooms": 2,
+      "floors": 1,
+      "location": {
+        "district": "Kathmandu",
+        "city": "New Road",
+        "address": "New Road, Ward No. 23",
+        "lat": 27.7041,
+        "lng": 85.3131
+      },
+      "images": [
+        "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800",
+        "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=800"
+      ],
+      "features": ["Parking", "Security", "Generator", "CCTV"],
+      "sellerId": 4,
+      "status": "approved",
+      "isFeatured": false,
+      "createdAt": "2025-03-01T00:00:00.000Z"
+    },
+    {
+      "id": 7,
+      "title": "Studio Apartment in Thamel",
+      "description": "Compact and modern studio apartment in the heart of Thamel. Fully furnished and ready to move in. Perfect for solo professionals or students.",
+      "type": "apartment",
+      "listingType": "rent",
+      "price": 18000,
+      "area": 450,
+      "aana": 0,
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "floors": 1,
+      "location": {
+        "district": "Kathmandu",
+        "city": "Thamel",
+        "address": "Thamel Marg, Ward No. 16",
+        "lat": 27.7154,
+        "lng": 85.3123
+      },
+      "images": [
+        "https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=800",
+        "https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800"
+      ],
+      "features": ["Furnished", "WiFi", "Security", "Water Tank"],
+      "sellerId": 2,
+      "status": "approved",
+      "isFeatured": false,
+      "createdAt": "2025-03-05T00:00:00.000Z"
+    },
+    {
+      "id": 8,
+      "title": "Land Plot in Bhaktapur Suryabinayak",
+      "description": "Excellent land plot near Suryabinayak temple area in Bhaktapur. Calm surroundings with all utilities available. Great investment opportunity in a rapidly developing area.",
+      "type": "land",
+      "listingType": "sale",
+      "price": 12000000,
+      "area": 0,
+      "aana": 12,
+      "bedrooms": 0,
+      "bathrooms": 0,
+      "floors": 0,
+      "location": {
+        "district": "Bhaktapur",
+        "city": "Suryabinayak",
+        "address": "Suryabinayak Road, Ward No. 2",
+        "lat": 27.671,
+        "lng": 85.4298
+      },
+      "images": [
+        "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800"
+      ],
+      "features": ["Road Access", "Electricity", "Water Supply", "Quiet Area"],
+      "sellerId": 4,
+      "status": "pending",
+      "isFeatured": false,
+      "createdAt": "2025-03-10T00:00:00.000Z"
+    },
+    {
+      "id": 9,
+      "title": "Modern Flat in Pulchowk",
+      "description": "Newly built flat in the engineering hub of Pulchowk, Lalitpur. Close to IOE campus, restaurants, and public transport. Ideal for professionals and students.",
+      "type": "apartment",
+      "listingType": "rent",
+      "price": 28000,
+      "area": 750,
+      "aana": 0,
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "location": {
+        "district": "Lalitpur",
+        "city": "Pulchowk",
+        "address": "Pulchowk Road, Ward No. 5",
+        "lat": 27.6825,
+        "lng": 85.3174
+      },
+      "images": [
+        "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800",
+        "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800"
+      ],
+      "features": ["Parking", "Security", "Water Tank"],
+      "sellerId": 2,
+      "status": "pending",
+      "isFeatured": false,
+      "createdAt": "2025-03-12T00:00:00.000Z"
+    },
+    {
+      "id": 10,
+      "title": "Bungalow in Budhanilkantha",
+      "description": "Spacious bungalow in the peaceful Budhanilkantha area at the foothills of Shivapuri. Enjoy fresh air, greenery, and a quiet lifestyle while staying connected to the city.",
+      "type": "house",
+      "listingType": "sale",
+      "price": 32000000,
+      "area": 3000,
+      "aana": 10,
+      "bedrooms": 5,
+      "bathrooms": 4,
+      "floors": 2,
+      "location": {
+        "district": "Kathmandu",
+        "city": "Budhanilkantha",
+        "address": "Budhanilkantha Road, Ward No. 7",
+        "lat": 27.7917,
+        "lng": 85.3611
+      },
+      "images": [
+        "https://images.unsplash.com/photo-1449844908441-8829872d2607?w=800",
+        "https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=800"
+      ],
+      "features": [
+        "Garden",
+        "Parking",
+        "Mountain View",
+        "Security",
+        "Water Tank",
+        "Generator"
+      ],
+      "sellerId": 4,
+      "status": "rejected",
+      "isFeatured": false,
+      "createdAt": "2025-03-15T00:00:00.000Z"
+    },
+    {
+      "id": 11,
+      "title": "Duplex House in Koteshwor",
+      "description": "Well designed duplex house in the convenient Koteshwor area. Easy access to ring road and public transport. Modern kitchen, spacious living area, and a private terrace on the top floor.",
+      "type": "house",
+      "listingType": "sale",
+      "price": 22000000,
+      "area": 2000,
+      "aana": 5,
+      "bedrooms": 4,
+      "bathrooms": 3,
+      "floors": 2,
+      "location": {
+        "district": "Kathmandu",
+        "city": "Koteshwor",
+        "address": "Koteshwor Chowk, Ward No. 32",
+        "lat": 27.6867,
+        "lng": 85.3542
+      },
+      "images": [
+        "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800",
+        "https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=800"
+      ],
+      "features": ["Parking", "Rooftop", "Security", "Water Tank", "Garden"],
+      "sellerId": 2,
+      "status": "approved",
+      "isFeatured": false,
+      "createdAt": "2025-03-18T00:00:00.000Z"
+    },
+    {
+      "id": 12,
+      "title": "Apartment in Kirtipur",
+      "description": "Affordable and spacious apartment in the historic Kirtipur town. Stunning valley views, peaceful surroundings, and close to Tribhuvan University. A rare find at this price point.",
+      "type": "apartment",
+      "listingType": "rent",
+      "price": 22000,
+      "area": 800,
+      "aana": 0,
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "location": {
+        "district": "Kathmandu",
+        "city": "Kirtipur",
+        "address": "Kirtipur Municipality, Ward No. 6",
+        "lat": 27.6782,
+        "lng": 85.2786
+      },
+      "images": [
+        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800",
+        "https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?w=800"
+      ],
+      "features": ["Valley View", "Parking", "Water Tank", "Quiet Area"],
+      "sellerId": 4,
+      "status": "approved",
+      "isFeatured": false,
+      "createdAt": "2025-03-20T00:00:00.000Z"
+    },
+    {
+      "id": 13,
+      "title": "Land in Thankot",
+      "description": "Strategic land plot at the entrance of the Kathmandu valley in Thankot. Highway facing with excellent road access. Ideal for commercial or residential development.",
+      "type": "land",
+      "listingType": "sale",
+      "price": 15000000,
+      "area": 0,
+      "aana": 16,
+      "bedrooms": 0,
+      "bathrooms": 0,
+      "floors": 0,
+      "location": {
+        "district": "Kathmandu",
+        "city": "Thankot",
+        "address": "Thankot Highway, Ward No. 1",
+        "lat": 27.6933,
+        "lng": 85.2195
+      },
+      "images": [
+        "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800",
+        "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800"
+      ],
+      "features": [
+        "Highway Access",
+        "Electricity",
+        "Water Supply",
+        "Corner Plot"
+      ],
+      "sellerId": 2,
+      "status": "approved",
+      "isFeatured": false,
+      "createdAt": "2025-03-22T00:00:00.000Z"
+    },
+    {
+      "id": 14,
+      "title": "Premium Flat in Sanepa",
+      "description": "Beautifully finished premium flat in the upscale Sanepa neighborhood of Lalitpur. Close to international schools, hospitals, and embassies. The ideal address for executives and expats.",
+      "type": "apartment",
+      "listingType": "rent",
+      "price": 55000,
+      "area": 1400,
+      "aana": 0,
+      "bedrooms": 3,
+      "bathrooms": 3,
+      "floors": 1,
+      "location": {
+        "district": "Lalitpur",
+        "city": "Sanepa",
+        "address": "Sanepa Road, Ward No. 10",
+        "lat": 27.6889,
+        "lng": 85.3101
+      },
+      "images": [
+        "https://images.unsplash.com/photo-1565182999561-18d7dc61c393?w=800",
+        "https://images.unsplash.com/photo-1556020685-ae41abfc9365?w=800"
+      ],
+      "features": [
+        "Parking",
+        "Gym",
+        "Security",
+        "Lift",
+        "Generator",
+        "Furnished"
+      ],
+      "sellerId": 4,
+      "status": "approved",
+      "isFeatured": true,
+      "createdAt": "2025-03-25T00:00:00.000Z"
+    },
+    {
+      "id": 15,
+      "title": "House in Kalanki",
+      "description": "Solid three storey house in the well connected Kalanki area. Located near the ring road junction with easy access to all parts of the valley. Good rental income potential.",
+      "type": "house",
+      "listingType": "sale",
+      "price": 19500000,
+      "area": 1600,
+      "aana": 4,
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "floors": 3,
+      "location": {
+        "district": "Kathmandu",
+        "city": "Kalanki",
+        "address": "Kalanki Chowk, Ward No. 14",
+        "lat": 27.694,
+        "lng": 85.2817
+      },
+      "images": [
+        "https://images.unsplash.com/photo-1598228723793-52759bba239c?w=800",
+        "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800"
+      ],
+      "features": ["Parking", "Rooftop", "Water Tank", "Road Access"],
+      "sellerId": 2,
+      "status": "pending",
+      "isFeatured": false,
+      "createdAt": "2025-04-01T00:00:00.000Z"
+    }
+  ],
+
+  "appointments": [
+    {
+      "id": 1,
+      "propertyId": 1,
+      "buyerId": 3,
+      "sellerId": 2,
+      "buyerName": "Sita Thapa",
+      "buyerPhone": "9800000003",
+      "propertyTitle": "Modern Villa in Bansbari",
+      "date": "2025-04-10",
+      "time": "10:00 AM",
+      "message": "I would like to visit this property this weekend. Please confirm.",
+      "status": "pending",
+      "createdAt": "2025-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "propertyId": 2,
+      "buyerId": 5,
+      "sellerId": 2,
+      "buyerName": "Anita Rai",
+      "buyerPhone": "9800000005",
+      "propertyTitle": "Cozy Apartment in Lazimpat",
+      "date": "2025-04-12",
+      "time": "2:00 PM",
+      "message": "Interested in long term rent. Can we meet?",
+      "status": "accepted",
+      "createdAt": "2025-04-02T00:00:00.000Z"
+    },
+    {
+      "id": 3,
+      "propertyId": 4,
+      "buyerId": 3,
+      "sellerId": 4,
+      "buyerName": "Sita Thapa",
+      "buyerPhone": "9800000003",
+      "propertyTitle": "Luxury Penthouse in Jhamsikhel",
+      "date": "2025-04-15",
+      "time": "11:00 AM",
+      "message": "Would love to see the rooftop terrace.",
+      "status": "declined",
+      "createdAt": "2025-04-03T00:00:00.000Z"
+    },
+    {
+      "id": 4,
+      "propertyId": 5,
+      "buyerId": 5,
+      "sellerId": 2,
+      "buyerName": "Anita Rai",
+      "buyerPhone": "9800000005",
+      "propertyTitle": "Family Home in Patan Mangalbazar",
+      "date": "2025-04-18",
+      "time": "3:00 PM",
+      "message": "Looking for a family home. Would like to visit.",
+      "status": "pending",
+      "createdAt": "2025-04-05T00:00:00.000Z"
+    }
+  ],
+
+  "favorites": [
+    {
+      "id": 1,
+      "buyerId": 3,
+      "propertyId": 1,
+      "createdAt": "2025-03-20T00:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "buyerId": 3,
+      "propertyId": 4,
+      "createdAt": "2025-03-21T00:00:00.000Z"
+    },
+    {
+      "id": 3,
+      "buyerId": 3,
+      "propertyId": 5,
+      "createdAt": "2025-03-22T00:00:00.000Z"
+    },
+    {
+      "id": 4,
+      "buyerId": 5,
+      "propertyId": 2,
+      "createdAt": "2025-03-23T00:00:00.000Z"
+    },
+    {
+      "id": 5,
+      "buyerId": 5,
+      "propertyId": 14,
+      "createdAt": "2025-03-24T00:00:00.000Z"
+    }
+  ]
+}
