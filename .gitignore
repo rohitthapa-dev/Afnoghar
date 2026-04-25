@@ -2,6 +2,7 @@
 
 # Compiled output
 /dist
+/build
 /tmp
 /out-tsc
 /bazel-out
@@ -9,7 +10,11 @@
 # Node
 /node_modules
 npm-debug.log
+npm-debug.log*
 yarn-error.log
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
 # IDEs and editors
 .idea/
@@ -19,6 +24,8 @@ yarn-error.log
 *.launch
 .settings/
 *.sublime-workspace
+*.swp
+*.swo
 
 # Visual Studio Code
 .vscode/*
@@ -27,15 +34,22 @@ yarn-error.log
 !.vscode/launch.json
 !.vscode/extensions.json
 .history/*
+.vscode/
 
 # Miscellaneous
 /.angular/cache
+/.angular
 .sass-cache/
 /connect.lock
 /coverage
 /libpeerconnection.log
 testem.log
 /typings
+.npm
+.eslintcache
+
+# Environment files
+/src/environments/*.local.ts
 
 # System files
 .DS_Store
