@@ -90,7 +90,7 @@ export class LoginComponent {
         break;
       case 'buyer':
       default:
-        this.router.navigate(['/buyer/favorites']);
+        this.router.navigate(['/buyer/home']);
     }
   }
 }
