@@ -1,0 +1,497 @@
+@use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins" as *;
+
+.auth-container {
+  @include flex(row);
+  align-items: stretch;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background: $surface;
+}
+
+.auth-image-section {
+  flex: 1;
+  position: relative;
+  @include flex(row, flex-start, flex-end);
+  overflow: hidden;
+  min-height: 100vh;
+
+  @include respond-to(md) {
+    display: none;
+  }
+}
+
+.auth-bg-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 8s ease;
+
+  &:hover {
+    transform: scale(1.04);
+  }
+}
+
+.image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba($primary-darker, 0.97) 0%,
+    rgba($primary-dark, 0.75) 40%,
+    rgba($primary, 0.3) 75%,
+    rgba($primary, 0.1) 100%
+  );
+  z-index: 1;
+}
+
+.image-content {
+  position: relative;
+  z-index: 2;
+  padding: $space-12;
+  max-width: 520px;
+
+  .image-tag {
+    @include flex(row, flex-start, center, $space-2);
+    background: rgba($surface, 0.12);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba($surface, 0.2);
+    border-radius: $radius-full;
+    padding: $space-2 $space-4;
+    margin-bottom: $space-6;
+    width: fit-content;
+
+    mat-icon {
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
+      color: rgba($surface, 0.8);
+    }
+
+    span {
+      font-family: $font-primary;
+      font-size: $text-xs;
+      font-weight: $font-medium;
+      color: rgba($surface, 0.85);
+      letter-spacing: $tracking-wider;
+      text-transform: uppercase;
+    }
+  }
+
+  h2 {
+    font-family: $font-heading;
+    font-size: $text-4xl;
+    font-weight: $font-extrabold;
+    color: $surface;
+    line-height: $leading-tight;
+    letter-spacing: $tracking-tight;
+    margin-bottom: $space-4;
+  }
+
+  p {
+    font-family: $font-primary;
+    font-size: $text-md;
+    color: rgba($surface, 0.75);
+    line-height: $leading-relaxed;
+    margin-bottom: $space-10;
+  }
+
+  .features {
+    @include flex(column, flex-start, flex-start, $space-5);
+    padding-top: $space-6;
+    border-top: 1px solid rgba($surface, 0.15);
+
+    .feature {
+      @include flex(row, flex-start, center, $space-4);
+
+      .feature-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: $radius-md;
+        background: rgba($surface, 0.12);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba($surface, 0.15);
+        @include flex(row, center, center);
+        flex-shrink: 0;
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+          color: rgba($surface, 0.9);
+        }
+      }
+
+      .feature-text {
+        @include flex(column, flex-start, flex-start, $space-1);
+
+        .feature-title {
+          font-family: $font-heading;
+          font-size: $text-sm;
+          font-weight: $font-semibold;
+          color: $surface;
+          line-height: 1;
+        }
+
+        .feature-desc {
+          font-family: $font-primary;
+          font-size: $text-xs;
+          color: rgba($surface, 0.6);
+          line-height: $leading-normal;
+        }
+      }
+    }
+  }
+}
+
+.auth-form-section {
+  width: 520px;
+  min-width: 520px;
+  min-height: 100vh;
+  @include flex(column, center, center);
+  padding: $space-10 $space-10;
+  background: $surface;
+  position: relative;
+  z-index: 1;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.06);
+  overflow-y: auto;
+
+  @include respond-to(md) {
+    width: 100%;
+    min-width: 100%;
+    min-height: auto;
+    padding: $space-8 $space-6;
+    box-shadow: none;
+  }
+}
+
+.auth-form-wrapper {
+  width: 100%;
+  max-width: 400px;
+}
+
+.brand {
+  margin-bottom: $space-8;
+
+  .logo-mark {
+    @include flex(row, flex-start, center, $space-2);
+    margin-bottom: $space-3;
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: $primary;
+      border-radius: $radius-md;
+      @include flex(row, center, center);
+      flex-shrink: 0;
+
+      mat-icon {
+        color: $surface;
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    .logo-text {
+      font-family: $font-heading;
+      font-size: $text-2xl;
+      font-weight: $font-extrabold;
+      letter-spacing: $tracking-tight;
+      line-height: 1;
+
+      .afno {
+        color: $text-primary;
+      }
+      .ghar {
+        color: $primary;
+      }
+    }
+  }
+
+  .tagline {
+    font-family: $font-primary;
+    font-size: $text-xs;
+    color: $text-disabled;
+    letter-spacing: $tracking-widest;
+    text-transform: uppercase;
+    padding-left: 44px;
+  }
+}
+
+.form-heading {
+  margin-bottom: $space-6;
+
+  .title {
+    font-family: $font-heading;
+    font-size: $text-2xl;
+    font-weight: $font-bold;
+    color: $text-primary;
+    letter-spacing: $tracking-tight;
+    line-height: $leading-tight;
+    margin-bottom: $space-1;
+  }
+
+  .subtitle {
+    font-family: $font-primary;
+    font-size: $text-sm;
+    color: $text-secondary;
+    line-height: $leading-normal;
+  }
+}
+
+.error-banner {
+  @include flex(row, flex-start, center, $space-2);
+  background: $error-light;
+  color: $error;
+  padding: $space-3 $space-4;
+  border-radius: $radius-md;
+  margin-bottom: $space-5;
+  font-size: $text-sm;
+  font-family: $font-primary;
+  border-left: 3px solid $error;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: $space-1;
+}
+
+.mat-mdc-form-field {
+  --mdc-outlined-text-field-outline-color: #{$border};
+  --mdc-outlined-text-field-hover-outline-color: #{$primary};
+  --mdc-outlined-text-field-focus-outline-color: #{$primary};
+  --mdc-outlined-text-field-label-text-color: #{$text-secondary};
+  --mdc-outlined-text-field-focus-label-text-color: #{$primary};
+  --mdc-outlined-text-field-input-text-color: #{$text-primary};
+  --mdc-outlined-text-field-caret-color: #{$primary};
+  --mdc-outlined-text-field-container-shape: #{$radius-md};
+  font-family: $font-primary;
+}
+
+.role-selection {
+  margin: $space-4 0;
+
+  .role-label {
+    display: block;
+    font-family: $font-primary;
+    font-size: $text-sm;
+    font-weight: $font-medium;
+    color: $text-secondary;
+    letter-spacing: $tracking-wide;
+    text-transform: uppercase;
+    margin-bottom: $space-3;
+  }
+
+  .role-options {
+    @include flex(row, flex-start, stretch, $space-3);
+    width: 100%;
+  }
+
+  .role-option {
+    flex: 1;
+    border: 1.5px solid $border;
+    border-radius: $radius-lg;
+    padding: $space-4;
+    transition: $transition-fast;
+    cursor: pointer;
+
+    .mdc-radio {
+      display: none;
+    }
+
+    &:hover {
+      border-color: $primary-light;
+      background: $primary-tint;
+    }
+
+    &.mat-mdc-radio-checked {
+      border-color: $primary;
+      background: $primary-tint;
+    }
+
+    .role-content {
+      @include flex(column, flex-start, center, $space-2);
+      width: 100%;
+
+      .role-icon {
+        font-size: 22px;
+        width: 22px;
+        height: 22px;
+        color: $primary;
+      }
+
+      .role-text {
+        @include flex(column, flex-start, center, $space-1);
+        text-align: center;
+
+        .role-title {
+          font-family: $font-heading;
+          font-size: $text-sm;
+          font-weight: $font-semibold;
+          color: $text-primary;
+        }
+
+        .role-description {
+          font-family: $font-primary;
+          font-size: $text-xs;
+          color: $text-secondary;
+          line-height: $leading-snug;
+        }
+      }
+    }
+  }
+}
+
+.mat-mdc-radio-button {
+  --mdc-radio-unselected-icon-color: #{$border};
+  --mdc-radio-selected-icon-color: #{$primary};
+  --mdc-radio-selected-hover-icon-color: #{$primary-dark};
+  --mdc-radio-selected-focus-icon-color: #{$primary};
+}
+
+.terms-section {
+  @include flex(column, flex-start, flex-start, $space-2);
+  margin: $space-4 0 $space-6;
+
+  mat-checkbox {
+    font-family: $font-primary;
+    font-size: $text-sm;
+    --mdc-checkbox-selected-checkmark-color: #{$surface};
+    --mdc-checkbox-selected-focus-icon-color: #{$primary};
+    --mdc-checkbox-selected-hover-icon-color: #{$primary-dark};
+    --mdc-checkbox-selected-icon-color: #{$primary};
+    --mdc-checkbox-unselected-icon-color: #{$border};
+  }
+
+  .terms-link {
+    font-family: $font-primary;
+    color: $primary;
+    font-weight: $font-medium;
+    text-decoration: none;
+    transition: $transition-fast;
+
+    &:hover {
+      color: $primary-dark;
+    }
+  }
+
+  .terms-error {
+    font-family: $font-primary;
+    font-size: $text-xs;
+    color: $error;
+    padding-left: $space-1;
+  }
+}
+
+.submit-btn {
+  width: 100%;
+  height: 52px;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  font-weight: $font-semibold;
+  letter-spacing: $tracking-widest;
+  background: $primary !important;
+  color: $surface !important;
+  border-radius: $radius-md !important;
+  transition: $transition-base !important;
+  box-shadow: 0 4px 16px rgba($primary, 0.35) !important;
+
+  &:hover:not(:disabled) {
+    background: $primary-dark !important;
+    box-shadow: 0 6px 20px rgba($primary-dark, 0.45) !important;
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    background: $text-disabled !important;
+    box-shadow: none !important;
+  }
+
+  mat-spinner {
+    margin: 0 auto;
+    circle {
+      stroke: $surface;
+    }
+  }
+}
+
+.divider {
+  @include flex(row, center, center, $space-4);
+  margin: $space-6 0;
+
+  .line {
+    flex: 1;
+    height: 1px;
+    background: $divider;
+  }
+
+  span {
+    font-family: $font-primary;
+    font-size: $text-xs;
+    color: $text-disabled;
+    letter-spacing: $tracking-wider;
+    text-transform: uppercase;
+  }
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: $space-2;
+
+  p {
+    font-family: $font-primary;
+    font-size: $text-sm;
+    color: $text-secondary;
+    margin: 0;
+
+    a {
+      color: $primary;
+      font-weight: $font-semibold;
+      text-decoration: none;
+      transition: $transition-fast;
+
+      &:hover {
+        color: $primary-dark;
+      }
+    }
+  }
+}
+
+.trust-badge {
+  @include flex(row, center, center, $space-2);
+  position: absolute;
+  bottom: $space-6;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    color: $text-disabled;
+  }
+
+  span {
+    font-family: $font-primary;
+    font-size: $text-xs;
+    color: $text-disabled;
+    letter-spacing: $tracking-wide;
+  }
+}

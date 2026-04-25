@@ -1,113 +1,157 @@
 <div class="auth-container">
+  <!-- LEFT — FORM -->
   <div class="auth-form-section">
     <div class="auth-form-wrapper">
+      <!-- Brand -->
       <div class="brand">
-        <h1 class="logo">Afnoghar</h1>
-        <p class="tagline">Find your dream property</p>
-      </div>
-
-      <div class="form-card">
-        <h2 class="title">Welcome Back</h2>
-        <p class="subtitle">Sign in to continue</p>
-
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-          @if (errorMessage) {
-            <div class="error-banner">
-              <mat-icon>error_outline</mat-icon>
-              <span>{{ errorMessage }}</span>
-            </div>
-          }
-
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Email</mat-label>
-            <input
-              matInput
-              formControlName="email"
-              type="email"
-              placeholder="Enter your email"
-            />
-            <mat-icon matSuffix>email</mat-icon>
-            @if (email?.invalid && email?.touched) {
-              <mat-error>
-                @if (email?.hasError("required")) {
-                  Email is required
-                } @else if (email?.hasError("email")) {
-                  Please enter a valid email
-                }
-              </mat-error>
-            }
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Password</mat-label>
-            <input
-              matInput
-              formControlName="password"
-              [type]="hidePassword ? 'password' : 'text'"
-              placeholder="Enter your password"
-            />
-            <button
-              mat-icon-button
-              matSuffix
-              (click)="hidePassword = !hidePassword"
-              type="button"
-            >
-              <mat-icon>{{
-                hidePassword ? "visibility_off" : "visibility"
-              }}</mat-icon>
-            </button>
-            @if (password?.invalid && password?.touched) {
-              <mat-error>
-                @if (password?.hasError("required")) {
-                  Password is required
-                } @else if (password?.hasError("minlength")) {
-                  Password must be at least 6 characters
-                }
-              </mat-error>
-            }
-          </mat-form-field>
-
-          <div class="form-options">
-            <mat-checkbox formControlName="remember" color="primary"
-              >Remember me</mat-checkbox
-            >
-            <a routerLink="/forgot-password" class="forgot-link"
-              >Forgot password?</a
-            >
+        <div class="logo-mark">
+          <div class="logo-icon">
+            <mat-icon>home</mat-icon>
           </div>
-
-          <button
-            mat-flat-button
-            color="primary"
-            class="submit-btn"
-            type="submit"
-            [disabled]="loading"
-          >
-            @if (loading) {
-              <mat-spinner diameter="20"></mat-spinner>
-            } @else {
-              SIGN IN
-            }
-          </button>
-        </form>
-
-        <div class="auth-footer">
-          <p>Don't have an account? <a routerLink="/register">Sign up</a></p>
+          <div class="logo-text">
+            <span class="afno">Afno</span><span class="ghar">Ghar</span>
+          </div>
         </div>
+        <p class="tagline">Real Estate · Nepal</p>
       </div>
+
+      <!-- Heading -->
+      <div class="form-heading">
+        <h1 class="title">Welcome back</h1>
+        <p class="subtitle">Sign in to your account to continue</p>
+      </div>
+
+      <!-- Form -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        @if (errorMessage) {
+          <div class="error-banner">
+            <mat-icon>error_outline</mat-icon>
+            <span>{{ errorMessage }}</span>
+          </div>
+        }
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email address</mat-label>
+          <input
+            matInput
+            formControlName="email"
+            type="email"
+            placeholder="you@example.com"
+          />
+          <mat-icon matSuffix>mail_outline</mat-icon>
+          @if (email?.invalid && email?.touched) {
+            <mat-error>
+              @if (email?.hasError("required")) {
+                Email is required
+              } @else if (email?.hasError("email")) {
+                Enter a valid email address
+              }
+            </mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            formControlName="password"
+            [type]="hidePassword ? 'password' : 'text'"
+            placeholder="Enter your password"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="hidePassword = !hidePassword"
+          >
+            <mat-icon>{{
+              hidePassword ? "visibility_off" : "visibility"
+            }}</mat-icon>
+          </button>
+          @if (password?.invalid && password?.touched) {
+            <mat-error>
+              @if (password?.hasError("required")) {
+                Password is required
+              } @else if (password?.hasError("minlength")) {
+                Minimum 6 characters
+              }
+            </mat-error>
+          }
+        </mat-form-field>
+
+        <div class="form-options">
+          <mat-checkbox formControlName="remember"> Remember me </mat-checkbox>
+          <a routerLink="/forgot-password" class="forgot-link">
+            Forgot password?
+          </a>
+        </div>
+
+        <button
+          mat-flat-button
+          class="submit-btn"
+          type="submit"
+          [disabled]="loading"
+        >
+          @if (loading) {
+            <mat-spinner diameter="22"></mat-spinner>
+          } @else {
+            SIGN IN
+          }
+        </button>
+      </form>
+
+      <!-- Divider -->
+      <div class="divider">
+        <span class="line"></span>
+        <span>or</span>
+        <span class="line"></span>
+      </div>
+
+      <!-- Footer -->
+      <div class="auth-footer">
+        <p>Don't have an account? <a routerLink="/register">Create one</a></p>
+      </div>
+    </div>
+
+    <!-- Trust Badge -->
+    <div class="trust-badge">
+      <mat-icon>lock_outline</mat-icon>
+      <span>Secured with 256-bit encryption</span>
     </div>
   </div>
 
+  <!-- RIGHT — IMAGE -->
   <div class="auth-image-section">
     <div class="image-overlay"></div>
     <img
-      src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200"
-      alt="Luxury Property"
+      src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600"
+      alt="Premium Property in Nepal"
       class="auth-bg-image"
     />
     <div class="image-content">
-      <h2>Find Your Perfect Home</h2>
-      <p>Discover thousands of properties across Nepal</p>
+      <div class="image-tag">
+        <mat-icon>location_on</mat-icon>
+        <span>Kathmandu Valley, Nepal</span>
+      </div>
+      <h2>Your Dream Home Awaits</h2>
+      <p>
+        Discover premium properties across Nepal's most sought-after
+        neighborhoods.
+      </p>
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-number">500+</span>
+          <span class="stat-label">Properties</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">12K+</span>
+          <span class="stat-label">Happy Buyers</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">8+</span>
+          <span class="stat-label">Districts</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>
