@@ -19,20 +19,23 @@ import { sellerGuard } from './core/guards/seller.guard';
 import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', component: BuyerHomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
 
+  // PUBLIC: Property routes (accessible without login)
+  { path: 'buyer/properties', component: BuyerPropertyListComponent },
+  { path: 'buyer/properties/:id', component: BuyerPropertyDetailComponent },
+  { path: 'buyer/map-search', component: BuyerMapSearchComponent },
+
+  // PROTECTED: Buyer routes (require login)
   {
     path: 'buyer',
     canActivate: [buyerGuard],
     children: [
       { path: 'home', component: BuyerHomeComponent },
-      { path: 'properties', component: BuyerPropertyListComponent },
-      { path: 'properties/:id', component: BuyerPropertyDetailComponent },
       { path: 'favorites', component: BuyerFavoritesComponent },
       { path: 'appointments', component: BuyerAppointmentsComponent },
-      { path: 'map-search', component: BuyerMapSearchComponent },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
     ],
   },

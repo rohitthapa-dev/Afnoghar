@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { Property } from '../models/property.model';
 
 @Injectable({
@@ -22,11 +22,37 @@ export class PropertyService {
     return this.http.post<Property>(`${this.apiUrl}/properties`, property);
   }
 
-  updateProperty(id: number, property: Partial<Property>): Observable<Property> {
-    return this.http.patch<Property>(`${this.apiUrl}/properties/${id}`, property);
+  updateProperty(
+    id: number,
+    property: Partial<Property>,
+  ): Observable<Property> {
+    return this.http.patch<Property>(
+      `${this.apiUrl}/properties/${id}`,
+      property,
+    );
   }
 
   deleteProperty(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/properties/${id}`);
+  }
+
+  getFeaturedProperties(limit: number = 6): Observable<Property[]> {
+    return this.http
+      .get<Property[]>(`${this.apiUrl}/properties`)
+      .pipe(
+        map((properties) =>
+          properties
+            .filter((p) => p.status === 'approved' && p.isFeatured === true)
+            .slice(0, limit),
+        ),
+      );
+  }
+
+  getApprovedProperties(): Observable<Property[]> {
+    return this.http
+      .get<Property[]>(`${this.apiUrl}/properties`)
+      .pipe(
+        map((properties) => properties.filter((p) => p.status === 'approved')),
+      );
   }
 }
