@@ -54,9 +54,19 @@
       "avatar": "",
       "createdAt": "2025-01-05T00:00:00.000Z",
       "isActive": true
+    },
+    {
+      "id": 6,
+      "name": "Hari Tamang",
+      "email": "hari@example.com",
+      "password": "hari@123",
+      "role": "buyer",
+      "phone": "9800000000",
+      "avatar": "",
+      "createdAt": "2026-04-27T11:00:17.721Z",
+      "isActive": true
     }
   ],
-
   "properties": [
     {
       "id": 1,
@@ -237,7 +247,7 @@
       "features": ["Parking", "Security", "Generator", "CCTV"],
       "sellerId": 4,
       "status": "approved",
-      "isFeatured": false,
+      "isFeatured": true,
       "createdAt": "2025-03-01T00:00:00.000Z"
     },
     {
@@ -520,7 +530,6 @@
       "createdAt": "2025-04-01T00:00:00.000Z"
     }
   ],
-
   "appointments": [
     {
       "id": 1,
@@ -579,7 +588,6 @@
       "createdAt": "2025-04-05T00:00:00.000Z"
     }
   ],
-
   "favorites": [
     {
       "id": 1,
