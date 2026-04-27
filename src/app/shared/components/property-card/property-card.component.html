@@ -1,0 +1,85 @@
+<div class="property-card" (click)="onCardClick()">
+  <!-- Image -->
+  <div class="card-image">
+    <img [src]="getPropertyUrl()" [alt]="property.title" loading="lazy" />
+
+    <!-- Badges -->
+    <div class="card-badges">
+      <span class="badge type-badge">{{ property.type | propertyType }}</span>
+      <span class="badge listing-badge">
+        {{ property.listingType === "sale" ? "For Sale" : "For Rent" }}
+      </span>
+    </div>
+
+    <!-- Favorite button -->
+    <button
+      class="favorite-btn"
+      (click)="onFavoriteClick($event)"
+      mat-icon-button
+    >
+      <mat-icon>favorite_border</mat-icon>
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div class="card-content">
+    <!-- Price — only shown in full mode -->
+    @if (mode === "full") {
+      <div class="property-price">
+        {{ property.price | priceFormat: property.listingType }}
+      </div>
+    }
+
+    <!-- Title -->
+    <h3 class="property-title">{{ property.title }}</h3>
+
+    <!-- Location -->
+    <p class="property-location">
+      <mat-icon>location_on</mat-icon>
+      {{ getLocation() }}
+    </p>
+
+    <!-- Details row -->
+    @if (property.type !== "land" && property.type !== "commercial") {
+      <div class="property-details">
+        @if (property.bedrooms) {
+          <div class="detail-item">
+            <mat-icon>bed</mat-icon>
+            <span>{{ property.bedrooms }} Bed</span>
+          </div>
+        }
+        @if (property.bathrooms) {
+          <div class="detail-item">
+            <mat-icon>bathtub</mat-icon>
+            <span>{{ property.bathrooms }} Bath</span>
+          </div>
+        }
+        @if (property.area) {
+          <div class="detail-item">
+            <mat-icon>straighten</mat-icon>
+            <span>{{ property.area }} sq.ft</span>
+          </div>
+        }
+      </div>
+    }
+
+    @if (property.type === "land") {
+      <div class="property-details">
+        @if (property.aana) {
+          <div class="detail-item">
+            <mat-icon>straighten</mat-icon>
+            <span>{{ property.aana }} Aana</span>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Footer -->
+  <div class="card-footer">
+    <span class="view-link">
+      View Details
+      <mat-icon>arrow_forward</mat-icon>
+    </span>
+  </div>
+</div>

@@ -1,0 +1,350 @@
+@use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins" as *;
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: $z-navbar;
+  height: $navbar-height;
+  background: $surface;
+  transition: $transition-base;
+  box-shadow: $shadow-navbar;
+
+  &.scrolled {
+    background: rgba($surface, 0.95);
+    backdrop-filter: blur(12px);
+  }
+}
+
+.navbar-container {
+  @include flex(row, space-between, center);
+  max-width: $container-max;
+  margin: 0 auto;
+  padding: 0 $space-8;
+  height: 100%;
+}
+
+.logo {
+  @include flex(row, flex-start, center, $space-3);
+  text-decoration: none;
+  flex-shrink: 0;
+
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    background: $primary;
+    border-radius: $radius-md;
+    @include flex(row, center, center);
+
+    mat-icon {
+      color: $surface;
+      font-size: 22px;
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  .logo-text {
+    font-family: $font-heading;
+    font-size: $text-xl;
+    font-weight: $font-extrabold;
+    letter-spacing: $tracking-tight;
+    line-height: 1;
+
+    .afno {
+      color: $text-primary;
+    }
+
+    .ghar {
+      color: $primary;
+    }
+  }
+}
+
+.nav-links {
+  @include flex(row, center, center, $space-8);
+
+  a {
+    font-family: $font-primary;
+    font-size: $text-sm;
+    font-weight: $font-medium;
+    color: $text-secondary;
+    text-decoration: none;
+    transition: $transition-fast;
+    padding: $space-2 0;
+    position: relative;
+
+    &:hover {
+      color: $primary;
+    }
+
+    &.active {
+      color: $primary;
+      font-weight: $font-semibold;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: $primary;
+        border-radius: $radius-full;
+      }
+    }
+  }
+}
+
+.auth-section {
+  @include flex(row, flex-end, center, $space-4);
+  flex-shrink: 0;
+}
+
+.btn {
+  font-family: $font-primary;
+  font-size: $text-sm;
+  font-weight: $font-semibold;
+  padding: $space-2 $space-6;
+  border-radius: $radius-md;
+  text-decoration: none;
+  transition: $transition-fast;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &.btn-outline {
+    color: $primary;
+    border: 1.5px solid $primary;
+    background: transparent;
+
+    &:hover {
+      background: $primary-light;
+    }
+  }
+
+  &.btn-primary {
+    background: $primary;
+    color: $surface;
+    border: 1.5px solid $primary;
+    box-shadow: 0 2px 8px rgba($primary, 0.25);
+
+    &:hover {
+      background: $primary-dark;
+      border-color: $primary-dark;
+      box-shadow: 0 4px 12px rgba($primary-dark, 0.35);
+      transform: translateY(-1px);
+    }
+  }
+}
+
+.user-menu-trigger {
+  @include flex(row, flex-start, center, $space-3);
+  padding: $space-2 $space-4 !important;
+  border-radius: $radius-full !important;
+  background: $surface-alt;
+  transition: $transition-fast;
+
+  &:hover {
+    background: rgba($surface-alt, 0.92);
+  }
+
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+    background: $primary;
+    color: $surface;
+    border-radius: $radius-full;
+    @include flex(row, center, center);
+    font-family: $font-primary;
+    font-size: $text-sm;
+    font-weight: $font-semibold;
+  }
+
+  .user-name {
+    font-family: $font-primary;
+    font-size: $text-sm;
+    font-weight: $font-medium;
+    color: $text-primary;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dropdown-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: $text-secondary;
+  }
+}
+
+.user-menu-header {
+  @include flex(row, flex-start, center, $space-3);
+  padding: $space-4 $space-4;
+  background: $primary-light;
+
+  .user-avatar-lg {
+    width: 48px;
+    height: 48px;
+    background: $primary;
+    color: $surface;
+    border-radius: $radius-full;
+    @include flex(row, center, center);
+    font-family: $font-heading;
+    font-size: $text-lg;
+    font-weight: $font-bold;
+  }
+
+  .user-info {
+    @include flex(column, flex-start, flex-start, $space-1);
+
+    .user-name {
+      font-family: $font-primary;
+      font-size: $text-base;
+      font-weight: $font-semibold;
+      color: $text-primary;
+    }
+
+    .user-email {
+      font-family: $font-primary;
+      font-size: $text-xs;
+      color: $text-secondary;
+    }
+  }
+}
+
+.mobile-menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  padding: $space-2;
+  cursor: pointer;
+  color: $text-primary;
+
+  mat-icon {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+  }
+
+  @include respond-to(md) {
+    display: block;
+  }
+}
+
+.mobile-nav {
+  display: none;
+  position: absolute;
+  top: $navbar-height;
+  left: 0;
+  right: 0;
+  background: $surface;
+  padding: $space-4 $space-6;
+  box-shadow: $shadow-lg;
+  animation: slideDown 0.2s ease;
+
+  @include respond-to(md) {
+    display: block;
+  }
+
+  a {
+    display: block;
+    font-family: $font-primary;
+    font-size: $text-base;
+    font-weight: $font-medium;
+    color: $text-primary;
+    text-decoration: none;
+    padding: $space-4 $space-4;
+    margin: 0 (-$space-4);
+    transition: $transition-fast;
+
+    &:hover {
+      background: $surface-alt;
+      color: $primary;
+    }
+
+    &.active {
+      color: $primary;
+      font-weight: $font-semibold;
+    }
+  }
+
+  .mobile-auth-buttons {
+    @include flex(column, stretch, stretch, $space-3);
+    margin-top: $space-4;
+    padding-top: $space-4;
+    border-top: 1px solid $divider;
+
+    .btn {
+      text-align: center;
+    }
+  }
+
+  .mobile-user-info {
+    @include flex(row, flex-start, center, $space-4);
+    padding: $space-4;
+    background: $primary-light;
+    border-radius: $radius-lg;
+    margin-bottom: $space-4;
+
+    .user-name {
+      font-family: $font-primary;
+      font-size: $text-base;
+      font-weight: $font-semibold;
+      color: $text-primary;
+    }
+
+    .user-role {
+      font-family: $font-primary;
+      font-size: $text-xs;
+      color: $text-secondary;
+      text-transform: capitalize;
+    }
+  }
+
+  .logout-btn {
+    @include flex(row, flex-start, center, $space-3);
+    width: 100%;
+    background: none;
+    border: none;
+    padding: $space-4;
+    margin: 0 (-$space-4);
+    cursor: pointer;
+    font-family: $font-primary;
+    font-size: $text-base;
+    font-weight: $font-medium;
+    color: $error;
+    transition: $transition-fast;
+
+    &:hover {
+      background: $error-light;
+    }
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.desktop-nav {
+  @include respond-to(md) {
+    display: none;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

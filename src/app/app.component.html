@@ -1,1 +1,6 @@
-<router-outlet />
+@if (showNavbar) {
+  <app-navbar></app-navbar>
+}
+<main [class.has-navbar]="showNavbar">
+  <router-outlet />
+</main>
