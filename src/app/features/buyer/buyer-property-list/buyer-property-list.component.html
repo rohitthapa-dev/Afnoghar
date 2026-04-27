@@ -1,1 +1,44 @@
-<p>buyer-property-list works!</p>
+<div class="property-list-page">
+  <div class="page-header">
+    <h1 class="page-title">Properties</h1>
+    <p class="page-subtitle">Browse all available properties in Nepal</p>
+  </div>
+
+  <div class="properties-content">
+    @if (loading) {
+      <div class="loading-container">
+        <mat-spinner diameter="48"></mat-spinner>
+        <p>Loading properties...</p>
+      </div>
+    } @else if (error) {
+      <div class="error-container">
+        <p>{{ error }}</p>
+        <button mat-stroked-button (click)="loadProperties()">
+          Try Again
+        </button>
+      </div>
+    } @else {
+      <div class="properties-grid">
+        @for (property of paginatedProperties; track property.id) {
+          <app-property-card [property]="property" mode="view" />
+        } @empty {
+          <div class="empty-state">
+            <mat-icon>home</mat-icon>
+            <p>No properties found</p>
+          </div>
+        }
+      </div>
+
+      @if (totalProperties > pageSize) {
+        <mat-paginator
+          [length]="totalProperties"
+          [pageSize]="pageSize"
+          [pageIndex]="pageIndex"
+          [pageSizeOptions]="[6, 12, 15]"
+          (page)="onPageChange($event)"
+          showFirstLastButtons>
+        </mat-paginator>
+      }
+    }
+  </div>
+</div>
