@@ -1,0 +1,814 @@
+@use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins" as *;
+
+// ============================================================
+// HERO SECTION
+// ============================================================
+
+.hero-section {
+  position: relative;
+  height: calc(100vh - #{$navbar-height});
+  min-height: 640px;
+  @include flex(column, center, center);
+  overflow: hidden;
+}
+
+.hero-background {
+  position: absolute;
+  inset: 0;
+  background-image: url("https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba($primary-darker, 0.75) 0%,
+      rgba($primary-dark, 0.55) 40%,
+      rgba($primary, 0.35) 70%,
+      rgba($background, 0.98) 100%
+    );
+  }
+}
+
+.hero-content {
+  position: relative;
+  z-index: $z-raised;
+  text-align: center;
+  max-width: 860px;
+  padding: 0 $space-8;
+  @include flex(column, center, center, $space-8);
+}
+
+.hero-tag {
+  @include flex(row, center, center, $space-2);
+  background: rgba($surface, 0.12);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba($surface, 0.2);
+  border-radius: $radius-full;
+  padding: $space-2 $space-5;
+  width: fit-content;
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    color: rgba($surface, 0.8);
+  }
+
+  span {
+    font-family: $font-primary;
+    font-size: $text-xs;
+    font-weight: $font-medium;
+    color: rgba($surface, 0.85);
+    letter-spacing: $tracking-wider;
+    text-transform: uppercase;
+  }
+}
+
+.hero-text {
+  @include flex(column, center, center, $space-4);
+}
+
+.hero-title {
+  font-family: $font-heading;
+  font-size: $text-5xl;
+  font-weight: $font-extrabold;
+  color: $surface;
+  line-height: $leading-tight;
+  letter-spacing: $tracking-tight;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.25);
+  white-space: nowrap;
+
+  @include respond-to(lg) {
+    white-space: normal;
+    font-size: $text-4xl;
+  }
+
+  @include respond-to(md) {
+    font-size: $text-3xl;
+  }
+}
+
+.hero-subtitle {
+  font-family: $font-primary;
+  font-size: $text-lg;
+  color: rgba($surface, 0.85);
+  line-height: $leading-relaxed;
+  max-width: 560px;
+
+  @include respond-to(md) {
+    font-size: $text-base;
+  }
+}
+
+.hero-actions {
+  @include flex(row, center, center, $space-4);
+
+  @include respond-to(md) {
+    @include flex(column, center, center, $space-3);
+    width: 100%;
+  }
+}
+
+.search-btn {
+  height: 52px;
+  padding: 0 $space-8;
+  font-family: $font-primary;
+  font-size: $text-base;
+  font-weight: $font-semibold;
+  background: $surface !important;
+  color: $primary !important;
+  border-radius: $radius-lg !important;
+  box-shadow: $shadow-lg !important;
+  transition: $transition-base !important;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    margin-right: $space-2;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-xl !important;
+  }
+}
+
+.explore-btn {
+  height: 52px;
+  padding: 0 $space-8;
+  font-family: $font-primary;
+  font-size: $text-base;
+  font-weight: $font-semibold;
+  color: $surface !important;
+  border-color: rgba($surface, 0.5) !important;
+  border-radius: $radius-lg !important;
+  transition: $transition-base !important;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    margin-left: $space-2;
+  }
+
+  &:hover {
+    background: rgba($surface, 0.1) !important;
+    border-color: $surface !important;
+  }
+}
+
+.hero-stats {
+  @include flex(row, center, center, $space-8);
+  padding-top: $space-6;
+  border-top: 1px solid rgba($surface, 0.2);
+
+  .stat {
+    text-align: center;
+
+    .stat-number {
+      display: block;
+      font-family: $font-heading;
+      font-size: $text-3xl;
+      font-weight: $font-bold;
+      color: $surface;
+      line-height: 1;
+      margin-bottom: $space-1;
+    }
+
+    .stat-label {
+      font-family: $font-primary;
+      font-size: $text-xs;
+      color: rgba($surface, 0.7);
+      letter-spacing: $tracking-wider;
+      text-transform: uppercase;
+    }
+  }
+
+  .stat-divider {
+    width: 1px;
+    height: 32px;
+    background: rgba($surface, 0.2);
+  }
+}
+
+// ============================================================
+// SHARED SECTION STYLES
+// ============================================================
+
+.section-container {
+  max-width: $container-max;
+  margin: 0 auto;
+  padding: 0 $space-8;
+}
+
+.section-tag {
+  display: inline-block;
+  font-family: $font-primary;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+  color: $primary;
+  letter-spacing: $tracking-widest;
+  text-transform: uppercase;
+  margin-bottom: $space-3;
+  padding: $space-1 $space-3;
+  background: $primary-tint;
+  border-radius: $radius-full;
+  border: 1px solid $primary-light;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: $space-12;
+}
+
+.section-title {
+  font-family: $font-heading;
+  font-size: $text-3xl;
+  font-weight: $font-bold;
+  color: $text-primary;
+  margin-bottom: $space-3;
+  letter-spacing: $tracking-tight;
+}
+
+.section-subtitle {
+  font-family: $font-primary;
+  font-size: $text-base;
+  color: $text-secondary;
+  line-height: $leading-relaxed;
+}
+
+// ============================================================
+// HOW IT WORKS SECTION
+// ============================================================
+
+.how-it-works-section {
+  padding: $space-20 0;
+  background: $surface;
+}
+
+.how-it-works-inner {
+  @include flex(row, space-between, center, $space-16);
+
+  @include respond-to(lg) {
+    @include flex(column, flex-start, flex-start, $space-10);
+  }
+}
+
+.how-left {
+  flex: 1;
+  max-width: 420px;
+  @include flex(column, flex-start, flex-start, $space-5);
+
+  @include respond-to(lg) {
+    max-width: 100%;
+  }
+}
+
+.how-right {
+  flex: 1;
+  @include flex(column, flex-start, flex-start, 0);
+  max-width: 520px;
+
+  @include respond-to(lg) {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+.how-step {
+  @include flex(row, flex-start, flex-start, $space-5);
+  padding: $space-5 0;
+
+  .how-step-icon {
+    width: 48px;
+    height: 48px;
+    background: $primary-tint;
+    border: 1px solid $primary-light;
+    border-radius: $radius-lg;
+    @include flex(row, center, center);
+    flex-shrink: 0;
+    margin-top: $space-1;
+
+    mat-icon {
+      font-size: 22px;
+      width: 22px;
+      height: 22px;
+      color: $primary;
+    }
+  }
+
+  .how-step-text {
+    h3 {
+      font-family: $font-heading;
+      font-size: $text-base;
+      font-weight: $font-semibold;
+      color: $text-primary;
+      margin-bottom: $space-2;
+      line-height: $leading-snug;
+    }
+
+    p {
+      font-family: $font-primary;
+      font-size: $text-sm;
+      color: $text-secondary;
+      line-height: $leading-relaxed;
+      margin: 0;
+    }
+  }
+}
+
+.how-step-connector {
+  width: 1px;
+  height: 24px;
+  background: $divider;
+  margin-left: 23px;
+}
+
+// ============================================================
+// FEATURED SECTION
+// ============================================================
+
+.featured-section {
+  padding: $space-20 0;
+  background: $background;
+}
+
+.section-header-row {
+  @include flex(row, space-between, flex-end);
+  margin-bottom: $space-10;
+
+  .section-header-left {
+    @include flex(column, flex-start, flex-start, $space-1);
+  }
+
+  @include respond-to(md) {
+    @include flex(column, flex-start, flex-start, $space-4);
+  }
+}
+
+.view-all-btn {
+  font-family: $font-primary;
+  font-size: $text-sm;
+  font-weight: $font-semibold;
+  color: $primary !important;
+  border-color: $primary !important;
+  border-radius: $radius-md !important;
+  height: 40px;
+  padding: 0 $space-5;
+  white-space: nowrap;
+  transition: $transition-fast !important;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    margin-left: $space-1;
+    transition: transform 0.2s ease;
+  }
+
+  &:hover {
+    background: $primary-tint !important;
+
+    mat-icon {
+      transform: translateX(3px);
+    }
+  }
+}
+
+.properties-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $space-6;
+
+  @include respond-to(lg) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to(md) {
+    grid-template-columns: 1fr;
+    gap: $space-4;
+  }
+}
+
+.loading-container,
+.error-container {
+  @include flex(column, center, center, $space-4);
+  padding: $space-16 0;
+  text-align: center;
+
+  p {
+    font-family: $font-primary;
+    font-size: $text-base;
+    color: $text-secondary;
+  }
+}
+
+// ============================================================
+// TRUST SECTION
+// ============================================================
+
+.trust-section {
+  padding: $space-20 0;
+  background: $surface;
+}
+
+.trust-grid {
+  @include flex(row, space-between, center, $space-16);
+
+  @include respond-to(lg) {
+    @include flex(column, flex-start, flex-start, $space-10);
+  }
+}
+
+.trust-content {
+  flex: 1;
+  max-width: 520px;
+
+  .trust-title {
+    font-family: $font-heading;
+    font-size: $text-3xl;
+    font-weight: $font-bold;
+    color: $text-primary;
+    line-height: $leading-tight;
+    letter-spacing: $tracking-tight;
+    margin-bottom: $space-4;
+  }
+
+  .trust-desc {
+    font-family: $font-primary;
+    font-size: $text-base;
+    color: $text-secondary;
+    line-height: $leading-relaxed;
+    margin-bottom: $space-8;
+  }
+}
+
+.trust-features {
+  @include flex(column, flex-start, flex-start, $space-5);
+  margin-bottom: $space-8;
+}
+
+.trust-feature {
+  @include flex(row, flex-start, center, $space-4);
+
+  .trust-feature-icon {
+    width: 44px;
+    height: 44px;
+    background: $primary-tint;
+    border: 1px solid $primary-light;
+    border-radius: $radius-lg;
+    @include flex(row, center, center);
+    flex-shrink: 0;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      color: $primary;
+    }
+  }
+
+  .trust-feature-text {
+    h4 {
+      font-family: $font-heading;
+      font-size: $text-base;
+      font-weight: $font-semibold;
+      color: $text-primary;
+      margin-bottom: $space-1;
+    }
+
+    p {
+      font-family: $font-primary;
+      font-size: $text-sm;
+      color: $text-secondary;
+      margin: 0;
+    }
+  }
+}
+
+.trust-cta {
+  height: 48px;
+  padding: 0 $space-8;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  font-weight: $font-semibold;
+  background: $primary !important;
+  color: $surface !important;
+  border-radius: $radius-md !important;
+  box-shadow: 0 4px 16px rgba($primary, 0.3) !important;
+  transition: $transition-base !important;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    margin-left: $space-2;
+  }
+
+  &:hover {
+    background: $primary-dark !important;
+    transform: translateY(-1px);
+  }
+}
+
+.trust-image {
+  flex: 1;
+  position: relative;
+  border-radius: $radius-2xl;
+  overflow: hidden;
+  box-shadow: $shadow-xl;
+  max-width: 560px;
+
+  img {
+    width: 100%;
+    height: 420px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .trust-image-badge {
+    position: absolute;
+    bottom: $space-6;
+    left: $space-6;
+    @include flex(row, flex-start, center, $space-3);
+    background: rgba($surface, 0.95);
+    backdrop-filter: blur(12px);
+    border-radius: $radius-lg;
+    padding: $space-3 $space-5;
+    box-shadow: $shadow-md;
+
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+      color: $primary;
+    }
+
+    .badge-title {
+      display: block;
+      font-family: $font-heading;
+      font-size: $text-sm;
+      font-weight: $font-semibold;
+      color: $text-primary;
+    }
+
+    .badge-sub {
+      display: block;
+      font-family: $font-primary;
+      font-size: $text-xs;
+      color: $text-secondary;
+    }
+  }
+}
+
+// ============================================================
+// AGENTS SECTION
+// ============================================================
+
+.agents-section {
+  padding: $space-20 0;
+  background: $background;
+}
+
+.agents-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $space-6;
+
+  @include respond-to(lg) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to(md) {
+    grid-template-columns: 1fr;
+    gap: $space-4;
+  }
+}
+
+.agent-card {
+  background: $surface;
+  border: 1px solid $divider;
+  border-radius: $radius-xl;
+  padding: $space-8 $space-6;
+  text-align: center;
+  transition: $transition-base;
+  @include flex(column, flex-start, center, $space-3);
+
+  &:hover {
+    box-shadow: $shadow-card-hover;
+    transform: translateY(-4px);
+    border-color: $primary-light;
+  }
+
+  .agent-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: $radius-full;
+    overflow: hidden;
+    border: 3px solid $primary-light;
+    flex-shrink: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .agent-name {
+    font-family: $font-heading;
+    font-size: $text-lg;
+    font-weight: $font-semibold;
+    color: $text-primary;
+  }
+
+  .agent-experience {
+    font-family: $font-primary;
+    font-size: $text-sm;
+    color: $text-secondary;
+  }
+
+  .agent-stats {
+    @include flex(row, center, center, $space-6);
+    width: 100%;
+    padding: $space-4 0;
+    border-top: 1px solid $divider;
+    border-bottom: 1px solid $divider;
+
+    .agent-stat {
+      @include flex(column, center, center, $space-1);
+
+      .agent-stat-number {
+        font-family: $font-heading;
+        font-size: $text-xl;
+        font-weight: $font-bold;
+        color: $primary;
+      }
+
+      .agent-stat-label {
+        font-family: $font-primary;
+        font-size: $text-xs;
+        color: $text-secondary;
+        text-transform: uppercase;
+        letter-spacing: $tracking-wide;
+      }
+    }
+
+    .agent-stat-divider {
+      width: 1px;
+      height: 32px;
+      background: $divider;
+    }
+  }
+
+  .contact-btn {
+    width: 100%;
+    height: 40px;
+    color: $primary !important;
+    border-color: $primary !important;
+    border-radius: $radius-md !important;
+    font-family: $font-primary;
+    font-size: $text-sm;
+    font-weight: $font-semibold;
+    transition: $transition-fast !important;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      margin-right: $space-1;
+    }
+
+    &:hover {
+      background: $primary-tint !important;
+    }
+  }
+}
+
+// ============================================================
+// CTA SECTION
+// ============================================================
+
+.cta-section {
+  padding: $space-20 0;
+  background: $surface;
+}
+
+.cta-card {
+  background: linear-gradient(
+    135deg,
+    $primary-dark 0%,
+    $primary 60%,
+    rgba($primary, 0.85) 100%
+  );
+  border-radius: $radius-2xl;
+  padding: $space-16 $space-12;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: rgba($surface, 0.05);
+    border-radius: $radius-full;
+    pointer-events: none;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -30%;
+    left: -5%;
+    width: 300px;
+    height: 300px;
+    background: rgba($surface, 0.04);
+    border-radius: $radius-full;
+    pointer-events: none;
+  }
+}
+
+.cta-content {
+  position: relative;
+  z-index: $z-raised;
+
+  .cta-title {
+    font-family: $font-heading;
+    font-size: $text-3xl;
+    font-weight: $font-bold;
+    color: $surface;
+    margin-bottom: $space-4;
+    letter-spacing: $tracking-tight;
+  }
+
+  .cta-desc {
+    font-family: $font-primary;
+    font-size: $text-lg;
+    color: rgba($surface, 0.8);
+    line-height: $leading-relaxed;
+    margin-bottom: $space-8;
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.cta-actions {
+  @include flex(row, center, center, $space-4);
+
+  @include respond-to(md) {
+    @include flex(column, center, center, $space-3);
+  }
+}
+
+.cta-primary-btn {
+  height: 52px;
+  padding: 0 $space-8;
+  font-family: $font-primary;
+  font-size: $text-base;
+  font-weight: $font-semibold;
+  background: $surface !important;
+  color: $primary !important;
+  border-radius: $radius-lg !important;
+  box-shadow: $shadow-lg !important;
+  transition: $transition-base !important;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    margin-left: $space-2;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-xl !important;
+  }
+}
+
+.cta-secondary-btn {
+  height: 52px;
+  padding: 0 $space-8;
+  font-family: $font-primary;
+  font-size: $text-base;
+  font-weight: $font-semibold;
+  color: $surface !important;
+  border-color: rgba($surface, 0.4) !important;
+  border-radius: $radius-lg !important;
+  transition: $transition-base !important;
+
+  &:hover {
+    background: rgba($surface, 0.1) !important;
+    border-color: $surface !important;
+  }
+}

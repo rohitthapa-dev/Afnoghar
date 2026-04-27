@@ -1,1 +1,301 @@
-<p>home works!</p>
+<!-- HERO SECTION -->
+<section class="hero-section">
+  <div class="hero-background">
+    <div class="hero-overlay"></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-tag">
+      <mat-icon>location_on</mat-icon>
+      <span>Kathmandu Valley, Nepal</span>
+    </div>
+
+    <div class="hero-text">
+      <h1 class="hero-title">Find Your Dream Home</h1>
+      <p class="hero-subtitle">
+        Discover premium properties across Nepal's most sought-after
+        neighborhoods
+      </p>
+    </div>
+
+    <div class="hero-actions">
+      <button mat-flat-button class="search-btn" (click)="onSearchProperties()">
+        <mat-icon>search</mat-icon>
+        Browse Properties
+      </button>
+      <button
+        mat-stroked-button
+        class="explore-btn"
+        (click)="onSearchProperties()"
+      >
+        View on Map
+        <mat-icon>map</mat-icon>
+      </button>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-number">500+</span>
+        <span class="stat-label">Properties</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-number">12K+</span>
+        <span class="stat-label">Happy Buyers</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-number">8+</span>
+        <span class="stat-label">Districts</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS SECTION -->
+<section class="how-it-works-section">
+  <div class="section-container">
+    <div class="how-it-works-inner">
+      <div class="how-left">
+        <span class="section-tag">The Process</span>
+        <h2 class="section-title" style="text-align: left">
+          Buying a home in Nepal has never been this easy
+        </h2>
+        <p class="section-subtitle" style="text-align: left">
+          From browsing to booking everything happens in one place, without the
+          hassle of agents and phone calls.
+        </p>
+        <button
+          mat-flat-button
+          class="trust-cta"
+          routerLink="/buyer/properties"
+        >
+          Start Browsing
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </div>
+
+      <div class="how-right">
+        <div class="how-step">
+          <div class="how-step-icon">
+            <mat-icon>search</mat-icon>
+          </div>
+          <div class="how-step-text">
+            <h3>Search by location or type</h3>
+            <p>
+              Filter by district, price range, property type, or use the map to
+              explore the valley visually.
+            </p>
+          </div>
+        </div>
+
+        <div class="how-step-connector"></div>
+
+        <div class="how-step">
+          <div class="how-step-icon">
+            <mat-icon>calendar_today</mat-icon>
+          </div>
+          <div class="how-step-text">
+            <h3>Book a visit directly</h3>
+            <p>
+              Schedule an appointment with the seller without going through a
+              broker. Pick your date and time.
+            </p>
+          </div>
+        </div>
+
+        <div class="how-step-connector"></div>
+
+        <div class="how-step">
+          <div class="how-step-icon">
+            <mat-icon>key</mat-icon>
+          </div>
+          <div class="how-step-text">
+            <h3>Move in with confidence</h3>
+            <p>
+              Every listing on Afnoghar is reviewed before approval. No
+              surprises, no fake listings.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED PROPERTIES SECTION -->
+<section class="featured-section">
+  <div class="section-container">
+    <div class="section-header-row">
+      <div class="section-header-left">
+        <span class="section-tag">Hand Picked</span>
+        <h2 class="section-title">Featured Properties</h2>
+        <p class="section-subtitle">Premium listings selected just for you</p>
+      </div>
+      <a mat-stroked-button routerLink="/buyer/properties" class="view-all-btn">
+        View All
+        <mat-icon>arrow_forward</mat-icon>
+      </a>
+    </div>
+
+    @if (loading) {
+      <div class="loading-container">
+        <mat-spinner diameter="48"></mat-spinner>
+        <p>Loading properties...</p>
+      </div>
+    } @else if (error) {
+      <div class="error-container">
+        <p>{{ error }}</p>
+        <button mat-stroked-button (click)="loadFeaturedProperties()">
+          Try Again
+        </button>
+      </div>
+    } @else {
+      <div class="properties-grid">
+        @for (property of featuredProperties; track property.id) {
+          <app-property-card [property]="property" mode="view" />
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<!-- TRUST SECTION -->
+<section class="trust-section">
+  <div class="section-container">
+    <div class="trust-grid">
+      <div class="trust-content">
+        <span class="section-tag">Why Choose Us</span>
+        <h2 class="trust-title">Nepal's Most Trusted Real Estate Platform</h2>
+        <p class="trust-desc">
+          Afnoghar connects buyers and sellers across the Kathmandu valley with
+          verified listings, transparent pricing, and direct communication no
+          middlemen, no hidden fees.
+        </p>
+        <div class="trust-features">
+          <div class="trust-feature">
+            <div class="trust-feature-icon">
+              <mat-icon>verified</mat-icon>
+            </div>
+            <div class="trust-feature-text">
+              <h4>Verified Listings</h4>
+              <p>Every property is reviewed before going live</p>
+            </div>
+          </div>
+          <div class="trust-feature">
+            <div class="trust-feature-icon">
+              <mat-icon>map</mat-icon>
+            </div>
+            <div class="trust-feature-text">
+              <h4>Map-Based Search</h4>
+              <p>Explore properties by location across the valley</p>
+            </div>
+          </div>
+          <div class="trust-feature">
+            <div class="trust-feature-icon">
+              <mat-icon>support_agent</mat-icon>
+            </div>
+            <div class="trust-feature-text">
+              <h4>Direct Contact</h4>
+              <p>Connect directly with sellers, no commission</p>
+            </div>
+          </div>
+        </div>
+        <button mat-flat-button class="trust-cta" routerLink="/register">
+          Get Started Free
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </div>
+      <div class="trust-image">
+        <img
+          src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800"
+          alt="Premium property in Nepal"
+        />
+        <div class="trust-image-badge">
+          <mat-icon>shield</mat-icon>
+          <div>
+            <span class="badge-title">100% Verified</span>
+            <span class="badge-sub">All listings reviewed</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AGENTS SECTION -->
+<section class="agents-section">
+  <div class="section-container">
+    <div class="section-header">
+      <span class="section-tag">Our Team</span>
+      <h2 class="section-title">Meet Our Trusted Sellers</h2>
+      <p class="section-subtitle">
+        Experienced professionals ready to help you find the perfect home
+      </p>
+    </div>
+
+    <div class="agents-grid">
+      @for (agent of agents; track agent.id) {
+        <div class="agent-card">
+          <div class="agent-avatar">
+            <img
+              src="https://ui-avatars.com/api/?name={{
+                agent.name
+              }}&background=14919b&color=fff&size=128&bold=true"
+              [alt]="agent.name"
+            />
+          </div>
+          <h3 class="agent-name">{{ agent.name }}</h3>
+          <p class="agent-experience">{{ agent.experience }} experience</p>
+          <div class="agent-stats">
+            <div class="agent-stat">
+              <span class="agent-stat-number">{{ agent.propertiesSold }}</span>
+              <span class="agent-stat-label">Listings</span>
+            </div>
+            <div class="agent-stat-divider"></div>
+            <div class="agent-stat">
+              <span class="agent-stat-number">{{ agent.rating }}</span>
+              <span class="agent-stat-label">Rating</span>
+            </div>
+          </div>
+          <button mat-stroked-button class="contact-btn">
+            <mat-icon>phone</mat-icon>
+            Contact
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- CTA SECTION -->
+<section class="cta-section">
+  <div class="section-container">
+    <div class="cta-card">
+      <div class="cta-content">
+        <h2 class="cta-title">Ready to List Your Property?</h2>
+        <p class="cta-desc">
+          Join thousands of sellers who trust Afnoghar to reach genuine buyers
+          across Nepal.
+        </p>
+        <div class="cta-actions">
+          <button
+            mat-flat-button
+            class="cta-primary-btn"
+            routerLink="/register"
+          >
+            Start Selling
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+          <button
+            mat-stroked-button
+            class="cta-secondary-btn"
+            routerLink="/buyer/properties"
+          >
+            Browse Properties
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
