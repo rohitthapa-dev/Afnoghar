@@ -8,9 +8,8 @@ describe('BuyerMapSearchComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BuyerMapSearchComponent]
-    })
-    .compileComponents();
+      imports: [BuyerMapSearchComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(BuyerMapSearchComponent);
     component = fixture.componentInstance;

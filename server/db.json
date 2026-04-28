@@ -65,6 +65,17 @@
       "avatar": "",
       "createdAt": "2026-04-27T11:00:17.721Z",
       "isActive": true
+    },
+    {
+      "id": 7,
+      "name": "Rohit ",
+      "email": "hari01@example.com",
+      "password": "hari@123",
+      "role": "seller",
+      "phone": "9800000001",
+      "avatar": "",
+      "createdAt": "2026-04-27T12:15:11.989Z",
+      "isActive": true
     }
   ],
   "properties": [
@@ -92,7 +103,13 @@
         "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800",
         "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800"
       ],
-      "features": ["Parking", "Garden", "Rooftop", "Security", "Water Tank"],
+      "features": [
+        "Parking",
+        "Garden",
+        "Rooftop",
+        "Security",
+        "Water Tank"
+      ],
       "sellerId": 2,
       "status": "approved",
       "isFeatured": true,
@@ -121,7 +138,12 @@
         "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800",
         "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800"
       ],
-      "features": ["Parking", "Security", "Water Tank", "Lift"],
+      "features": [
+        "Parking",
+        "Security",
+        "Water Tank",
+        "Lift"
+      ],
       "sellerId": 2,
       "status": "approved",
       "isFeatured": true,
@@ -150,7 +172,11 @@
         "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800",
         "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800"
       ],
-      "features": ["Road Access", "Electricity", "Water Supply"],
+      "features": [
+        "Road Access",
+        "Electricity",
+        "Water Supply"
+      ],
       "sellerId": 4,
       "status": "approved",
       "isFeatured": false,
@@ -215,7 +241,12 @@
         "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800",
         "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800"
       ],
-      "features": ["Garden", "Parking", "Rooftop", "Water Tank"],
+      "features": [
+        "Garden",
+        "Parking",
+        "Rooftop",
+        "Water Tank"
+      ],
       "sellerId": 2,
       "status": "approved",
       "isFeatured": true,
@@ -244,7 +275,12 @@
         "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800",
         "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=800"
       ],
-      "features": ["Parking", "Security", "Generator", "CCTV"],
+      "features": [
+        "Parking",
+        "Security",
+        "Generator",
+        "CCTV"
+      ],
       "sellerId": 4,
       "status": "approved",
       "isFeatured": true,
@@ -273,7 +309,12 @@
         "https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=800",
         "https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800"
       ],
-      "features": ["Furnished", "WiFi", "Security", "Water Tank"],
+      "features": [
+        "Furnished",
+        "WiFi",
+        "Security",
+        "Water Tank"
+      ],
       "sellerId": 2,
       "status": "approved",
       "isFeatured": false,
@@ -301,7 +342,12 @@
       "images": [
         "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800"
       ],
-      "features": ["Road Access", "Electricity", "Water Supply", "Quiet Area"],
+      "features": [
+        "Road Access",
+        "Electricity",
+        "Water Supply",
+        "Quiet Area"
+      ],
       "sellerId": 4,
       "status": "pending",
       "isFeatured": false,
@@ -330,7 +376,11 @@
         "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800",
         "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800"
       ],
-      "features": ["Parking", "Security", "Water Tank"],
+      "features": [
+        "Parking",
+        "Security",
+        "Water Tank"
+      ],
       "sellerId": 2,
       "status": "pending",
       "isFeatured": false,
@@ -395,7 +445,13 @@
         "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800",
         "https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=800"
       ],
-      "features": ["Parking", "Rooftop", "Security", "Water Tank", "Garden"],
+      "features": [
+        "Parking",
+        "Rooftop",
+        "Security",
+        "Water Tank",
+        "Garden"
+      ],
       "sellerId": 2,
       "status": "approved",
       "isFeatured": false,
@@ -424,7 +480,12 @@
         "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800",
         "https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?w=800"
       ],
-      "features": ["Valley View", "Parking", "Water Tank", "Quiet Area"],
+      "features": [
+        "Valley View",
+        "Parking",
+        "Water Tank",
+        "Quiet Area"
+      ],
       "sellerId": 4,
       "status": "approved",
       "isFeatured": false,
@@ -523,7 +584,12 @@
         "https://images.unsplash.com/photo-1598228723793-52759bba239c?w=800",
         "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800"
       ],
-      "features": ["Parking", "Rooftop", "Water Tank", "Road Access"],
+      "features": [
+        "Parking",
+        "Rooftop",
+        "Water Tank",
+        "Road Access"
+      ],
       "sellerId": 2,
       "status": "pending",
       "isFeatured": false,

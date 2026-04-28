@@ -14,6 +14,7 @@ import { SellerAppointmentsComponent } from './features/seller/seller-appointmen
 import { AdminDashboardComponent } from './features/admin/dashboard/admin-dashboard.component';
 import { AdminManageListingsComponent } from './features/admin/admin-manage-listings/admin-manage-listings.component';
 import { AdminManageUsersComponent } from './features/admin/admin-manage-users/admin-manage-users.component';
+import { PageNotFoundComponent } from './shared/components/page-not-found/page-not-found.component';
 import { buyerGuard } from './core/guards/buyer.guard';
 import { sellerGuard } from './core/guards/seller.guard';
 import { adminGuard } from './core/guards/admin.guard';
@@ -23,12 +24,10 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
 
-  // PUBLIC: Property routes (accessible without login)
   { path: 'buyer/properties', component: BuyerPropertyListComponent },
   { path: 'buyer/properties/:id', component: BuyerPropertyDetailComponent },
   { path: 'buyer/map-search', component: BuyerMapSearchComponent },
 
-  // PROTECTED: Buyer routes (require login)
   {
     path: 'buyer',
     canActivate: [buyerGuard],
@@ -64,5 +63,5 @@ export const routes: Routes = [
     ],
   },
 
-  { path: '**', redirectTo: 'login' },
+  { path: '**', component: PageNotFoundComponent },
 ];

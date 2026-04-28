@@ -4,3 +4,6 @@
 <main [class.has-navbar]="showNavbar">
   <router-outlet />
 </main>
+@if (showFooter) {
+  <app-footer></app-footer>
+}
