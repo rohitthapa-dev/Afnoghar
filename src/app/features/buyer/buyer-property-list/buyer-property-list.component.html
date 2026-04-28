@@ -13,9 +13,7 @@
     } @else if (error) {
       <div class="error-container">
         <p>{{ error }}</p>
-        <button mat-stroked-button (click)="loadProperties()">
-          Try Again
-        </button>
+        <button mat-stroked-button (click)="loadProperties()">Try Again</button>
       </div>
     } @else {
       <div class="properties-grid">
@@ -36,7 +34,8 @@
           [pageIndex]="pageIndex"
           [pageSizeOptions]="[6, 12, 15]"
           (page)="onPageChange($event)"
-          showFirstLastButtons>
+          showFirstLastButtons
+        >
         </mat-paginator>
       }
     }

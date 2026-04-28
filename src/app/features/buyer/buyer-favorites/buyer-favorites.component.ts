@@ -4,8 +4,6 @@ import { Component } from '@angular/core';
   selector: 'app-buyer-favorites',
   imports: [],
   templateUrl: './buyer-favorites.component.html',
-  styleUrl: './buyer-favorites.component.scss'
+  styleUrl: './buyer-favorites.component.scss',
 })
-export class BuyerFavoritesComponent {
-
-}
+export class BuyerFavoritesComponent {}

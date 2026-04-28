@@ -4,8 +4,6 @@ import { Component } from '@angular/core';
   selector: 'app-seller-property-upload',
   imports: [],
   templateUrl: './seller-property-upload.component.html',
-  styleUrl: './seller-property-upload.component.scss'
+  styleUrl: './seller-property-upload.component.scss',
 })
-export class SellerPropertyUploadComponent {
-
-}
+export class SellerPropertyUploadComponent {}

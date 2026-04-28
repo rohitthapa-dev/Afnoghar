@@ -4,8 +4,6 @@ import { Component } from '@angular/core';
   selector: 'app-seller-appointments',
   imports: [],
   templateUrl: './seller-appointments.component.html',
-  styleUrl: './seller-appointments.component.scss'
+  styleUrl: './seller-appointments.component.scss',
 })
-export class SellerAppointmentsComponent {
-
-}
+export class SellerAppointmentsComponent {}

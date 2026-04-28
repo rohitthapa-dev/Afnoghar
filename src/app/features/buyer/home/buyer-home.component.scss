@@ -1,10 +1,6 @@
 @use "../../../../styles/variables" as *;
 @use "../../../../styles/mixins" as *;
 
-// ============================================================
-// HERO SECTION
-// ============================================================
-
 .hero-section {
   position: relative;
   height: calc(100vh - #{$navbar-height});
@@ -197,10 +193,6 @@
   }
 }
 
-// ============================================================
-// SHARED SECTION STYLES
-// ============================================================
-
 .section-container {
   max-width: $container-max;
   margin: 0 auto;
@@ -242,10 +234,6 @@
   color: $text-secondary;
   line-height: $leading-relaxed;
 }
-
-// ============================================================
-// HOW IT WORKS SECTION
-// ============================================================
 
 .how-it-works-section {
   padding: $space-20 0;
@@ -330,10 +318,6 @@
   margin-left: 23px;
 }
 
-// ============================================================
-// FEATURED SECTION
-// ============================================================
-
 .featured-section {
   padding: $space-20 0;
   background: $background;
@@ -408,10 +392,6 @@
     color: $text-secondary;
   }
 }
-
-// ============================================================
-// TRUST SECTION
-// ============================================================
 
 .trust-section {
   padding: $space-20 0;
@@ -567,12 +547,8 @@
   }
 }
 
-// ============================================================
-// AGENTS SECTION
-// ============================================================
-
 .agents-section {
-  padding: $space-20 0;
+  padding: $space-20 0 $space-12 0;
   background: $background;
 }
 
@@ -691,124 +667,102 @@
   }
 }
 
-// ============================================================
-// CTA SECTION
-// ============================================================
-
 .cta-section {
-  padding: $space-20 0;
-  background: $surface;
+  padding: $space-12 0 $space-20 0;
+  background: $background;
 }
 
 .cta-card {
-  background: linear-gradient(
-    135deg,
-    $primary-dark 0%,
-    $primary 60%,
-    rgba($primary, 0.85) 100%
-  );
+  background: $surface;
+  border: 1px solid $divider;
   border-radius: $radius-2xl;
-  padding: $space-16 $space-12;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
+  padding: $space-12;
+  @include flex(row, space-between, center, $space-12);
 
-  &::before {
-    content: "";
-    position: absolute;
-    top: -50%;
-    right: -10%;
-    width: 400px;
-    height: 400px;
-    background: rgba($surface, 0.05);
-    border-radius: $radius-full;
-    pointer-events: none;
-  }
-
-  &::after {
-    content: "";
-    position: absolute;
-    bottom: -30%;
-    left: -5%;
-    width: 300px;
-    height: 300px;
-    background: rgba($surface, 0.04);
-    border-radius: $radius-full;
-    pointer-events: none;
+  @include respond-to(lg) {
+    @include flex(column, flex-start, flex-start, $space-8);
+    padding: $space-10 $space-8;
   }
 }
 
 .cta-content {
-  position: relative;
-  z-index: $z-raised;
+  flex: 1;
 
   .cta-title {
     font-family: $font-heading;
-    font-size: $text-3xl;
+    font-size: $text-2xl;
     font-weight: $font-bold;
-    color: $surface;
-    margin-bottom: $space-4;
+    color: $text-primary;
+    margin-bottom: $space-3;
     letter-spacing: $tracking-tight;
   }
 
   .cta-desc {
     font-family: $font-primary;
-    font-size: $text-lg;
-    color: rgba($surface, 0.8);
+    font-size: $text-base;
+    color: $text-secondary;
     line-height: $leading-relaxed;
-    margin-bottom: $space-8;
-    max-width: 520px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0;
+    max-width: 480px;
   }
 }
 
 .cta-actions {
-  @include flex(row, center, center, $space-4);
+  @include flex(row, flex-end, center, $space-3);
+  flex-shrink: 0;
 
   @include respond-to(md) {
-    @include flex(column, center, center, $space-3);
+    @include flex(column, flex-start, flex-start, $space-3);
+    width: 100%;
   }
 }
 
 .cta-primary-btn {
-  height: 52px;
+  height: 48px;
   padding: 0 $space-8;
   font-family: $font-primary;
-  font-size: $text-base;
+  font-size: $text-sm;
   font-weight: $font-semibold;
-  background: $surface !important;
-  color: $primary !important;
-  border-radius: $radius-lg !important;
-  box-shadow: $shadow-lg !important;
+  background: $primary !important;
+  color: $surface !important;
+  border-radius: $radius-md !important;
+  box-shadow: 0 4px 16px rgba($primary, 0.25) !important;
   transition: $transition-base !important;
+  white-space: nowrap;
 
   mat-icon {
     font-size: 18px;
     width: 18px;
     height: 18px;
     margin-left: $space-2;
+    transition: transform 0.2s ease;
   }
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: $shadow-xl !important;
+    background: $primary-dark !important;
+    transform: translateY(-1px);
+
+    mat-icon {
+      transform: translateX(3px);
+    }
   }
 }
 
 .cta-secondary-btn {
-  height: 52px;
-  padding: 0 $space-8;
+  height: 48px;
+  padding: 0 $space-6;
   font-family: $font-primary;
-  font-size: $text-base;
+  font-size: $text-sm;
   font-weight: $font-semibold;
-  color: $surface !important;
-  border-color: rgba($surface, 0.4) !important;
-  border-radius: $radius-lg !important;
-  transition: $transition-base !important;
+  color: $text-secondary !important;
+  border-color: $border !important;
+  border-radius: $radius-md !important;
+  transition: $transition-fast !important;
+  white-space: nowrap;
 
   &:hover {
-    background: rgba($surface, 0.1) !important;
-    border-color: $surface !important;
+    color: $primary !important;
+    border-color: $primary !important;
+    background: $primary-tint !important;
   }
 }
