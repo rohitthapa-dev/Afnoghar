@@ -1,10 +1,6 @@
 @use "../../../../styles/variables" as *;
 @use "../../../../styles/mixins" as *;
 
-// ============================================================
-// AUTH LAYOUT
-// ============================================================
-
 .auth-container {
   @include flex(row);
   align-items: stretch;
@@ -13,10 +9,6 @@
   overflow: hidden;
   background: $surface;
 }
-
-// ============================================================
-// LEFT — FORM SIDE
-// ============================================================
 
 .auth-form-section {
   width: 480px;
@@ -43,47 +35,15 @@
   max-width: 380px;
 }
 
-// ============================================================
-// BRAND
-// ============================================================
-
 .brand {
   margin-bottom: $space-12;
 
   .logo-mark {
-    @include flex(row, flex-start, center, $space-2);
+    @include logo(36px, 20px);
     margin-bottom: $space-3;
 
-    .logo-icon {
-      width: 36px;
-      height: 36px;
-      background: $primary;
-      border-radius: $radius-md;
-      @include flex(row, center, center);
-      flex-shrink: 0;
-
-      mat-icon {
-        color: $surface;
-        font-size: 20px;
-        width: 20px;
-        height: 20px;
-      }
-    }
-
     .logo-text {
-      font-family: $font-heading;
       font-size: $text-2xl;
-      font-weight: $font-extrabold;
-      letter-spacing: $tracking-tight;
-      line-height: 1;
-
-      .afno {
-        color: $text-primary;
-      }
-
-      .ghar {
-        color: $primary;
-      }
     }
   }
 
@@ -96,10 +56,6 @@
     padding-left: 44px;
   }
 }
-
-// ============================================================
-// HEADING
-// ============================================================
 
 .form-heading {
   margin-bottom: $space-8;
@@ -122,10 +78,6 @@
   }
 }
 
-// ============================================================
-// ERROR BANNER
-// ============================================================
-
 .error-banner {
   @include flex(row, flex-start, center, $space-2);
   background: $error-light;
@@ -145,10 +97,6 @@
   }
 }
 
-// ============================================================
-// FORM FIELDS
-// ============================================================
-
 .full-width {
   width: 100%;
   margin-bottom: $space-1;
@@ -165,10 +113,6 @@
   --mdc-outlined-text-field-container-shape: #{$radius-md};
   font-family: $font-primary;
 }
-
-// ============================================================
-// FORM OPTIONS
-// ============================================================
 
 .form-options {
   @include flex(row, space-between, center);
@@ -198,10 +142,6 @@
     }
   }
 }
-
-// ============================================================
-// SUBMIT BUTTON
-// ============================================================
 
 .submit-btn {
   width: 100%;
@@ -239,10 +179,6 @@
   }
 }
 
-// ============================================================
-// DIVIDER
-// ============================================================
-
 .divider {
   @include flex(row, center, center, $space-4);
   margin: $space-8 0;
@@ -261,10 +197,6 @@
     text-transform: uppercase;
   }
 }
-
-// ============================================================
-// AUTH FOOTER
-// ============================================================
 
 .auth-footer {
   text-align: center;
@@ -289,10 +221,6 @@
   }
 }
 
-// ============================================================
-// TRUST BADGE
-// ============================================================
-
 .trust-badge {
   @include flex(row, center, center, $space-2);
   position: absolute;
@@ -315,10 +243,6 @@
     letter-spacing: $tracking-wide;
   }
 }
-
-// ============================================================
-// RIGHT — IMAGE SIDE
-// ============================================================
 
 .auth-image-section {
   flex: 1;

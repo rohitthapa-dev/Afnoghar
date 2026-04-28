@@ -8,13 +8,16 @@
   right: 0;
   z-index: $z-navbar;
   height: $navbar-height;
-  background: $surface;
+  background: rgba($surface, 0.98);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid $divider;
   transition: $transition-base;
-  box-shadow: $shadow-navbar;
 
   &.scrolled {
     background: rgba($surface, 0.95);
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(16px);
+    box-shadow: $shadow-navbar;
+    border-bottom-color: transparent;
   }
 }
 
@@ -24,47 +27,18 @@
   margin: 0 auto;
   padding: 0 $space-8;
   height: 100%;
+
+  @include respond-to(md) {
+    padding: 0 $space-6;
+  }
 }
 
 .logo {
-  @include flex(row, flex-start, center, $space-3);
-  text-decoration: none;
-  flex-shrink: 0;
-
-  .logo-icon {
-    width: 40px;
-    height: 40px;
-    background: $primary;
-    border-radius: $radius-md;
-    @include flex(row, center, center);
-
-    mat-icon {
-      color: $surface;
-      font-size: 22px;
-      width: 22px;
-      height: 22px;
-    }
-  }
-
-  .logo-text {
-    font-family: $font-heading;
-    font-size: $text-xl;
-    font-weight: $font-extrabold;
-    letter-spacing: $tracking-tight;
-    line-height: 1;
-
-    .afno {
-      color: $text-primary;
-    }
-
-    .ghar {
-      color: $primary;
-    }
-  }
+  @include logo();
 }
 
 .nav-links {
-  @include flex(row, center, center, $space-8);
+  @include flex(row, center, center, $space-1);
 
   a {
     font-family: $font-primary;
@@ -72,34 +46,27 @@
     font-weight: $font-medium;
     color: $text-secondary;
     text-decoration: none;
+    padding: $space-2 $space-3;
+    border-radius: $radius-md;
     transition: $transition-fast;
-    padding: $space-2 0;
     position: relative;
+    white-space: nowrap;
 
     &:hover {
       color: $primary;
+      background: $primary-tint;
     }
 
     &.active {
       color: $primary;
       font-weight: $font-semibold;
-
-      &::after {
-        content: '';
-        position: absolute;
-        bottom: -2px;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background: $primary;
-        border-radius: $radius-full;
-      }
+      background: $primary-tint;
     }
   }
 }
 
 .auth-section {
-  @include flex(row, flex-end, center, $space-4);
+  @include flex(row, flex-end, center, $space-3);
   flex-shrink: 0;
 }
 
@@ -107,21 +74,23 @@
   font-family: $font-primary;
   font-size: $text-sm;
   font-weight: $font-semibold;
-  padding: $space-2 $space-6;
+  height: 38px;
+  padding: 0 $space-5;
   border-radius: $radius-md;
   text-decoration: none;
   transition: $transition-fast;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  @include flex(row, center, center);
+  white-space: nowrap;
+  cursor: pointer;
 
   &.btn-outline {
     color: $primary;
-    border: 1.5px solid $primary;
+    border: 1.5px solid $border;
     background: transparent;
 
     &:hover {
-      background: $primary-light;
+      border-color: $primary;
+      background: $primary-tint;
     }
   }
 
@@ -129,38 +98,50 @@
     background: $primary;
     color: $surface;
     border: 1.5px solid $primary;
-    box-shadow: 0 2px 8px rgba($primary, 0.25);
+    box-shadow: 0 2px 8px rgba($primary, 0.2);
 
     &:hover {
       background: $primary-dark;
       border-color: $primary-dark;
-      box-shadow: 0 4px 12px rgba($primary-dark, 0.35);
+      box-shadow: 0 4px 12px rgba($primary-dark, 0.3);
       transform: translateY(-1px);
     }
   }
 }
 
 .user-menu-trigger {
-  @include flex(row, flex-start, center, $space-3);
-  padding: $space-2 $space-4 !important;
+  @include flex(row, flex-start, center, $space-2);
+  height: 40px;
+  padding: $space-1 $space-2 $space-1 $space-1 !important;
   border-radius: $radius-full !important;
-  background: $surface-alt;
+  border: 1.5px solid $divider !important;
+  background: $surface !important;
   transition: $transition-fast;
+  min-width: unset !important;
+  line-height: normal !important;
 
   &:hover {
-    background: rgba($surface-alt, 0.92);
+    border-color: $primary !important;
+    background: $primary-tint !important;
+  }
+
+  ::ng-deep .mdc-button__label {
+    @include flex(row, flex-start, center, $space-2);
   }
 
   .user-avatar {
-    width: 36px;
-    height: 36px;
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
     background: $primary;
     color: $surface;
     border-radius: $radius-full;
     @include flex(row, center, center);
     font-family: $font-primary;
-    font-size: $text-sm;
-    font-weight: $font-semibold;
+    font-size: $text-xs;
+    font-weight: $font-bold;
+    flex-shrink: 0;
+    letter-spacing: $tracking-wide;
   }
 
   .user-name {
@@ -178,41 +159,48 @@
     font-size: 18px;
     width: 18px;
     height: 18px;
-    color: $text-secondary;
+    color: $text-disabled;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
   }
 }
 
 .user-menu-header {
   @include flex(row, flex-start, center, $space-3);
-  padding: $space-4 $space-4;
-  background: $primary-light;
+  padding: $space-4 $space-5;
+  background: $primary-tint;
+  border-bottom: 1px solid $primary-light;
 
   .user-avatar-lg {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     background: $primary;
     color: $surface;
     border-radius: $radius-full;
     @include flex(row, center, center);
     font-family: $font-heading;
-    font-size: $text-lg;
+    font-size: $text-base;
     font-weight: $font-bold;
+    flex-shrink: 0;
   }
 
   .user-info {
     @include flex(column, flex-start, flex-start, $space-1);
+    min-width: 0;
 
     .user-name {
       font-family: $font-primary;
-      font-size: $text-base;
+      font-size: $text-sm;
       font-weight: $font-semibold;
       color: $text-primary;
+      @include truncate(1);
     }
 
     .user-email {
       font-family: $font-primary;
       font-size: $text-xs;
       color: $text-secondary;
+      @include truncate(1);
     }
   }
 }
@@ -224,15 +212,21 @@
   padding: $space-2;
   cursor: pointer;
   color: $text-primary;
+  border-radius: $radius-md;
+  transition: $transition-fast;
+
+  &:hover {
+    background: $surface-alt;
+  }
 
   mat-icon {
-    font-size: 28px;
-    width: 28px;
-    height: 28px;
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
   }
 
   @include respond-to(md) {
-    display: block;
+    display: flex;
   }
 }
 
@@ -243,9 +237,12 @@
   left: 0;
   right: 0;
   background: $surface;
-  padding: $space-4 $space-6;
+  border-top: 1px solid $divider;
+  padding: $space-3 $space-6 $space-6;
   box-shadow: $shadow-lg;
   animation: slideDown 0.2s ease;
+  max-height: calc(100vh - #{$navbar-height});
+  overflow-y: auto;
 
   @include respond-to(md) {
     display: block;
@@ -258,18 +255,19 @@
     font-weight: $font-medium;
     color: $text-primary;
     text-decoration: none;
-    padding: $space-4 $space-4;
-    margin: 0 (-$space-4);
+    padding: $space-3 $space-4;
+    border-radius: $radius-md;
     transition: $transition-fast;
 
     &:hover {
-      background: $surface-alt;
+      background: $primary-tint;
       color: $primary;
     }
 
     &.active {
       color: $primary;
       font-weight: $font-semibold;
+      background: $primary-tint;
     }
   }
 
@@ -278,18 +276,28 @@
     margin-top: $space-4;
     padding-top: $space-4;
     border-top: 1px solid $divider;
-
-    .btn {
-      text-align: center;
-    }
   }
 
   .mobile-user-info {
-    @include flex(row, flex-start, center, $space-4);
+    @include flex(row, flex-start, center, $space-3);
     padding: $space-4;
-    background: $primary-light;
+    background: $primary-tint;
+    border: 1px solid $primary-light;
     border-radius: $radius-lg;
-    margin-bottom: $space-4;
+    margin-bottom: $space-2;
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      background: $primary;
+      color: $surface;
+      border-radius: $radius-full;
+      @include flex(row, center, center);
+      font-family: $font-primary;
+      font-size: $text-sm;
+      font-weight: $font-bold;
+      flex-shrink: 0;
+    }
 
     .user-name {
       font-family: $font-primary;
@@ -302,7 +310,6 @@
       font-family: $font-primary;
       font-size: $text-xs;
       color: $text-secondary;
-      text-transform: capitalize;
     }
   }
 
@@ -311,23 +318,24 @@
     width: 100%;
     background: none;
     border: none;
-    padding: $space-4;
-    margin: 0 (-$space-4);
+    padding: $space-3 $space-4;
+    border-radius: $radius-md;
     cursor: pointer;
     font-family: $font-primary;
     font-size: $text-base;
     font-weight: $font-medium;
     color: $error;
     transition: $transition-fast;
+    margin-top: $space-2;
 
     &:hover {
       background: $error-light;
     }
 
     mat-icon {
-      font-size: 20px;
-      width: 20px;
-      height: 20px;
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
     }
   }
 }
@@ -341,7 +349,7 @@
 @keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-8px);
   }
   to {
     opacity: 1;

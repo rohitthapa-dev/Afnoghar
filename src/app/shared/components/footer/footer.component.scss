@@ -1,0 +1,190 @@
+@use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins" as *;
+
+.footer {
+  background: $surface;
+  border-top: 1px solid $divider;
+}
+
+.footer-container {
+  @include container;
+}
+
+// Top Section
+.footer-top {
+  padding: $space-16 0 $space-12;
+
+  .footer-container {
+    @include grid(4, $space-8);
+
+    @include respond-to(lg) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include respond-to(sm) {
+      grid-template-columns: 1fr;
+      gap: $space-10;
+    }
+  }
+}
+
+// Brand Column
+.footer-brand {
+  .footer-logo {
+    @include logo();
+    margin-bottom: $space-3;
+  }
+
+  .tagline {
+    font-family: $font-primary;
+    font-size: $text-sm;
+    font-weight: $font-medium;
+    color: $text-secondary;
+    margin-bottom: $space-4;
+  }
+
+  .description {
+    font-family: $font-primary;
+    font-size: $text-sm;
+    color: $text-secondary;
+    line-height: $leading-relaxed;
+  }
+}
+
+// Footer Headings
+.footer-heading {
+  font-family: $font-heading;
+  font-size: $text-base;
+  font-weight: $font-bold;
+  color: $text-primary;
+  margin-bottom: $space-6;
+}
+
+// Links Section
+.footer-links {
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      margin-bottom: $space-3;
+
+      a {
+        font-family: $font-primary;
+        font-size: $text-sm;
+        color: $text-secondary;
+        text-decoration: none;
+        transition: $transition-fast;
+
+        &:hover {
+          color: $primary;
+        }
+      }
+    }
+  }
+}
+
+// Contact Section
+.footer-contact {
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      @include flex(row, flex-start, center, $space-3);
+      font-family: $font-primary;
+      font-size: $text-sm;
+      color: $text-secondary;
+      margin-bottom: $space-4;
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: $primary;
+      }
+
+      a {
+        color: $text-secondary;
+        text-decoration: none;
+        transition: $transition-fast;
+
+        &:hover {
+          color: $primary;
+        }
+      }
+    }
+  }
+}
+
+// Social Section
+.footer-social {
+  .social-icons {
+    @include flex(row, flex-start, center, $space-3);
+  }
+
+  .social-link {
+    width: 40px;
+    height: 40px;
+    border-radius: $radius-full;
+    background: $surface;
+    @include flex(row, center, center);
+    color: $text-secondary;
+    text-decoration: none;
+    transition: $transition-fast;
+    border: 1px solid $divider;
+
+    mat-icon {
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    &:hover {
+      background: $primary;
+      color: $surface;
+      border-color: $primary;
+    }
+  }
+}
+
+// Bottom Copyright Bar
+.footer-bottom {
+  background: $background;
+  border-top: 1px solid $divider;
+  padding: $space-4 0;
+
+  .footer-container {
+    @include flex(row, space-between, center);
+
+    @include respond-to(sm) {
+      flex-direction: column;
+      gap: $space-3;
+      text-align: center;
+    }
+  }
+
+  p {
+    font-family: $font-primary;
+    font-size: $text-sm;
+    color: $text-secondary;
+    margin: 0;
+  }
+
+  .footer-bottom-links {
+    @include flex(row, flex-end, center, $space-6);
+
+    a {
+      font-family: $font-primary;
+      font-size: $text-sm;
+      color: $text-secondary;
+      text-decoration: none;
+      transition: $transition-fast;
+
+      &:hover {
+        color: $primary;
+      }
+    }
+  }
+}

@@ -1,6 +1,5 @@
 <nav class="navbar" [class.scrolled]="isScrolled()">
   <div class="navbar-container">
-    <!-- Logo -->
     <a routerLink="/" class="logo" (click)="closeMobileMenu()">
       <div class="logo-icon">
         <mat-icon>home</mat-icon>
@@ -10,48 +9,78 @@
       </div>
     </a>
 
-    <!-- Desktop Navigation -->
     <div class="nav-links desktop-nav">
       @if (!isLoggedIn) {
-        <!-- Public Routes -->
-        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
-        <a routerLink="/buyer/properties" routerLinkActive="active">Properties</a>
+        <a
+          routerLink="/"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          >Home</a
+        >
+        <a routerLink="/buyer/properties" routerLinkActive="active"
+          >Properties</a
+        >
         <a routerLink="/about" routerLinkActive="active">About</a>
-      } @else if (userRole === 'buyer') {
-        <!-- Buyer Routes -->
-        <a routerLink="/buyer/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
-        <a routerLink="/buyer/properties" routerLinkActive="active">Properties</a>
+      } @else if (userRole === "buyer") {
+        <a
+          routerLink="/buyer/home"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          >Home</a
+        >
+        <a routerLink="/buyer/properties" routerLinkActive="active"
+          >Properties</a
+        >
         <a routerLink="/buyer/favorites" routerLinkActive="active">Favorites</a>
-        <a routerLink="/buyer/appointments" routerLinkActive="active">Appointments</a>
-        <a routerLink="/buyer/map-search" routerLinkActive="active">Map Search</a>
-      } @else if (userRole === 'seller') {
-        <!-- Seller Routes -->
-        <a routerLink="/seller/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Dashboard</a>
-        <a routerLink="/seller/properties" routerLinkActive="active">My Listings</a>
-        <a routerLink="/seller/properties/new" routerLinkActive="active">Upload Property</a>
-        <a routerLink="/seller/appointments" routerLinkActive="active">Appointments</a>
-      } @else if (userRole === 'admin') {
-        <!-- Admin Routes -->
-        <a routerLink="/admin/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Dashboard</a>
-        <a routerLink="/admin/listings" routerLinkActive="active">Manage Listings</a>
+        <a routerLink="/buyer/appointments" routerLinkActive="active"
+          >Appointments</a
+        >
+        <a routerLink="/buyer/map-search" routerLinkActive="active"
+          >Map Search</a
+        >
+      } @else if (userRole === "seller") {
+        <a
+          routerLink="/seller/dashboard"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          >Dashboard</a
+        >
+        <a routerLink="/seller/properties" routerLinkActive="active"
+          >My Listings</a
+        >
+        <a routerLink="/seller/properties/new" routerLinkActive="active"
+          >Upload Property</a
+        >
+        <a routerLink="/seller/appointments" routerLinkActive="active"
+          >Appointments</a
+        >
+      } @else if (userRole === "admin") {
+        <a
+          routerLink="/admin/dashboard"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          >Dashboard</a
+        >
+        <a routerLink="/admin/listings" routerLinkActive="active"
+          >Manage Listings</a
+        >
         <a routerLink="/admin/users" routerLinkActive="active">Manage Users</a>
       }
     </div>
 
-    <!-- Auth Section -->
     <div class="auth-section">
       @if (!isLoggedIn) {
-        <!-- Public Auth Buttons -->
         <a routerLink="/login" class="btn btn-outline">Login</a>
         <a routerLink="/register" class="btn btn-primary">Register</a>
       } @else {
-        <!-- User Menu -->
-        <button mat-button [matMenuTriggerFor]="userMenu" class="user-menu-trigger">
-          <div class="user-avatar">
-            {{ userInitials }}
-          </div>
+        <button
+          mat-button
+          [matMenuTriggerFor]="userMenu"
+          class="user-menu-trigger"
+        >
+          <div class="user-avatar">{{ userInitials }}</div>
           <span class="user-name">{{ userName }}</span>
-          <mat-icon class="dropdown-icon">expand_more</mat-icon>
+          <mat-icon class="dropdown-icon">keyboard_arrow_down</mat-icon>
         </button>
 
         <mat-menu #userMenu="matMenu" xPosition="before">
@@ -79,14 +108,12 @@
         </mat-menu>
       }
 
-      <!-- Mobile Menu Toggle -->
       <button class="mobile-menu-toggle" (click)="toggleMobileMenu()">
-        <mat-icon>{{ mobileMenuOpen() ? 'close' : 'menu' }}</mat-icon>
+        <mat-icon>{{ mobileMenuOpen() ? "close" : "menu" }}</mat-icon>
       </button>
     </div>
   </div>
 
-  <!-- Mobile Navigation -->
   @if (mobileMenuOpen()) {
     <div class="mobile-nav">
       @if (!isLoggedIn) {
@@ -94,8 +121,18 @@
         <a routerLink="/properties" (click)="closeMobileMenu()">Properties</a>
         <a routerLink="/about" (click)="closeMobileMenu()">About</a>
         <div class="mobile-auth-buttons">
-          <a routerLink="/login" class="btn btn-outline" (click)="closeMobileMenu()">Login</a>
-          <a routerLink="/register" class="btn btn-primary" (click)="closeMobileMenu()">Register</a>
+          <a
+            routerLink="/login"
+            class="btn btn-outline"
+            (click)="closeMobileMenu()"
+            >Login</a
+          >
+          <a
+            routerLink="/register"
+            class="btn btn-primary"
+            (click)="closeMobileMenu()"
+            >Register</a
+          >
         </div>
       } @else {
         <div class="mobile-user-info">
@@ -107,21 +144,43 @@
         </div>
         <mat-divider></mat-divider>
 
-        @if (userRole === 'buyer') {
+        @if (userRole === "buyer") {
           <a routerLink="/buyer/home" (click)="closeMobileMenu()">Home</a>
-          <a routerLink="/buyer/properties" (click)="closeMobileMenu()">Properties</a>
-          <a routerLink="/buyer/favorites" (click)="closeMobileMenu()">Favorites</a>
-          <a routerLink="/buyer/appointments" (click)="closeMobileMenu()">Appointments</a>
-          <a routerLink="/buyer/map-search" (click)="closeMobileMenu()">Map Search</a>
-        } @else if (userRole === 'seller') {
-          <a routerLink="/seller/dashboard" (click)="closeMobileMenu()">Dashboard</a>
-          <a routerLink="/seller/properties" (click)="closeMobileMenu()">My Listings</a>
-          <a routerLink="/seller/properties/new" (click)="closeMobileMenu()">Upload Property</a>
-          <a routerLink="/seller/appointments" (click)="closeMobileMenu()">Appointments</a>
-        } @else if (userRole === 'admin') {
-          <a routerLink="/admin/dashboard" (click)="closeMobileMenu()">Dashboard</a>
-          <a routerLink="/admin/listings" (click)="closeMobileMenu()">Manage Listings</a>
-          <a routerLink="/admin/users" (click)="closeMobileMenu()">Manage Users</a>
+          <a routerLink="/buyer/properties" (click)="closeMobileMenu()"
+            >Properties</a
+          >
+          <a routerLink="/buyer/favorites" (click)="closeMobileMenu()"
+            >Favorites</a
+          >
+          <a routerLink="/buyer/appointments" (click)="closeMobileMenu()"
+            >Appointments</a
+          >
+          <a routerLink="/buyer/map-search" (click)="closeMobileMenu()"
+            >Map Search</a
+          >
+        } @else if (userRole === "seller") {
+          <a routerLink="/seller/dashboard" (click)="closeMobileMenu()"
+            >Dashboard</a
+          >
+          <a routerLink="/seller/properties" (click)="closeMobileMenu()"
+            >My Listings</a
+          >
+          <a routerLink="/seller/properties/new" (click)="closeMobileMenu()"
+            >Upload Property</a
+          >
+          <a routerLink="/seller/appointments" (click)="closeMobileMenu()"
+            >Appointments</a
+          >
+        } @else if (userRole === "admin") {
+          <a routerLink="/admin/dashboard" (click)="closeMobileMenu()"
+            >Dashboard</a
+          >
+          <a routerLink="/admin/listings" (click)="closeMobileMenu()"
+            >Manage Listings</a
+          >
+          <a routerLink="/admin/users" (click)="closeMobileMenu()"
+            >Manage Users</a
+          >
         }
 
         <mat-divider></mat-divider>

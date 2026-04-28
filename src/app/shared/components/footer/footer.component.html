@@ -1,0 +1,86 @@
+<footer class="footer">
+  <div class="footer-top">
+  <div class="footer-container">
+    <div class="footer-brand">
+        <a routerLink="/" class="footer-logo">
+          <div class="logo-icon">
+            <mat-icon>home</mat-icon>
+          </div>
+          <div class="logo-text">
+            <span class="afno">Afno</span><span class="ghar">Ghar</span>
+          </div>
+        </a>
+        <p class="tagline">Real Estate · Nepal</p>
+        <p class="description">
+          Find your dream home with AfnoGhar. We connect buyers, sellers, and
+          agents across Nepal's most sought-after neighborhoods.
+        </p>
+    </div>
+
+    <div class="footer-links">
+        <h4 class="footer-heading">Quick Links</h4>
+        <ul>
+          <li><a routerLink="/">Home</a></li>
+          <li><a routerLink="/buyer/properties">Properties</a></li>
+          <li><a routerLink="/about">About</a></li>
+          @if (isLoggedIn && userRole === "buyer") {
+            <li><a routerLink="/buyer/favorites">Favorites</a></li>
+            <li><a routerLink="/buyer/appointments">Appointments</a></li>
+          } @else if (isLoggedIn && userRole === "seller") {
+            <li><a routerLink="/seller/dashboard">Dashboard</a></li>
+            <li><a routerLink="/seller/properties">My Listings</a></li>
+          } @else if (isLoggedIn && userRole === "admin") {
+            <li><a routerLink="/admin/dashboard">Dashboard</a></li>
+            <li><a routerLink="/admin/listings">Manage Listings</a></li>
+          }
+        </ul>
+    </div>
+
+    <div class="footer-contact">
+        <h4 class="footer-heading">Contact Us</h4>
+        <ul>
+          <li>
+            <mat-icon>mail_outline</mat-icon>
+            <a href="mailto:info&#64;afnoghar.com">info&#64;afnoghar.com</a>
+          </li>
+          <li>
+            <mat-icon>phone</mat-icon>
+            <a href="tel:+9771234567890">+977 1-234567</a>
+          </li>
+          <li>
+            <mat-icon>location_on</mat-icon>
+            <span>Kathmandu, Nepal</span>
+          </li>
+        </ul>
+    </div>
+
+    <div class="footer-social">
+        <h4 class="footer-heading">Follow Us</h4>
+        <div class="social-icons">
+          <a href="#" class="social-link" aria-label="Facebook">
+            <i class="bi bi-facebook"></i>
+          </a>
+          <a href="#" class="social-link" aria-label="Instagram">
+            <i class="bi bi-instagram"></i>
+          </a>
+          <a href="#" class="social-link" aria-label="Twitter / X">
+            <i class="bi bi-twitter-x"></i>
+          </a>
+          <a href="#" class="social-link" aria-label="LinkedIn">
+            <i class="bi bi-linkedin"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="footer-container">
+      <p>&copy; {{ currentYear }} AfnoGhar. All rights reserved.</p>
+      <div class="footer-bottom-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>

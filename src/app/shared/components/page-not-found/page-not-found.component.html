@@ -1,0 +1,27 @@
+<div class="not-found-container">
+  <div class="not-found-content">
+    <div class="error-code">
+      <span class="four">4</span>
+      <span class="zero">
+        <mat-icon>search_off</mat-icon>
+      </span>
+      <span class="four">4</span>
+    </div>
+
+    <h1 class="error-title">Page Not Found</h1>
+    <p class="error-message">
+      The page you're looking for doesn't exist or has been moved.
+    </p>
+
+    <div class="action-buttons">
+      <button mat-flat-button class="btn-primary" (click)="goHome()">
+        <mat-icon>home</mat-icon>
+        Go to Home
+      </button>
+      <button mat-stroked-button class="btn-secondary" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Go Back
+      </button>
+    </div>
+  </div>
+</div>

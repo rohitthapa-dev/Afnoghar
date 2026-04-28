@@ -1,0 +1,10 @@
+@if (loading) {
+  <div class="loader-container" [class.fullscreen]="fullscreen">
+    <div class="loader-content">
+      <mat-spinner [diameter]="diameter" [color]="color"></mat-spinner>
+      @if (message) {
+        <p class="loader-message">{{ message }}</p>
+      }
+    </div>
+  </div>
+}

@@ -17,7 +17,10 @@ export class PropertyTypePipe implements PipeTransform {
     rent: 'For Rent',
   };
 
-  transform(value: string, type: 'propertyType' | 'listingType' = 'propertyType'): string {
+  transform(
+    value: string,
+    type: 'propertyType' | 'listingType' = 'propertyType',
+  ): string {
     if (type === 'listingType') {
       return this.listingTypeMap[value] || value;
     }

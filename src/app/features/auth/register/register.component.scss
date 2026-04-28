@@ -178,38 +178,11 @@
   margin-bottom: $space-8;
 
   .logo-mark {
-    @include flex(row, flex-start, center, $space-2);
+    @include logo(36px, 20px);
     margin-bottom: $space-3;
 
-    .logo-icon {
-      width: 36px;
-      height: 36px;
-      background: $primary;
-      border-radius: $radius-md;
-      @include flex(row, center, center);
-      flex-shrink: 0;
-
-      mat-icon {
-        color: $surface;
-        font-size: 20px;
-        width: 20px;
-        height: 20px;
-      }
-    }
-
     .logo-text {
-      font-family: $font-heading;
       font-size: $text-2xl;
-      font-weight: $font-extrabold;
-      letter-spacing: $tracking-tight;
-      line-height: 1;
-
-      .afno {
-        color: $text-primary;
-      }
-      .ghar {
-        color: $primary;
-      }
     }
   }
 

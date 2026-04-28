@@ -28,12 +28,23 @@ export class AppointmentService {
     return this.http.get<Appointment>(`${this.apiUrl}/appointments/${id}`);
   }
 
-  createAppointment(appointment: Partial<Appointment>): Observable<Appointment> {
-    return this.http.post<Appointment>(`${this.apiUrl}/appointments`, appointment);
+  createAppointment(
+    appointment: Partial<Appointment>,
+  ): Observable<Appointment> {
+    return this.http.post<Appointment>(
+      `${this.apiUrl}/appointments`,
+      appointment,
+    );
   }
 
-  updateAppointment(id: number, appointment: Partial<Appointment>): Observable<Appointment> {
-    return this.http.patch<Appointment>(`${this.apiUrl}/appointments/${id}`, appointment);
+  updateAppointment(
+    id: number,
+    appointment: Partial<Appointment>,
+  ): Observable<Appointment> {
+    return this.http.patch<Appointment>(
+      `${this.apiUrl}/appointments/${id}`,
+      appointment,
+    );
   }
 
   deleteAppointment(id: number): Observable<void> {

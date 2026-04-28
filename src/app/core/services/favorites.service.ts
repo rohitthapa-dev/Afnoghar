@@ -32,6 +32,8 @@ export class FavoritesService {
   }
 
   checkFavorite(propertyId: number, userId: number): Observable<Favorite[]> {
-    return this.http.get<Favorite[]>(`${this.apiUrl}/favorites?propertyId=${propertyId}&userId=${userId}`);
+    return this.http.get<Favorite[]>(
+      `${this.apiUrl}/favorites?propertyId=${propertyId}&userId=${userId}`,
+    );
   }
 }
