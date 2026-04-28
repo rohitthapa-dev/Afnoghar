@@ -4,6 +4,8 @@
 @use "styles/mixins" as *;
 @use "@angular/material" as mat;
 
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
+
 @include mat.core();
 
 $afnoghar-primary: mat.m2-define-palette(mat.$m2-teal-palette, 600);
@@ -27,7 +29,10 @@ $afnoghar-theme: mat.m2-define-light-theme(
 
 // Global
 html,
-body {
+body,
+app-root {
   height: 100%;
+  margin: 0;
+  padding: 0;
   background-color: $background;
 }

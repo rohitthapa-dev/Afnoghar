@@ -1,0 +1,262 @@
+<div class="auth-container">
+  <div class="auth-image-section">
+    <div class="image-overlay"></div>
+    <img
+      src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1600"
+      alt="Premium Property in Nepal"
+      class="auth-bg-image"
+    />
+    <div class="image-content">
+      <div class="image-tag">
+        <mat-icon>apartment</mat-icon>
+        <span>Join 12,000+ Happy Users</span>
+      </div>
+      <h2>Start Your Property Journey</h2>
+      <p>
+        Buy, sell, or rent properties across Nepal's most sought-after
+        neighborhoods.
+      </p>
+      <div class="features">
+        <div class="feature">
+          <div class="feature-icon">
+            <mat-icon>verified</mat-icon>
+          </div>
+          <div class="feature-text">
+            <span class="feature-title">Verified Listings</span>
+            <span class="feature-desc"
+              >All properties reviewed by our team</span
+            >
+          </div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">
+            <mat-icon>map</mat-icon>
+          </div>
+          <div class="feature-text">
+            <span class="feature-title">Map-Based Search</span>
+            <span class="feature-desc"
+              >Explore properties across the valley</span
+            >
+          </div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">
+            <mat-icon>support_agent</mat-icon>
+          </div>
+          <div class="feature-text">
+            <span class="feature-title">Direct Contact</span>
+            <span class="feature-desc">Connect directly with sellers</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-form-section">
+    <div class="auth-form-wrapper">
+      <div class="brand">
+        <div class="logo-mark">
+          <div class="logo-icon">
+            <mat-icon>home</mat-icon>
+          </div>
+          <div class="logo-text">
+            <span class="afno">Afno</span><span class="ghar">Ghar</span>
+          </div>
+        </div>
+        <p class="tagline">Real Estate · Nepal</p>
+      </div>
+
+      <div class="form-heading">
+        <h1 class="title">Create your account</h1>
+        <p class="subtitle">
+          Join thousands of buyers and sellers across Nepal
+        </p>
+      </div>
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        @if (errorMessage) {
+          <div class="error-banner">
+            <mat-icon>error_outline</mat-icon>
+            <span>{{ errorMessage }}</span>
+          </div>
+        }
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Full name</mat-label>
+          <input
+            matInput
+            formControlName="name"
+            type="text"
+            placeholder="Your full name"
+          />
+          <mat-icon matSuffix>person_outline</mat-icon>
+          @if (name?.invalid && name?.touched) {
+            <mat-error>
+              @if (name?.hasError("required")) {
+                Name is required
+              } @else if (name?.hasError("minlength")) {
+                Minimum 2 characters
+              }
+            </mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email address</mat-label>
+          <input
+            matInput
+            formControlName="email"
+            type="email"
+            placeholder="you@example.com"
+          />
+          <mat-icon matSuffix>mail_outline</mat-icon>
+          @if (email?.invalid && email?.touched) {
+            <mat-error>
+              @if (email?.hasError("required")) {
+                Email is required
+              } @else if (email?.hasError("email")) {
+                Enter a valid email address
+              }
+            </mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Phone number</mat-label>
+          <input
+            matInput
+            formControlName="phone"
+            type="tel"
+            placeholder="98XXXXXXXX"
+          />
+          <mat-icon matSuffix>phone_outlined</mat-icon>
+          @if (phone?.invalid && phone?.touched) {
+            <mat-error>
+              @if (phone?.hasError("required")) {
+                Phone number is required
+              } @else if (phone?.hasError("pattern")) {
+                Enter a valid Nepal number (98XXXXXXXX)
+              }
+            </mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            formControlName="password"
+            [type]="hidePassword ? 'password' : 'text'"
+            placeholder="Create a password"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="hidePassword = !hidePassword"
+          >
+            <mat-icon>{{
+              hidePassword ? "visibility_off" : "visibility"
+            }}</mat-icon>
+          </button>
+          @if (password?.invalid && password?.touched) {
+            <mat-error>
+              @if (password?.hasError("required")) {
+                Password is required
+              } @else if (password?.hasError("minlength")) {
+                Minimum 6 characters
+              }
+            </mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Confirm password</mat-label>
+          <input
+            matInput
+            formControlName="confirmPassword"
+            [type]="hideConfirmPassword ? 'password' : 'text'"
+            placeholder="Confirm your password"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="hideConfirmPassword = !hideConfirmPassword"
+          >
+            <mat-icon>{{
+              hideConfirmPassword ? "visibility_off" : "visibility"
+            }}</mat-icon>
+          </button>
+          @if (confirmPassword?.invalid && confirmPassword?.touched) {
+            <mat-error>
+              @if (confirmPassword?.hasError("required")) {
+                Please confirm your password
+              } @else if (confirmPassword?.hasError("passwordMismatch")) {
+                Passwords do not match
+              }
+            </mat-error>
+          }
+        </mat-form-field>
+
+        <div class="role-selection">
+          <label class="role-label">I want to</label>
+          <mat-radio-group formControlName="role" class="role-options">
+            @for (r of roles; track r.value) {
+              <mat-radio-button [value]="r.value" class="role-option">
+                <div class="role-content">
+                  <mat-icon class="role-icon">{{ r.icon }}</mat-icon>
+                  <div class="role-text">
+                    <span class="role-title">{{ r.label }}</span>
+                    <span class="role-description">{{ r.description }}</span>
+                  </div>
+                </div>
+              </mat-radio-button>
+            }
+          </mat-radio-group>
+        </div>
+
+        <div class="terms-section">
+          <mat-checkbox formControlName="terms">
+            I agree to the
+            <a href="/terms" class="terms-link">Terms & Conditions</a>
+            and
+            <a href="/privacy" class="terms-link">Privacy Policy</a>
+          </mat-checkbox>
+          @if (terms?.invalid && terms?.touched) {
+            <span class="terms-error"
+              >You must agree to the terms to continue</span
+            >
+          }
+        </div>
+
+        <button
+          mat-flat-button
+          class="submit-btn"
+          type="submit"
+          [disabled]="loading"
+        >
+          @if (loading) {
+            <mat-spinner diameter="22"></mat-spinner>
+          } @else {
+            CREATE ACCOUNT
+          }
+        </button>
+      </form>
+
+      <div class="divider">
+        <span class="line"></span>
+        <span>or</span>
+        <span class="line"></span>
+      </div>
+
+      <div class="auth-footer">
+        <p>Already have an account? <a routerLink="/login">Sign in</a></p>
+      </div>
+    </div>
+    <div class="trust-badge">
+      <mat-icon>lock_outline</mat-icon>
+      <span>Secured with 256-bit encryption</span>
+    </div>
+  </div>
+</div>

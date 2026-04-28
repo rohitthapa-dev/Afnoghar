@@ -1,90 +1,105 @@
 @use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins" as *;
 
 .auth-container {
-  display: flex;
+  @include flex(row);
+  align-items: stretch;
   min-height: 100vh;
   width: 100%;
+  overflow: hidden;
+  background: $surface;
 }
 
 .auth-form-section {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: $space-8;
-  background: $background;
+  width: 480px;
+  min-width: 480px;
+  min-height: 100vh;
+  @include flex(column, center, center);
+  padding: $space-12 $space-10;
+  background: $surface;
+  position: relative;
+  z-index: 1;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.06);
 
-  @media (max-width: $screen-md) {
-    flex: 100%;
-    padding: $space-6;
+  @include respond-to(md) {
+    width: 100%;
+    min-width: 100%;
+    min-height: auto;
+    padding: $space-8 $space-6;
+    box-shadow: none;
   }
 }
 
 .auth-form-wrapper {
   width: 100%;
-  max-width: 420px;
+  max-width: 380px;
 }
 
 .brand {
-  text-align: center;
-  margin-bottom: $space-10;
+  margin-bottom: $space-12;
 
-  .logo {
-    font-family: $font-heading;
-    font-size: $text-3xl;
-    font-weight: $font-extrabold;
-    color: $primary;
-    letter-spacing: -0.02em;
-    margin-bottom: $space-2;
+  .logo-mark {
+    @include logo(36px, 20px);
+    margin-bottom: $space-3;
+
+    .logo-text {
+      font-size: $text-2xl;
+    }
   }
 
   .tagline {
-    font-size: $text-sm;
-    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-xs;
+    color: $text-disabled;
+    letter-spacing: $tracking-widest;
+    text-transform: uppercase;
+    padding-left: 44px;
   }
 }
 
-.form-card {
-  background: $surface;
-  border-radius: $radius-xl;
-  padding: $space-10;
-  box-shadow: $shadow-lg;
+.form-heading {
+  margin-bottom: $space-8;
 
   .title {
-    font-size: $text-2xl;
+    font-family: $font-heading;
+    font-size: $text-3xl;
     font-weight: $font-bold;
     color: $text-primary;
+    letter-spacing: $tracking-tight;
+    line-height: $leading-tight;
     margin-bottom: $space-2;
   }
 
   .subtitle {
+    font-family: $font-primary;
     font-size: $text-base;
     color: $text-secondary;
-    margin-bottom: $space-8;
+    line-height: $leading-normal;
   }
 }
 
 .error-banner {
-  display: flex;
-  align-items: center;
-  gap: $space-2;
+  @include flex(row, flex-start, center, $space-2);
   background: $error-light;
   color: $error;
   padding: $space-3 $space-4;
   border-radius: $radius-md;
-  margin-bottom: $space-6;
+  margin-bottom: $space-5;
   font-size: $text-sm;
+  font-family: $font-primary;
+  border-left: 3px solid $error;
 
   mat-icon {
     font-size: 18px;
     width: 18px;
     height: 18px;
+    flex-shrink: 0;
   }
 }
 
 .full-width {
   width: 100%;
-  margin-bottom: $space-2;
+  margin-bottom: $space-1;
 }
 
 .mat-mdc-form-field {
@@ -92,19 +107,21 @@
   --mdc-outlined-text-field-hover-outline-color: #{$primary};
   --mdc-outlined-text-field-focus-outline-color: #{$primary};
   --mdc-outlined-text-field-label-text-color: #{$text-secondary};
+  --mdc-outlined-text-field-focus-label-text-color: #{$primary};
   --mdc-outlined-text-field-input-text-color: #{$text-primary};
   --mdc-outlined-text-field-caret-color: #{$primary};
-  --mat-form-field-state-layer-color: #{$primary};
-  --mat-form-field-focus-select-arrow-color: #{$primary};
+  --mdc-outlined-text-field-container-shape: #{$radius-md};
+  font-family: $font-primary;
 }
 
 .form-options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  @include flex(row, space-between, center);
+  margin-top: $space-1;
   margin-bottom: $space-8;
 
   mat-checkbox {
+    font-family: $font-primary;
+    font-size: $text-sm;
     --mdc-checkbox-selected-checkmark-color: #{$surface};
     --mdc-checkbox-selected-focus-icon-color: #{$primary};
     --mdc-checkbox-selected-hover-icon-color: #{$primary-dark};
@@ -113,98 +130,155 @@
   }
 
   .forgot-link {
+    font-family: $font-primary;
     font-size: $text-sm;
+    font-weight: $font-medium;
     color: $primary;
     text-decoration: none;
     transition: $transition-fast;
 
     &:hover {
       color: $primary-dark;
-      text-decoration: underline;
     }
   }
 }
 
 .submit-btn {
   width: 100%;
-  height: 48px;
-  font-size: $text-base;
+  height: 52px;
+  font-family: $font-primary;
+  font-size: $text-sm;
   font-weight: $font-semibold;
-  letter-spacing: 0.05em;
-  background: $primary;
+  letter-spacing: $tracking-widest;
+  background: $primary !important;
+  color: $surface !important;
+  border-radius: $radius-md !important;
+  transition: $transition-base !important;
+  box-shadow: 0 4px 16px rgba($primary, 0.35) !important;
 
-  &:hover {
-    background: $primary-dark;
+  &:hover:not(:disabled) {
+    background: $primary-dark !important;
+    box-shadow: 0 6px 20px rgba($primary-dark, 0.45) !important;
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    background: $text-disabled !important;
+    box-shadow: none !important;
   }
 
   mat-spinner {
     margin: 0 auto;
-
     circle {
       stroke: $surface;
     }
   }
+}
 
-  &:disabled {
-    background: $text-disabled;
+.divider {
+  @include flex(row, center, center, $space-4);
+  margin: $space-8 0;
+
+  .line {
+    flex: 1;
+    height: 1px;
+    background: $divider;
+  }
+
+  span {
+    font-family: $font-primary;
+    font-size: $text-xs;
+    color: $text-disabled;
+    letter-spacing: $tracking-wider;
+    text-transform: uppercase;
   }
 }
 
 .auth-footer {
   text-align: center;
-  margin-top: $space-8;
-  padding-top: $space-6;
-  border-top: 1px solid $divider;
+  margin-top: $space-4;
 
   p {
+    font-family: $font-primary;
     font-size: $text-sm;
     color: $text-secondary;
     margin: 0;
 
     a {
       color: $primary;
-      font-weight: $font-medium;
+      font-weight: $font-semibold;
       text-decoration: none;
+      transition: $transition-fast;
 
       &:hover {
-        text-decoration: underline;
+        color: $primary-dark;
       }
     }
+  }
+}
+
+.trust-badge {
+  @include flex(row, center, center, $space-2);
+  position: absolute;
+  bottom: $space-6;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    color: $text-disabled;
+  }
+
+  span {
+    font-family: $font-primary;
+    font-size: $text-xs;
+    color: $text-disabled;
+    letter-spacing: $tracking-wide;
   }
 }
 
 .auth-image-section {
   flex: 1;
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include flex(row, flex-start, flex-end);
   overflow: hidden;
+  min-height: 100vh;
 
-  @media (max-width: $screen-md) {
+  @include respond-to(md) {
     display: none;
   }
 }
 
 .auth-bg-image {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
+  transition: transform 8s ease;
+
+  &:hover {
+    transform: scale(1.04);
+  }
 }
 
 .image-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background: linear-gradient(
-    135deg,
-    rgba($primary-dark, 0.85) 0%,
-    rgba($primary, 0.7) 100%
+    to top,
+    rgba($primary-darker, 0.95) 0%,
+    rgba($primary-dark, 0.65) 35%,
+    rgba($primary, 0.25) 70%,
+    rgba($primary, 0.1) 100%
   );
   z-index: 1;
 }
@@ -212,21 +286,77 @@
 .image-content {
   position: relative;
   z-index: 2;
-  text-align: center;
-  padding: $space-10;
-  max-width: 480px;
+  padding: $space-12;
+  max-width: 520px;
+
+  .image-tag {
+    @include flex(row, flex-start, center, $space-2);
+    background: rgba($surface, 0.12);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba($surface, 0.2);
+    border-radius: $radius-full;
+    padding: $space-2 $space-4;
+    margin-bottom: $space-6;
+    width: fit-content;
+
+    mat-icon {
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
+      color: rgba($surface, 0.8);
+    }
+
+    span {
+      font-family: $font-primary;
+      font-size: $text-xs;
+      font-weight: $font-medium;
+      color: rgba($surface, 0.85);
+      letter-spacing: $tracking-wider;
+      text-transform: uppercase;
+    }
+  }
 
   h2 {
+    font-family: $font-heading;
     font-size: $text-4xl;
-    font-weight: $font-bold;
-    color: $text-inverse;
-    margin-bottom: $space-4;
+    font-weight: $font-extrabold;
+    color: $surface;
     line-height: $leading-tight;
+    letter-spacing: $tracking-tight;
+    margin-bottom: $space-4;
   }
 
   p {
-    font-size: $text-lg;
-    color: rgba($text-inverse, 0.85);
+    font-family: $font-primary;
+    font-size: $text-md;
+    color: rgba($surface, 0.75);
     line-height: $leading-relaxed;
+    margin-bottom: $space-10;
+  }
+
+  .stats {
+    @include flex(row, flex-start, center, $space-8);
+    padding-top: $space-6;
+    border-top: 1px solid rgba($surface, 0.15);
+
+    .stat {
+      .stat-number {
+        font-family: $font-heading;
+        font-size: $text-2xl;
+        font-weight: $font-bold;
+        color: $surface;
+        display: block;
+        line-height: 1;
+        margin-bottom: $space-1;
+      }
+
+      .stat-label {
+        font-family: $font-primary;
+        font-size: $text-xs;
+        color: rgba($surface, 0.55);
+        letter-spacing: $tracking-wide;
+        text-transform: uppercase;
+      }
+    }
   }
 }

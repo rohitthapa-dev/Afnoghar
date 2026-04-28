@@ -13,7 +13,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatCardModule } from '@angular/material/card';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -29,7 +28,6 @@ import { AuthService } from '../../../core/services/auth.service';
     MatCheckboxModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    MatCardModule,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
@@ -75,7 +73,8 @@ export class LoginComponent {
       },
       error: (err) => {
         this.loading = false;
-        this.errorMessage = err.message || 'Invalid email or password';
+        this.errorMessage =
+          err?.error?.message || 'Invalid email or password. Please try again.';
       },
     });
   }

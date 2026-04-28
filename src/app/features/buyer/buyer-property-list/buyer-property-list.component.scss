@@ -1,0 +1,79 @@
+@use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins" as *;
+
+.property-list-page {
+  min-height: calc(100vh - #{$navbar-height});
+  padding: $space-8 0;
+  background: $background;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: $space-10;
+  padding: $space-8 0;
+}
+
+.page-title {
+  font-family: $font-heading;
+  font-size: $text-3xl;
+  font-weight: $font-bold;
+  color: $text-primary;
+  margin-bottom: $space-2;
+}
+
+.page-subtitle {
+  font-family: $font-primary;
+  font-size: $text-lg;
+  color: $text-secondary;
+}
+
+.properties-content {
+  max-width: $container-max;
+  margin: 0 auto;
+  padding: 0 $space-8;
+}
+
+.properties-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $space-6;
+
+  @include respond-to(lg) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to(md) {
+    grid-template-columns: 1fr;
+    gap: $space-4;
+  }
+}
+
+.loading-container,
+.error-container,
+.empty-state {
+  @include flex(column, center, center, $space-4);
+  padding: $space-16 0;
+  text-align: center;
+
+  p {
+    font-family: $font-primary;
+    font-size: $text-base;
+    color: $text-secondary;
+  }
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: $text-disabled;
+  }
+}
+
+mat-paginator {
+  margin-top: $space-10;
+  background: transparent;
+
+  .mat-mux-paginator-container {
+    font-family: $font-primary;
+  }
+}

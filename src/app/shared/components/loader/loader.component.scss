@@ -1,0 +1,29 @@
+@use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins" as *;
+
+.loader-container {
+  @include flex(row, center, center);
+  padding: $space-8;
+
+  &.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba($surface, 0.9);
+    backdrop-filter: blur(4px);
+    z-index: $z-overlay;
+  }
+}
+
+.loader-content {
+  @include flex(column, center, center, $space-4);
+}
+
+.loader-message {
+  font-family: $font-primary;
+  font-size: $text-sm;
+  color: $text-secondary;
+  margin: 0;
+}

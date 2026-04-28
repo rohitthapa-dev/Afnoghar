@@ -1,0 +1,358 @@
+@use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins" as *;
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: $z-navbar;
+  height: $navbar-height;
+  background: rgba($surface, 0.98);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid $divider;
+  transition: $transition-base;
+
+  &.scrolled {
+    background: rgba($surface, 0.95);
+    backdrop-filter: blur(16px);
+    box-shadow: $shadow-navbar;
+    border-bottom-color: transparent;
+  }
+}
+
+.navbar-container {
+  @include flex(row, space-between, center);
+  max-width: $container-max;
+  margin: 0 auto;
+  padding: 0 $space-8;
+  height: 100%;
+
+  @include respond-to(md) {
+    padding: 0 $space-6;
+  }
+}
+
+.logo {
+  @include logo();
+}
+
+.nav-links {
+  @include flex(row, center, center, $space-1);
+
+  a {
+    font-family: $font-primary;
+    font-size: $text-sm;
+    font-weight: $font-medium;
+    color: $text-secondary;
+    text-decoration: none;
+    padding: $space-2 $space-3;
+    border-radius: $radius-md;
+    transition: $transition-fast;
+    position: relative;
+    white-space: nowrap;
+
+    &:hover {
+      color: $primary;
+      background: $primary-tint;
+    }
+
+    &.active {
+      color: $primary;
+      font-weight: $font-semibold;
+      background: $primary-tint;
+    }
+  }
+}
+
+.auth-section {
+  @include flex(row, flex-end, center, $space-3);
+  flex-shrink: 0;
+}
+
+.btn {
+  font-family: $font-primary;
+  font-size: $text-sm;
+  font-weight: $font-semibold;
+  height: 38px;
+  padding: 0 $space-5;
+  border-radius: $radius-md;
+  text-decoration: none;
+  transition: $transition-fast;
+  @include flex(row, center, center);
+  white-space: nowrap;
+  cursor: pointer;
+
+  &.btn-outline {
+    color: $primary;
+    border: 1.5px solid $border;
+    background: transparent;
+
+    &:hover {
+      border-color: $primary;
+      background: $primary-tint;
+    }
+  }
+
+  &.btn-primary {
+    background: $primary;
+    color: $surface;
+    border: 1.5px solid $primary;
+    box-shadow: 0 2px 8px rgba($primary, 0.2);
+
+    &:hover {
+      background: $primary-dark;
+      border-color: $primary-dark;
+      box-shadow: 0 4px 12px rgba($primary-dark, 0.3);
+      transform: translateY(-1px);
+    }
+  }
+}
+
+.user-menu-trigger {
+  @include flex(row, flex-start, center, $space-2);
+  height: 40px;
+  padding: $space-1 $space-2 $space-1 $space-1 !important;
+  border-radius: $radius-full !important;
+  border: 1.5px solid $divider !important;
+  background: $surface !important;
+  transition: $transition-fast;
+  min-width: unset !important;
+  line-height: normal !important;
+
+  &:hover {
+    border-color: $primary !important;
+    background: $primary-tint !important;
+  }
+
+  ::ng-deep .mdc-button__label {
+    @include flex(row, flex-start, center, $space-2);
+  }
+
+  .user-avatar {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    background: $primary;
+    color: $surface;
+    border-radius: $radius-full;
+    @include flex(row, center, center);
+    font-family: $font-primary;
+    font-size: $text-xs;
+    font-weight: $font-bold;
+    flex-shrink: 0;
+    letter-spacing: $tracking-wide;
+  }
+
+  .user-name {
+    font-family: $font-primary;
+    font-size: $text-sm;
+    font-weight: $font-medium;
+    color: $text-primary;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dropdown-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: $text-disabled;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
+}
+
+.user-menu-header {
+  @include flex(row, flex-start, center, $space-3);
+  padding: $space-4 $space-5;
+  background: $primary-tint;
+  border-bottom: 1px solid $primary-light;
+
+  .user-avatar-lg {
+    width: 44px;
+    height: 44px;
+    background: $primary;
+    color: $surface;
+    border-radius: $radius-full;
+    @include flex(row, center, center);
+    font-family: $font-heading;
+    font-size: $text-base;
+    font-weight: $font-bold;
+    flex-shrink: 0;
+  }
+
+  .user-info {
+    @include flex(column, flex-start, flex-start, $space-1);
+    min-width: 0;
+
+    .user-name {
+      font-family: $font-primary;
+      font-size: $text-sm;
+      font-weight: $font-semibold;
+      color: $text-primary;
+      @include truncate(1);
+    }
+
+    .user-email {
+      font-family: $font-primary;
+      font-size: $text-xs;
+      color: $text-secondary;
+      @include truncate(1);
+    }
+  }
+}
+
+.mobile-menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  padding: $space-2;
+  cursor: pointer;
+  color: $text-primary;
+  border-radius: $radius-md;
+  transition: $transition-fast;
+
+  &:hover {
+    background: $surface-alt;
+  }
+
+  mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+
+  @include respond-to(md) {
+    display: flex;
+  }
+}
+
+.mobile-nav {
+  display: none;
+  position: absolute;
+  top: $navbar-height;
+  left: 0;
+  right: 0;
+  background: $surface;
+  border-top: 1px solid $divider;
+  padding: $space-3 $space-6 $space-6;
+  box-shadow: $shadow-lg;
+  animation: slideDown 0.2s ease;
+  max-height: calc(100vh - #{$navbar-height});
+  overflow-y: auto;
+
+  @include respond-to(md) {
+    display: block;
+  }
+
+  a {
+    display: block;
+    font-family: $font-primary;
+    font-size: $text-base;
+    font-weight: $font-medium;
+    color: $text-primary;
+    text-decoration: none;
+    padding: $space-3 $space-4;
+    border-radius: $radius-md;
+    transition: $transition-fast;
+
+    &:hover {
+      background: $primary-tint;
+      color: $primary;
+    }
+
+    &.active {
+      color: $primary;
+      font-weight: $font-semibold;
+      background: $primary-tint;
+    }
+  }
+
+  .mobile-auth-buttons {
+    @include flex(column, stretch, stretch, $space-3);
+    margin-top: $space-4;
+    padding-top: $space-4;
+    border-top: 1px solid $divider;
+  }
+
+  .mobile-user-info {
+    @include flex(row, flex-start, center, $space-3);
+    padding: $space-4;
+    background: $primary-tint;
+    border: 1px solid $primary-light;
+    border-radius: $radius-lg;
+    margin-bottom: $space-2;
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      background: $primary;
+      color: $surface;
+      border-radius: $radius-full;
+      @include flex(row, center, center);
+      font-family: $font-primary;
+      font-size: $text-sm;
+      font-weight: $font-bold;
+      flex-shrink: 0;
+    }
+
+    .user-name {
+      font-family: $font-primary;
+      font-size: $text-base;
+      font-weight: $font-semibold;
+      color: $text-primary;
+    }
+
+    .user-role {
+      font-family: $font-primary;
+      font-size: $text-xs;
+      color: $text-secondary;
+    }
+  }
+
+  .logout-btn {
+    @include flex(row, flex-start, center, $space-3);
+    width: 100%;
+    background: none;
+    border: none;
+    padding: $space-3 $space-4;
+    border-radius: $radius-md;
+    cursor: pointer;
+    font-family: $font-primary;
+    font-size: $text-base;
+    font-weight: $font-medium;
+    color: $error;
+    transition: $transition-fast;
+    margin-top: $space-2;
+
+    &:hover {
+      background: $error-light;
+    }
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+.desktop-nav {
+  @include respond-to(md) {
+    display: none;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

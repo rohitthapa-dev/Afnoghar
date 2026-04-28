@@ -9,6 +9,45 @@
   gap: $gap;
 }
 
+// Logo (shared across navbar, footer, auth pages)
+@mixin logo($size: 34px, $icon-font: 18px, $gap: $space-2) {
+  @include flex(row, flex-start, center, $gap);
+  text-decoration: none;
+  flex-shrink: 0;
+
+  .logo-icon {
+    width: $size;
+    height: $size;
+    background: $primary;
+    border-radius: $radius-md;
+    @include flex(row, center, center);
+    flex-shrink: 0;
+
+    mat-icon {
+      color: $surface;
+      font-size: $icon-font;
+      width: $icon-font;
+      height: $icon-font;
+    }
+  }
+
+  .logo-text {
+    font-family: $font-heading;
+    font-size: $text-xl;
+    font-weight: $font-extrabold;
+    letter-spacing: $tracking-tight;
+    line-height: 1;
+
+    .afno {
+      color: $text-primary;
+    }
+
+    .ghar {
+      color: $primary;
+    }
+  }
+}
+
 // Grid
 @mixin grid($columns: 3, $gap: $space-6) {
   display: grid;
