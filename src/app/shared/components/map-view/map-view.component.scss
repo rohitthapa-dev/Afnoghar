@@ -75,7 +75,6 @@
     .pin {
       width: 32px;
       height: 32px;
-      background: $primary;
       border: 2.5px solid $surface;
       border-radius: 50% 50% 50% 0;
       transform: rotate(-45deg);
@@ -96,7 +95,6 @@
       }
 
       &.selected {
-        background: $primary-dark;
         border-color: $surface;
         box-shadow:
           0 0 0 4px rgba($primary, 0.25),

@@ -139,7 +139,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
       }
 
       const isSelected = property.id === this.selectedPropertyId;
-      const icon = this.createCustomIcon(isSelected);
+      const icon = this.createCustomIcon(isSelected, property.listingType);
       const marker = L.marker([property.location.lat, property.location.lng], {
         icon,
       });
@@ -177,8 +177,9 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   private highlightSelectedMarker(): void {
     this.markerMap.forEach((marker, id) => {
+      const prop = this.properties.find(p => p.id === id);
       const isSelected = id === this.selectedPropertyId;
-      marker.setIcon(this.createCustomIcon(isSelected));
+      marker.setIcon(this.createCustomIcon(isSelected, prop?.listingType));
     });
 
     if (
@@ -193,10 +194,14 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
   }
 
-  private createCustomIcon(isSelected: boolean): L.DivIcon {
+  private createCustomIcon(isSelected: boolean, listingType?: string): L.DivIcon {
+    const baseColor = listingType === 'rent' ? '#3b82f6' : '#14919b'; // $secondary : $primary
+    const selectedColor = listingType === 'rent' ? '#1d4ed' : '#0d7377'; // $secondary-dark : $primary-dark
+    const color = isSelected ? selectedColor : baseColor;
+  
     return L.divIcon({
       className: 'custom-map-pin',
-      html: `<div class="pin ${isSelected ? 'selected' : ''}"></div>`,
+      html: `<div class="pin ${isSelected ? 'selected' : ''}" style="background: ${color}"></div>`,
       iconSize: [32, 32],
       iconAnchor: [16, 32],
       popupAnchor: [0, -36],
@@ -205,8 +210,15 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   private createClusterIcon(cluster: L.MarkerCluster): L.DivIcon {
     const count = cluster.getChildCount();
+    const markers = cluster.getAllChildMarkers();
+    const rentCount = markers.filter(m => {
+      const prop = this.properties.find(p => this.markerMap.get(p.id) === m);
+      return prop?.listingType === 'rent';
+    }).length;
+    const color = rentCount > markers.length / 2 ? '#3b82f6' : '#14919b';
+    
     return L.divIcon({
-      html: `<div class="cluster-icon">${count}</div>`,
+      html: `<div class="cluster-icon" style="background: ${color}">${count}</div>`,
       className: 'custom-cluster',
       iconSize: L.point(40, 40),
     });

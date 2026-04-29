@@ -5,6 +5,7 @@ import { MapViewComponent } from '../../../shared/components/map-view/map-view.c
 import { PropertyCardComponent } from '../../../shared/components/property-card/property-card.component';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { PropertyService } from '../../../core/services/property.service';
+import { ActivatedRoute } from '@angular/router';
 import { Property } from '../../../core/models/property.model';
 import * as L from 'leaflet';
 
@@ -23,6 +24,7 @@ import * as L from 'leaflet';
 })
 export class BuyerMapSearchComponent implements OnInit {
   private propertyService = inject(PropertyService);
+  private route = inject(ActivatedRoute);
 
   @ViewChild(MapViewComponent) mapView?: MapViewComponent;
 
@@ -55,7 +57,14 @@ export class BuyerMapSearchComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadProperties();
+    this.route.queryParams.subscribe(params => {
+      if (params['type'] === 'sale') {
+        this.selectedListingType = 'sale';
+      } else if (params['type'] === 'rent') {
+        this.selectedListingType = 'rent';
+      }
+      this.loadProperties();
+    });
   }
 
   private loadProperties(): void {
