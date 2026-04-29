@@ -1,9 +1,80 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { PropertyCardComponent } from '../../../shared/components/property-card/property-card.component';
+import { FavoritesService } from '../../../core/services/favorites.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { Property } from '../../../core/models/property.model';
 
 @Component({
   selector: 'app-buyer-favorites',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatSnackBarModule, PropertyCardComponent],
   templateUrl: './buyer-favorites.component.html',
   styleUrl: './buyer-favorites.component.scss',
 })
-export class BuyerFavoritesComponent {}
+export class BuyerFavoritesComponent implements OnInit {
+  private favoritesService = inject(FavoritesService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private snackBar = inject(MatSnackBar);
+
+  favoriteProperties = signal<Property[]>([]);
+  isLoading = signal(true);
+
+  ngOnInit(): void {
+    this.loadFavorites();
+  }
+
+  private getUserId(): number | null {
+    return this.authService.getCurrentUser()?.id ?? null;
+  }
+
+  private loadFavorites(): void {
+    const userId = this.getUserId();
+    if (!userId) return;
+
+    this.isLoading.set(true);
+    this.favoritesService.loadFavorites(userId);
+    this.favoritesService.getFavoriteProperties(userId).subscribe({
+      next: (properties) => {
+        this.favoriteProperties.set(properties);
+        this.isLoading.set(false);
+      },
+      error: () => this.isLoading.set(false),
+    });
+  }
+
+  onViewDetails(propertyId: number): void {
+    this.router.navigate(['/buyer/properties', propertyId]);
+  }
+
+  onRemoveFavorite(propertyId: number): void {
+    const userId = this.getUserId();
+    if (!userId) return;
+
+    this.favoritesService.removeFavoriteByPropertyId(propertyId).subscribe({
+      next: () => {
+        this.favoriteProperties.update(props =>
+          props.filter(p => p.id !== propertyId)
+        );
+        this.snackBar.open('Removed from favorites', 'Undo', {
+          duration: 3000,
+          horizontalPosition: 'start',
+          verticalPosition: 'bottom',
+        }).onAction().subscribe(() => {
+          this.favoritesService.toggleFavorite(propertyId, userId).subscribe({
+            next: (result) => {
+              if (result.action === 'added') {
+                this.loadFavorites();
+              }
+            },
+          });
+        });
+      },
+    });
+  }
+}

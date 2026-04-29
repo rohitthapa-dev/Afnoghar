@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, map, of } from 'rxjs';
 import { Property } from '../models/property.model';
 
 @Injectable({
@@ -53,6 +53,17 @@ export class PropertyService {
       .get<Property[]>(`${this.apiUrl}/properties`)
       .pipe(
         map((properties) => properties.filter((p) => p.status === 'approved')),
+      );
+  }
+
+  getPropertiesByIds(ids: number[]): Observable<Property[]> {
+    if (ids.length === 0) return of([]);
+    return this.http
+      .get<Property[]>(`${this.apiUrl}/properties`)
+      .pipe(
+        map((properties) =>
+          properties.filter((p) => ids.includes(p.id) && p.status === 'approved')
+        ),
       );
   }
 }

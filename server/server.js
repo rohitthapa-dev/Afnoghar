@@ -312,6 +312,12 @@ app.patch("/appointments/:id", verifyToken, (req, res) => {
 app.get("/favorites", verifyToken, (req, res) => {
   try {
     const db = getDB();
+    const { buyerId } = req.query;
+    
+    if (buyerId) {
+      return res.json(db.favorites.filter(f => f.buyerId === Number(buyerId)));
+    }
+    
     res.json(db.favorites);
   } catch (error) {
     res.status(500).json({ message: "Error fetching favorites." });

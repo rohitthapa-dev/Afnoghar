@@ -1,1 +1,28 @@
-<p>buyer-favorites works!</p>
+<div class="favorites-container">
+  <h1 class="page-title">My Favorites</h1>
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading your favorites...</p>
+    </div>
+  } @else if (favoriteProperties().length === 0) {
+    <div class="empty-state">
+      <mat-icon>favorite_border</mat-icon>
+      <h2>No favorites yet</h2>
+      <p>Browse properties and tap the heart icon to save them here</p>
+      <a routerLink="/buyer/properties" class="btn-primary">Browse Properties</a>
+    </div>
+  } @else {
+    <div class="properties-grid">
+      @for (property of favoriteProperties(); track property.id) {
+        <div class="property-item">
+          <app-property-card
+            [property]="property"
+            (favoriteToggled)="onRemoveFavorite(property.id)"
+          />
+        </div>
+      }
+    </div>
+  }
+</div>

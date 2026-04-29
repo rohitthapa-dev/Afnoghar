@@ -13,7 +13,7 @@
       (click)="onFavoriteClick($event)"
       mat-icon-button
     >
-      <mat-icon>favorite_border</mat-icon>
+      <mat-icon>{{ isFavorite() ? 'favorite' : 'favorite_border' }}</mat-icon>
     </button>
   </div>
 
