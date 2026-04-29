@@ -36,3 +36,9 @@ app-root {
   padding: 0;
   background-color: $background;
 }
+app-buyer-map-search {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - #{$navbar-height});
+  overflow: hidden;
+}
