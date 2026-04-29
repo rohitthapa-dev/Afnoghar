@@ -1,6 +1,6 @@
 <div class="property-card" (click)="onCardClick()">
   <div class="card-image">
-    <img [src]="getPropertyUrl()" [alt]="property.title" loading="lazy" />
+    <img [src]="getPropertyUrl()" [alt]="property.title" loading="eager" />
 
     <div class="card-badges">
       <span class="badge type-badge">{{ property.type | propertyType }}</span>
