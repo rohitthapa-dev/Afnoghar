@@ -42,3 +42,13 @@ app-buyer-map-search {
   height: calc(100vh - #{$navbar-height});
   overflow: hidden;
 }
+
+:root {
+  --color-primary: #{$primary};
+  --color-primary-dark: #{$primary-dark};
+  --color-info: #{$info};
+  --color-info-dark: #1558a3;
+  --color-surface: #{$surface};
+  --pulse-primary: #{rgba($primary, 0.5)};
+  --pulse-info: #{rgba($info, 0.5)};
+}

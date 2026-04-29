@@ -32,6 +32,7 @@ export class BuyerMapSearchComponent implements OnInit {
   filteredProperties: Property[] = [];
   selectedPropertyId?: number;
   isLoading = true;
+  private initialLoadDone = false;
 
   searchTerm = '';
   selectedType: '' | 'house' | 'apartment' | 'land' | 'commercial' = '';
@@ -51,33 +52,33 @@ export class BuyerMapSearchComponent implements OnInit {
       this.selectedListingType ||
       this.minPrice != null ||
       this.maxPrice != null ||
-      this.bedrooms != null ||
-      this.currentBounds
+      this.bedrooms != null
     );
   }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       if (params['type'] === 'sale') {
         this.selectedListingType = 'sale';
       } else if (params['type'] === 'rent') {
         this.selectedListingType = 'rent';
       }
-      this.loadProperties();
-    });
-  }
 
-  private loadProperties(): void {
-    this.isLoading = true;
-    this.propertyService.getApprovedProperties().subscribe({
-      next: (properties) => {
-        this.allProperties = properties;
-        this.filteredProperties = [...properties];
-        this.isLoading = false;
-      },
-      error: () => {
-        this.isLoading = false;
-      },
+      this.isLoading = true;
+      this.initialLoadDone = false;
+
+      this.propertyService.getApprovedProperties().subscribe({
+        next: (properties) => {
+          this.allProperties = properties;
+          this.applyFilters();
+          this.isLoading = false;
+          this.initialLoadDone = true;
+        },
+        error: () => {
+          this.isLoading = false;
+          this.initialLoadDone = true;
+        },
+      });
     });
   }
 
@@ -88,12 +89,9 @@ export class BuyerMapSearchComponent implements OnInit {
   }
 
   private showPropertyPage(propertyId: number): void {
-    const propertyIndex = this.filteredProperties.findIndex(
-      (property) => property.id === propertyId,
-    );
-
-    if (propertyIndex >= 0) {
-      this.currentPage = Math.floor(propertyIndex / this.pageSize) + 1;
+    const index = this.filteredProperties.findIndex((p) => p.id === propertyId);
+    if (index >= 0) {
+      this.currentPage = Math.floor(index / this.pageSize) + 1;
     }
   }
 
@@ -105,16 +103,13 @@ export class BuyerMapSearchComponent implements OnInit {
   }
 
   onBoundsChanged(bounds: L.LatLngBounds): void {
-    if (!bounds) return;
+    if (!bounds || !this.initialLoadDone) return;
     this.currentBounds = bounds;
     this.applyFilters();
   }
 
-  onSearch(): void {
-    this.applyFilters();
-  }
-
   onFilterChange(): void {
+    this.currentPage = 1;
     this.applyFilters();
   }
 
@@ -126,12 +121,13 @@ export class BuyerMapSearchComponent implements OnInit {
     this.maxPrice = undefined;
     this.bedrooms = undefined;
     this.currentBounds = undefined;
-    this.filteredProperties = [...this.allProperties];
     this.currentPage = 1;
     this.selectedPropertyId = undefined;
+    this.filteredProperties = [...this.allProperties];
   }
 
   private _viewMode: 'map' | 'list' = 'list';
+
   get viewMode(): 'map' | 'list' {
     return this._viewMode;
   }
@@ -196,7 +192,7 @@ export class BuyerMapSearchComponent implements OnInit {
         (p) =>
           p.title.toLowerCase().includes(term) ||
           p.location?.city?.toLowerCase().includes(term) ||
-          p.location?.district?.toLowerCase().includes(term)
+          p.location?.district?.toLowerCase().includes(term),
       );
     }
 
@@ -206,7 +202,7 @@ export class BuyerMapSearchComponent implements OnInit {
 
     if (this.selectedListingType) {
       filtered = filtered.filter(
-        (p) => p.listingType === this.selectedListingType
+        (p) => p.listingType === this.selectedListingType,
       );
     }
 
@@ -222,7 +218,7 @@ export class BuyerMapSearchComponent implements OnInit {
       filtered = filtered.filter((p) => p.bedrooms >= this.bedrooms!);
     }
 
-    if (this.currentBounds) {
+    if (this.currentBounds && this.initialLoadDone) {
       filtered = filtered.filter((p) => {
         if (p.location?.lat == null || p.location?.lng == null) return false;
         return this.currentBounds!.contains([p.location.lat, p.location.lng]);
@@ -233,7 +229,7 @@ export class BuyerMapSearchComponent implements OnInit {
 
     if (
       this.selectedPropertyId !== undefined &&
-      filtered.some((property) => property.id === this.selectedPropertyId)
+      filtered.some((p) => p.id === this.selectedPropertyId)
     ) {
       this.showPropertyPage(this.selectedPropertyId);
     } else {

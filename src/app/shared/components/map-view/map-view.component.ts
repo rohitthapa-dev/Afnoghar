@@ -42,10 +42,22 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   private invalidateTimeout?: ReturnType<typeof setTimeout>;
   private resizeObserver?: ResizeObserver;
 
+  private get css() {
+    const s = getComputedStyle(document.documentElement);
+    return {
+      primary: s.getPropertyValue('--color-primary').trim(),
+      primaryDark: s.getPropertyValue('--color-primary-dark').trim(),
+      info: s.getPropertyValue('--color-info').trim(),
+      infoDark: s.getPropertyValue('--color-info-dark').trim(),
+      surface: s.getPropertyValue('--color-surface').trim(),
+      pulsePrimary: s.getPropertyValue('--pulse-primary').trim(),
+      pulseInfo: s.getPropertyValue('--pulse-info').trim(),
+    };
+  }
+
   private readonly DEFAULT_CENTER: L.LatLngTuple = [27.7172, 85.324];
   private readonly DEFAULT_ZOOM = 12;
-  private readonly CARTO_DB_TILE_URL =
-    'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+  private readonly TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 
   ngAfterViewInit(): void {
     this.initTimeout = setTimeout(() => {
@@ -57,28 +69,19 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (!this.isInitialized) return;
-
     if (changes['properties']) {
       this.clearMarkers();
       this.addMarkers();
     }
-
     if (changes['selectedPropertyId']) {
       this.highlightSelectedMarker();
     }
   }
 
   ngOnDestroy(): void {
-    if (this.initTimeout) {
-      clearTimeout(this.initTimeout);
-    }
-
-    if (this.invalidateTimeout) {
-      clearTimeout(this.invalidateTimeout);
-    }
-
+    clearTimeout(this.initTimeout);
+    clearTimeout(this.invalidateTimeout);
     this.resizeObserver?.disconnect();
-
     if (this.map) {
       this.map.remove();
       this.map = undefined!;
@@ -94,15 +97,14 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
       scrollWheelZoom: true,
     });
 
-    L.tileLayer(this.CARTO_DB_TILE_URL, {
-      attribution: '© CartoDB | © OpenStreetMap contributors',
+    L.tileLayer(this.TILE_URL, {
+      attribution: '© CartoDB | © OpenStreetMap',
       maxZoom: 18,
+      minZoom: 8,
     }).addTo(this.map);
 
     this.invalidateTimeout = setTimeout(() => {
-      if (this.map) {
-        this.map.invalidateSize();
-      }
+      this.map?.invalidateSize();
     }, 100);
 
     if (this.mode === 'search') {
@@ -122,10 +124,9 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
         this.boundsChanged.emit(bounds);
       }
     });
+
     this.resizeObserver = new ResizeObserver(() => {
-      if (this.map) {
-        this.map.invalidateSize();
-      }
+      this.map?.invalidateSize();
     });
     this.resizeObserver.observe(this.mapContainer.nativeElement);
   }
@@ -134,14 +135,12 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     if (!this.properties?.length) return;
 
     this.properties.forEach((property) => {
-      if (property.location?.lat == null || property.location?.lng == null) {
+      if (property.location?.lat == null || property.location?.lng == null)
         return;
-      }
 
       const isSelected = property.id === this.selectedPropertyId;
-      const icon = this.createCustomIcon(isSelected, property.listingType);
       const marker = L.marker([property.location.lat, property.location.lng], {
-        icon,
+        icon: this.createCustomIcon(isSelected, property.listingType),
       });
 
       marker.on('click', () => {
@@ -177,31 +176,45 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   private highlightSelectedMarker(): void {
     this.markerMap.forEach((marker, id) => {
-      const prop = this.properties.find(p => p.id === id);
-      const isSelected = id === this.selectedPropertyId;
-      marker.setIcon(this.createCustomIcon(isSelected, prop?.listingType));
+      const prop = this.properties.find((p) => p.id === id);
+      marker.setIcon(
+        this.createCustomIcon(
+          id === this.selectedPropertyId,
+          prop?.listingType,
+        ),
+      );
     });
 
     if (
-      this.selectedPropertyId !== undefined &&
+      this.selectedPropertyId &&
       this.markerMap.has(this.selectedPropertyId)
     ) {
-      const marker = this.markerMap.get(this.selectedPropertyId);
-      const latLng = marker?.getLatLng();
-      if (latLng) {
-        this.map.flyTo(latLng, 15, { animate: true });
-      }
+      const latLng = this.markerMap.get(this.selectedPropertyId)?.getLatLng();
+      if (latLng) this.map.flyTo(latLng, 15, { animate: true });
     }
   }
 
-  private createCustomIcon(isSelected: boolean, listingType?: string): L.DivIcon {
-    const baseColor = listingType === 'rent' ? '#3b82f6' : '#14919b'; // Blue for rent, Teal for sale
-    const selectedColor = listingType === 'rent' ? '#1d4ed' : '#0d7377'; // Darker shades
-    const color = isSelected ? selectedColor : baseColor;
-  
+  private createCustomIcon(
+    isSelected: boolean,
+    listingType?: string,
+  ): L.DivIcon {
+    const c = this.css;
+    const isRent = listingType === 'rent';
+    const color = isRent
+      ? isSelected
+        ? c.infoDark
+        : c.info
+      : isSelected
+        ? c.primaryDark
+        : c.primary;
+    const pulseColor = isRent ? c.pulseInfo : c.pulsePrimary;
+
     return L.divIcon({
       className: 'custom-map-pin',
-      html: `<div class="pin ${isSelected ? 'selected' : ''}" style="background: ${color}"></div>`,
+      html: `<div
+        class="pin ${isSelected ? 'selected' : ''}"
+        style="background:${color};--pulse-color:${pulseColor};"
+      ></div>`,
       iconSize: [32, 32],
       iconAnchor: [16, 32],
       popupAnchor: [0, -36],
@@ -209,16 +222,22 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   }
 
   private createClusterIcon(cluster: L.MarkerCluster): L.DivIcon {
-    const count = cluster.getChildCount();
+    const c = this.css;
     const markers = cluster.getAllChildMarkers();
-    const rentCount = markers.filter(m => {
-      const prop = this.properties.find(p => this.markerMap.get(p.id) === m);
-      return prop?.listingType === 'rent';
+    const rentCount = markers.filter((m) => {
+      const ll = m.getLatLng();
+      return (
+        this.properties.find(
+          (p) => p.location.lat === ll.lat && p.location.lng === ll.lng,
+        )?.listingType === 'rent'
+      );
     }).length;
-    const color = rentCount > markers.length / 2 ? '#3b82f6' : '#14919b';
-    
+
+    const color = rentCount > markers.length / 2 ? c.info : c.primary;
+    const count = cluster.getChildCount();
+
     return L.divIcon({
-      html: `<div class="cluster-icon" style="background: ${color}">${count}</div>`,
+      html: `<div class="cluster-icon" style="background:${color}">${count}</div>`,
       className: 'custom-cluster',
       iconSize: L.point(40, 40),
     });
@@ -231,8 +250,6 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   }
 
   invalidateMapSize(): void {
-    if (this.map) {
-      this.map.invalidateSize();
-    }
+    this.map?.invalidateSize();
   }
 }

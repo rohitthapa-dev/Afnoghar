@@ -18,11 +18,9 @@
   </div>
 
   <div class="card-content">
-    @if (mode === "full") {
-      <div class="property-price">
-        {{ property.price | priceFormat: property.listingType }}
-      </div>
-    }
+    <div class="property-price">
+      {{ property.price | priceFormat: property.listingType }}
+    </div>
 
     <h3 class="property-title">{{ property.title }}</h3>
 
