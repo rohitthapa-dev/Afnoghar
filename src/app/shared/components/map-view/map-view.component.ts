@@ -195,8 +195,8 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   }
 
   private createCustomIcon(isSelected: boolean, listingType?: string): L.DivIcon {
-    const baseColor = listingType === 'rent' ? '#3b82f6' : '#14919b'; // $secondary : $primary
-    const selectedColor = listingType === 'rent' ? '#1d4ed' : '#0d7377'; // $secondary-dark : $primary-dark
+    const baseColor = listingType === 'rent' ? '#3b82f6' : '#14919b'; // Blue for rent, Teal for sale
+    const selectedColor = listingType === 'rent' ? '#1d4ed' : '#0d7377'; // Darker shades
     const color = isSelected ? selectedColor : baseColor;
   
     return L.divIcon({
