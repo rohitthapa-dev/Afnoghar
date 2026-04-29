@@ -1,6 +1,6 @@
 import { Component, inject, HostListener, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
@@ -23,6 +23,7 @@ import { AuthService } from '../../../core/services/auth.service';
 })
 export class NavbarComponent {
   authService = inject(AuthService);
+  private router = inject(Router);
 
   isScrolled = signal(false);
   mobileMenuOpen = signal(false);
@@ -68,5 +69,11 @@ export class NavbarComponent {
   logout(): void {
     this.authService.logout();
     this.closeMobileMenu();
+  }
+
+  navigateToMapSearch(listingType: string): void {
+    this.router.navigate(['/buyer/map-search'], {
+      queryParams: { type: listingType },
+    });
   }
 }

@@ -18,20 +18,14 @@
           >Home</a
         >
         <a routerLink="/buyer/properties" routerLinkActive="active"
-          >Properties</a
+          >Properties</a>
         >
-        <a routerLink="/about" routerLinkActive="active">About</a>
-      } @else if (userRole === "buyer") {
-        <a
-          routerLink="/buyer/home"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-          >Home</a
+        <a (click)="navigateToMapSearch('sale')" routerLinkActive="active"
+          >Buy</a>
         >
-        <a routerLink="/buyer/properties" routerLinkActive="active"
-          >Properties</a
+        <a (click)="navigateToMapSearch('rent')" routerLinkActive="active"
+          >Rent</a>
         >
-        <a routerLink="/buyer/favorites" routerLinkActive="active">Favorites</a>
         <a routerLink="/buyer/appointments" routerLinkActive="active"
           >Appointments</a
         >
@@ -150,7 +144,16 @@
             >Properties</a
           >
           <a routerLink="/buyer/favorites" (click)="closeMobileMenu()"
-            >Favorites</a
+            >Favorites</a>
+          >
+          <a routerLink="/buyer/appointments" (click)="closeMobileMenu()"
+            >Appointments</a>
+          >
+          <a (click)="navigateToMapSearch('sale'); closeMobileMenu()"
+            >Buy</a>
+          >
+          <a (click)="navigateToMapSearch('rent'); closeMobileMenu()"
+            >Rent</a>
           >
           <a routerLink="/buyer/appointments" (click)="closeMobileMenu()"
             >Appointments</a
