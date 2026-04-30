@@ -1,0 +1,798 @@
+@use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins" as *;
+
+:host {
+  display: block;
+}
+
+.property-detail-page {
+  min-height: calc(100vh - #{$navbar-height});
+  background: $background;
+}
+
+.detail-shell {
+  width: 100%;
+  max-width: $container-max;
+  margin: 0 auto;
+  padding: $space-5 $space-8 $space-20;
+
+  @include respond-to(md) {
+    padding: $space-4 $space-4 $space-12;
+  }
+}
+
+.loading-container,
+.error-container {
+  @include flex(column, center, center, $space-4);
+  min-height: calc(100vh - #{$navbar-height});
+  padding: $space-8;
+  text-align: center;
+
+  p {
+    margin: 0;
+    font-family: $font-primary;
+    font-size: $text-base;
+    color: $text-secondary;
+  }
+}
+
+.error-icon {
+  width: 48px;
+  height: 48px;
+  font-size: 48px;
+  color: $error;
+}
+
+.top-bar {
+  @include flex(row, space-between, center, $space-4);
+  margin-bottom: $space-4;
+}
+
+.back-button,
+.save-action {
+  height: 40px;
+  border-radius: $radius-md !important;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  font-weight: $font-semibold;
+}
+
+.back-button {
+  color: $text-secondary !important;
+  padding-left: 0 !important;
+
+  mat-icon {
+    margin-right: $space-1;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  &:hover {
+    color: $primary !important;
+    background: transparent !important;
+  }
+}
+
+.save-action {
+  border-color: $border !important;
+  color: $text-primary !important;
+  background: $surface !important;
+
+  mat-icon {
+    margin-right: $space-1;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: $accent;
+  }
+
+  &.saved {
+    border-color: rgba($accent, 0.35) !important;
+    color: $accent !important;
+    background: $accent-light !important;
+  }
+}
+
+.media-section {
+  margin-bottom: $space-5;
+}
+
+.media-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.42fr) minmax(250px, 0.58fr);
+  gap: $space-3;
+  height: clamp(360px, 42vw, 520px);
+
+  &.single-image {
+    grid-template-columns: 1fr;
+  }
+
+  @include respond-to(lg) {
+    grid-template-columns: minmax(0, 1fr) 240px;
+    height: 420px;
+  }
+
+  @include respond-to(md) {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+}
+
+.main-image-container {
+  position: relative;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  border-radius: $radius-lg;
+  background: $surface-alt;
+  box-shadow: $shadow-card;
+
+  @include respond-to(md) {
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+}
+
+.main-image,
+.side-image img,
+.thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.main-image {
+  transition: transform 0.5s ease;
+
+  .main-image-container:hover & {
+    transform: scale(1.02);
+  }
+}
+
+.listing-pill,
+.image-counter {
+  position: absolute;
+  z-index: $z-raised;
+  @include flex(row, center, center, $space-2);
+  min-height: 34px;
+  padding: 0 $space-3;
+  border-radius: $radius-full;
+  background: rgba($surface, 0.94);
+  color: $text-primary;
+  font-family: $font-primary;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+  box-shadow: $shadow-md;
+}
+
+.listing-pill {
+  top: $space-4;
+  left: $space-4;
+
+  span {
+    width: 8px;
+    height: 8px;
+    border-radius: $radius-full;
+    background: $accent;
+  }
+}
+
+.image-counter {
+  right: $space-4;
+  bottom: $space-4;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: $primary;
+  }
+}
+
+.gallery-nav {
+  position: absolute;
+  top: 50%;
+  z-index: $z-raised;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: $radius-full;
+  background: rgba($surface, 0.92);
+  color: $text-primary;
+  box-shadow: $shadow-md;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: $transition-fast;
+  @include flex(row, center, center);
+
+  &:hover {
+    background: $surface;
+    color: $primary;
+    box-shadow: $shadow-lg;
+  }
+
+  &.prev {
+    left: $space-4;
+  }
+
+  &.next {
+    right: $space-4;
+  }
+
+  mat-icon {
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
+  }
+}
+
+.side-gallery {
+  display: grid;
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  gap: $space-3;
+  min-height: 0;
+
+  @include respond-to(md) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: none;
+  }
+
+  @include respond-to(sm) {
+    display: none;
+  }
+}
+
+.side-image,
+.thumbnail {
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  background: $surface-alt;
+  cursor: pointer;
+}
+
+.side-image {
+  border-radius: $radius-md;
+  box-shadow: $shadow-card;
+  opacity: 0.78;
+  transition: $transition-fast;
+
+  &:hover,
+  &.active {
+    opacity: 1;
+    box-shadow: $shadow-md;
+  }
+}
+
+.thumbnail-strip {
+  @include flex(row, flex-start, center, $space-2);
+  margin-top: $space-3;
+  padding-bottom: $space-1;
+  overflow-x: auto;
+}
+
+.thumbnail {
+  width: 76px;
+  height: 56px;
+  flex: 0 0 76px;
+  border-radius: $radius-md;
+  opacity: 0.58;
+  transition: $transition-fast;
+
+  &.active,
+  &:hover {
+    opacity: 1;
+    box-shadow: 0 0 0 2px $primary;
+  }
+}
+
+.property-summary-card,
+.content-panel,
+.sidebar-card {
+  background: $surface;
+  border: 1px solid $divider;
+  border-radius: $radius-md;
+  box-shadow: $shadow-card;
+}
+
+.property-summary-card {
+  padding: $space-6;
+  margin-bottom: $space-5;
+
+  @include respond-to(sm) {
+    padding: $space-5;
+  }
+}
+
+.summary-meta,
+.summary-headline,
+.property-location,
+.summary-metrics,
+.metric,
+.feature-item,
+.map-address,
+.seller-info,
+.seller-phone {
+  @include flex(row, flex-start, center);
+}
+
+.summary-meta {
+  justify-content: space-between;
+  gap: $space-4;
+  margin-bottom: $space-5;
+
+  @include respond-to(md) {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: $space-3;
+  }
+}
+
+.property-badges {
+  @include flex(row, flex-start, center, $space-2);
+  flex-wrap: wrap;
+}
+
+.type-badge,
+.listing-badge,
+.status-approved {
+  min-height: 30px !important;
+  border-radius: $radius-full !important;
+  font-family: $font-primary !important;
+  font-size: $text-xs !important;
+  font-weight: $font-semibold !important;
+}
+
+.type-badge {
+  background: $primary-tint !important;
+  color: $primary-dark !important;
+  border: 1px solid $primary-light !important;
+}
+
+.listing-badge {
+  background: $accent-light !important;
+  color: $accent-dark !important;
+  border: 1px solid rgba($accent, 0.22) !important;
+}
+
+.status-approved {
+  background: $success-light !important;
+  color: $success !important;
+  border: 1px solid rgba($success, 0.2) !important;
+}
+
+.listed-date,
+.section-kicker {
+  font-family: $font-primary;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.listed-date {
+  color: $text-secondary;
+  white-space: nowrap;
+}
+
+.summary-headline {
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: $space-6;
+  margin-bottom: $space-6;
+
+  @include respond-to(md) {
+    flex-direction: column;
+    gap: $space-4;
+  }
+}
+
+.title-block {
+  min-width: 0;
+}
+
+.property-title {
+  margin: 0 0 $space-3;
+  color: $text-primary;
+  font-family: $font-heading;
+  font-size: $text-3xl;
+  font-weight: $font-bold;
+  line-height: $leading-tight;
+  letter-spacing: 0;
+
+  @include respond-to(md) {
+    font-size: $text-2xl;
+  }
+
+  @include respond-to(sm) {
+    font-size: $text-xl;
+  }
+}
+
+.property-location {
+  gap: $space-2;
+  color: $text-secondary;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  line-height: $leading-relaxed;
+
+  mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    color: $primary;
+    flex-shrink: 0;
+  }
+}
+
+.price-block {
+  flex-shrink: 0;
+  text-align: right;
+
+  @include respond-to(md) {
+    text-align: left;
+  }
+}
+
+.price {
+  color: $primary-dark;
+  font-family: $font-heading;
+  font-size: $text-3xl;
+  font-weight: $font-extrabold;
+  line-height: 1.1;
+  letter-spacing: 0;
+
+  @include respond-to(md) {
+    font-size: $text-2xl;
+  }
+}
+
+.summary-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+  gap: 0;
+  border-top: 1px solid $divider;
+  border-left: 1px solid $divider;
+}
+
+.metric {
+  gap: $space-3;
+  min-height: 72px;
+  padding: $space-4;
+  border-right: 1px solid $divider;
+  border-bottom: 1px solid $divider;
+
+  mat-icon {
+    width: 22px;
+    height: 22px;
+    font-size: 22px;
+    color: $primary;
+    flex-shrink: 0;
+  }
+
+  strong {
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-lg;
+    font-weight: $font-bold;
+    line-height: 1;
+  }
+
+  span {
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-sm;
+  }
+}
+
+.property-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 370px;
+  gap: $space-5;
+  align-items: start;
+
+  @include respond-to(lg) {
+    grid-template-columns: minmax(0, 1fr) 340px;
+  }
+
+  @include respond-to(md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.property-main {
+  @include flex(column, flex-start, stretch, $space-5);
+}
+
+.content-panel {
+  padding: $space-6;
+
+  @include respond-to(sm) {
+    padding: $space-5;
+  }
+}
+
+.section-heading {
+  margin-bottom: $space-4;
+
+  h2 {
+    margin: $space-1 0 0;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-xl;
+    font-weight: $font-bold;
+    line-height: $leading-tight;
+    letter-spacing: 0;
+  }
+}
+
+.section-kicker {
+  color: $primary;
+}
+
+.description-text {
+  margin: 0;
+  color: $text-secondary;
+  font-family: $font-primary;
+  font-size: $text-base;
+  line-height: $leading-loose;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: $space-3;
+}
+
+.feature-item {
+  gap: $space-3;
+  min-height: 48px;
+  padding: $space-3 $space-4;
+  border: 1px solid $divider;
+  border-radius: $radius-md;
+  background: $background;
+
+  i {
+    width: 34px;
+    height: 34px;
+    border-radius: $radius-full;
+    background: $primary-tint;
+    color: $success;
+    flex-shrink: 0;
+    font-size: 16px;
+    line-height: 1;
+    @include flex(row, center, center);
+  }
+
+  span {
+    color: $text-primary;
+    font-family: $font-primary;
+    font-size: $text-sm;
+    font-weight: $font-medium;
+  }
+}
+
+.map-panel {
+  overflow: hidden;
+}
+
+.map-address {
+  gap: $space-2;
+  margin-bottom: $space-4;
+  color: $text-secondary;
+  font-family: $font-primary;
+  font-size: $text-sm;
+
+  mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    color: $accent;
+    flex-shrink: 0;
+  }
+}
+
+.map-frame {
+  height: clamp(320px, 32vw, 430px);
+  overflow: hidden;
+  border: 1px solid $divider;
+  border-radius: $radius-md;
+  background: $surface-alt;
+
+  app-map-view {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.property-sidebar {
+  position: sticky;
+  top: calc(#{$navbar-height} + #{$space-5});
+
+  @include respond-to(md) {
+    position: static;
+    order: -1;
+  }
+}
+
+.sidebar-card {
+  padding: $space-6;
+
+  @include respond-to(sm) {
+    padding: $space-5;
+  }
+}
+
+.contact-heading {
+  margin-bottom: $space-5;
+
+  h2 {
+    margin: $space-1 0 0;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-xl;
+    font-weight: $font-bold;
+    line-height: $leading-tight;
+    letter-spacing: 0;
+  }
+}
+
+.seller-info {
+  gap: $space-4;
+  margin-bottom: $space-5;
+  padding: $space-4;
+  border: 1px solid $divider;
+  border-radius: $radius-md;
+  background: $background;
+}
+
+.seller-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: $radius-full;
+  background: $primary;
+  color: $surface;
+  flex: 0 0 48px;
+  font-family: $font-heading;
+  font-size: $text-lg;
+  font-weight: $font-bold;
+  @include flex(row, center, center);
+}
+
+.seller-details {
+  @include flex(column, flex-start, flex-start, $space-1);
+  min-width: 0;
+}
+
+.seller-name {
+  color: $text-primary;
+  font-family: $font-primary;
+  font-size: $text-base;
+  font-weight: $font-semibold;
+}
+
+.seller-phone {
+  gap: $space-1;
+  color: $text-secondary;
+  font-family: $font-primary;
+  font-size: $text-sm;
+
+  mat-icon {
+    width: 15px;
+    height: 15px;
+    font-size: 15px;
+    color: $primary;
+  }
+}
+
+.appointment-form {
+  @include flex(column, flex-start, stretch, $space-1);
+
+  .full-width {
+    width: 100%;
+  }
+
+  .mat-mdc-form-field {
+    --mdc-outlined-text-field-outline-color: #{$border};
+    --mdc-outlined-text-field-hover-outline-color: #{$primary};
+    --mdc-outlined-text-field-focus-outline-color: #{$primary};
+    --mdc-outlined-text-field-label-text-color: #{$text-secondary};
+    --mdc-outlined-text-field-focus-label-text-color: #{$primary};
+    --mdc-outlined-text-field-input-text-color: #{$text-primary};
+    --mdc-outlined-text-field-caret-color: #{$primary};
+    --mdc-outlined-text-field-container-shape: #{$radius-md};
+    font-family: $font-primary;
+  }
+}
+
+.submit-btn {
+  width: 100%;
+  height: 48px;
+  margin-top: $space-2;
+  border-radius: $radius-md !important;
+  background: $primary !important;
+  color: $surface !important;
+  box-shadow: 0 8px 18px rgba($primary, 0.22) !important;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  font-weight: $font-semibold;
+  transition: $transition-fast !important;
+
+  mat-icon {
+    margin-right: $space-2;
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+  }
+
+  &:hover:not(:disabled) {
+    background: $primary-dark !important;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    background: $text-disabled !important;
+    box-shadow: none !important;
+  }
+}
+
+.appointment-success,
+.login-prompt {
+  @include flex(column, center, center, $space-3);
+  padding: $space-4 0 0;
+  text-align: center;
+
+  p {
+    margin: 0;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-sm;
+    line-height: $leading-relaxed;
+  }
+}
+
+.appointment-success {
+  .success-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 44px;
+    color: $success;
+  }
+
+  h3 {
+    margin: 0;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-lg;
+    font-weight: $font-bold;
+    letter-spacing: 0;
+  }
+
+  button {
+    color: $primary !important;
+    font-family: $font-primary;
+    font-weight: $font-semibold;
+  }
+}
+
+.login-prompt {
+  mat-icon {
+    width: 42px;
+    height: 42px;
+    font-size: 42px;
+    color: $primary;
+  }
+
+  button {
+    width: 100%;
+    height: 44px;
+    border-radius: $radius-md !important;
+    background: $primary !important;
+    color: $surface !important;
+    font-family: $font-primary;
+    font-weight: $font-semibold;
+  }
+}

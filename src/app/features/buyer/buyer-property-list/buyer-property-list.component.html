@@ -4,40 +4,155 @@
     <p class="page-subtitle">Browse all available properties in Nepal</p>
   </div>
 
-  <div class="properties-content">
-    @if (loading) {
-      <div class="loading-container">
-        <mat-spinner diameter="48"></mat-spinner>
-        <p>Loading properties...</p>
-      </div>
-    } @else if (error) {
-      <div class="error-container">
-        <p>{{ error }}</p>
-        <button mat-stroked-button (click)="loadProperties()">Try Again</button>
-      </div>
-    } @else {
-      <div class="properties-grid">
-        @for (property of paginatedProperties; track property.id) {
-          <app-property-card [property]="property" mode="view" />
-        } @empty {
-          <div class="empty-state">
-            <mat-icon>home</mat-icon>
-            <p>No properties found</p>
-          </div>
+  <div class="content-layout">
+    <!-- Filter Sidebar -->
+    <div class="filter-sidebar">
+      <div class="filter-header">
+        <h3>Filters</h3>
+        @if (hasActiveFilters) {
+          <button mat-button color="primary" (click)="clearFilters()">
+            Clear All
+          </button>
         }
       </div>
 
-      @if (totalProperties > pageSize) {
-        <mat-paginator
-          [length]="totalProperties"
-          [pageSize]="pageSize"
-          [pageIndex]="pageIndex"
-          [pageSizeOptions]="[6, 12, 15]"
-          (page)="onPageChange($event)"
-          showFirstLastButtons
-        >
-        </mat-paginator>
+      <div class="filter-section">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Search</mat-label>
+          <input
+            matInput
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onFilterChange()"
+            placeholder="Search by name, city..."
+          />
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <div class="filter-section">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Property Type</mat-label>
+          <mat-select
+            [(value)]="selectedType"
+            (selectionChange)="onFilterChange()"
+          >
+            <mat-option value="">All Types</mat-option>
+            <mat-option value="house">House</mat-option>
+            <mat-option value="apartment">Apartment</mat-option>
+            <mat-option value="land">Land</mat-option>
+            <mat-option value="commercial">Commercial</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="filter-section">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Listing Type</mat-label>
+          <mat-select
+            [(value)]="selectedListingType"
+            (selectionChange)="onFilterChange()"
+          >
+            <mat-option value="">All</mat-option>
+            <mat-option value="sale">For Sale</mat-option>
+            <mat-option value="rent">For Rent</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="filter-section">
+        <label class="filter-label">Price Range</label>
+        <div class="price-range">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Min</mat-label>
+            <input
+              matInput
+              type="number"
+              [(ngModel)]="minPrice"
+              (ngModelChange)="onFilterChange()"
+              placeholder="Min"
+            />
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Max</mat-label>
+            <input
+              matInput
+              type="number"
+              [(ngModel)]="maxPrice"
+              (ngModelChange)="onFilterChange()"
+              placeholder="Max"
+            />
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Bedrooms</mat-label>
+          <mat-select
+            [(value)]="bedrooms"
+            (selectionChange)="onFilterChange()"
+          >
+            <mat-option [value]="null">Any</mat-option>
+            <mat-option [value]="1">1+</mat-option>
+            <mat-option [value]="2">2+</mat-option>
+            <mat-option [value]="3">3+</mat-option>
+            <mat-option [value]="4">4+</mat-option>
+            <mat-option [value]="5">5+</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      @if (hasActiveFilters) {
+        <div class="active-filters">
+          <span class="filter-count">{{ filteredProperties.length }} properties found</span>
+        </div>
       }
-    }
+    </div>
+
+    <!-- Properties Content -->
+    <div class="properties-content">
+      @if (loading) {
+        <div class="loading-container">
+          <mat-spinner diameter="48"></mat-spinner>
+          <p>Loading properties...</p>
+        </div>
+      } @else if (error) {
+        <div class="error-container">
+          <p>{{ error }}</p>
+          <button mat-stroked-button (click)="loadProperties()">Try Again</button>
+        </div>
+      } @else {
+        @if (filteredProperties.length === 0) {
+          <div class="empty-state">
+            <mat-icon>search_off</mat-icon>
+            <h3>No properties found</h3>
+            <p>Try adjusting your filters</p>
+            @if (hasActiveFilters) {
+              <button mat-raised-button color="primary" (click)="clearFilters()">
+                Clear Filters
+              </button>
+            }
+          </div>
+        } @else {
+          <div class="properties-grid">
+            @for (property of paginatedProperties; track property.id) {
+              <app-property-card [property]="property" mode="view" />
+            }
+          </div>
+
+          @if (totalProperties > pageSize) {
+            <mat-paginator
+              [length]="totalProperties"
+              [pageSize]="pageSize"
+              [pageIndex]="pageIndex"
+              [pageSizeOptions]="[6, 12, 15]"
+              (page)="onPageChange($event)"
+              showFirstLastButtons
+            >
+            </mat-paginator>
+          }
+        }
+      }
+    </div>
   </div>
 </div>

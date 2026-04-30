@@ -1,7 +1,7 @@
 <div class="auth-container">
   <div class="auth-form-section">
     <div class="auth-form-wrapper">
-      <div class="brand">
+      <a routerLink="/" class="brand logo-link">
         <div class="logo-mark">
           <div class="logo-icon">
             <mat-icon>home</mat-icon>
@@ -11,7 +11,7 @@
           </div>
         </div>
         <p class="tagline">Real Estate · Nepal</p>
-      </div>
+      </a>
       <div class="form-heading">
         <h1 class="title">Welcome back</h1>
         <p class="subtitle">Sign in to your account to continue</p>
@@ -91,13 +91,9 @@
           } @else {
             SIGN IN
           }
-        </button>
+      </button>
       </form>
-      <div class="divider">
-        <span class="line"></span>
-        <span>or</span>
-        <span class="line"></span>
-      </div>
+
       <div class="auth-footer">
         <p>Don't have an account? <a routerLink="/register">Create one</a></p>
       </div>

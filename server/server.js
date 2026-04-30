@@ -131,12 +131,11 @@ app.post("/register", (req, res) => {
   }
 });
 
-// Public endpoint for fetching agents (for home page)
 app.get("/agents", (req, res) => {
   try {
     const db = getDB();
     const agents = db.users
-      .filter(u => u.role === 'seller' && u.isActive)
+      .filter((u) => u.role === "seller" && u.isActive)
       .map(({ password, ...user }) => user);
     res.json(agents);
   } catch (error) {

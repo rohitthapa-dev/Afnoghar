@@ -608,7 +608,7 @@
       "date": "2025-04-10",
       "time": "10:00 AM",
       "message": "I would like to visit this property this weekend. Please confirm.",
-      "status": "pending",
+      "status": "cancelled",
       "createdAt": "2025-04-01T00:00:00.000Z"
     },
     {
@@ -652,6 +652,17 @@
       "message": "Looking for a family home. Would like to visit.",
       "status": "pending",
       "createdAt": "2025-04-05T00:00:00.000Z"
+    },
+    {
+      "id": 5,
+      "propertyId": 2,
+      "userId": 3,
+      "date": "2026-03-02",
+      "time": "10:00 AM",
+      "message": "",
+      "buyerId": 3,
+      "status": "cancelled",
+      "createdAt": "2026-04-30T10:31:53.642Z"
     }
   ],
   "favorites": [

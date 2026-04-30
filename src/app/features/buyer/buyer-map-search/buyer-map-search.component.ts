@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MapViewComponent } from '../../../shared/components/map-view/map-view.component';
@@ -22,7 +22,7 @@ import * as L from 'leaflet';
   templateUrl: './buyer-map-search.component.html',
   styleUrl: './buyer-map-search.component.scss',
 })
-export class BuyerMapSearchComponent implements OnInit {
+export class BuyerMapSearchComponent implements OnInit, OnDestroy {
   private propertyService = inject(PropertyService);
   private route = inject(ActivatedRoute);
 
@@ -33,6 +33,8 @@ export class BuyerMapSearchComponent implements OnInit {
   selectedPropertyId?: number;
   isLoading = true;
   private initialLoadDone = false;
+  private mapInvalidationFrame?: number;
+  private mapInvalidationTimeout?: ReturnType<typeof setTimeout>;
 
   searchTerm = '';
   selectedType: '' | 'house' | 'apartment' | 'land' | 'commercial' = '';
@@ -80,6 +82,13 @@ export class BuyerMapSearchComponent implements OnInit {
         },
       });
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.mapInvalidationFrame) {
+      cancelAnimationFrame(this.mapInvalidationFrame);
+    }
+    clearTimeout(this.mapInvalidationTimeout);
   }
 
   onMarkerClick(propertyId: number): void {
@@ -134,15 +143,28 @@ export class BuyerMapSearchComponent implements OnInit {
 
   set viewMode(mode: 'map' | 'list') {
     this._viewMode = mode;
-    setTimeout(() => {
-      if (mode === 'map' && this.mapView) {
-        this.mapView.invalidateMapSize();
-      }
-    }, 200);
+
+    if (mode === 'map') {
+      this.invalidateVisibleMap();
+    }
   }
 
   setViewMode(mode: 'map' | 'list'): void {
     this.viewMode = mode;
+  }
+
+  private invalidateVisibleMap(): void {
+    if (this.mapInvalidationFrame) {
+      cancelAnimationFrame(this.mapInvalidationFrame);
+    }
+    clearTimeout(this.mapInvalidationTimeout);
+
+    this.mapInvalidationFrame = requestAnimationFrame(() => {
+      this.mapView?.invalidateMapSize();
+      this.mapInvalidationTimeout = setTimeout(() => {
+        this.mapView?.invalidateMapSize();
+      }, 150);
+    });
   }
 
   get paginatedProperties(): Property[] {

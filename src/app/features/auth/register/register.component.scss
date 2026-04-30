@@ -196,6 +196,17 @@
   }
 }
 
+.logo-link {
+  display: inline-block;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid $primary;
+    outline-offset: 4px;
+  }
+}
+
 .form-heading {
   margin-bottom: $space-6;
 
@@ -437,6 +448,7 @@
       color: $primary;
       font-weight: $font-semibold;
       text-decoration: none;
+      cursor: pointer;
       transition: $transition-fast;
 
       &:hover {

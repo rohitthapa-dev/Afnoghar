@@ -24,8 +24,7 @@
           <div class="feature-text">
             <span class="feature-title">Verified Listings</span>
             <span class="feature-desc"
-              >All properties reviewed by our team</span
-            >
+              >All properties reviewed by our team</span>
           </div>
         </div>
         <div class="feature">
@@ -35,8 +34,7 @@
           <div class="feature-text">
             <span class="feature-title">Map-Based Search</span>
             <span class="feature-desc"
-              >Explore properties across the valley</span
-            >
+              >Explore properties across the valley</span>
           </div>
         </div>
         <div class="feature">
@@ -54,7 +52,7 @@
 
   <div class="auth-form-section">
     <div class="auth-form-wrapper">
-      <div class="brand">
+      <a routerLink="/" class="brand logo-link">
         <div class="logo-mark">
           <div class="logo-icon">
             <mat-icon>home</mat-icon>
@@ -64,7 +62,7 @@
           </div>
         </div>
         <p class="tagline">Real Estate · Nepal</p>
-      </div>
+      </a>
 
       <div class="form-heading">
         <h1 class="title">Create your account</h1>
@@ -225,8 +223,7 @@
           </mat-checkbox>
           @if (terms?.invalid && terms?.touched) {
             <span class="terms-error"
-              >You must agree to the terms to continue</span
-            >
+              >You must agree to the terms to continue</span>
           }
         </div>
 
@@ -243,12 +240,6 @@
           }
         </button>
       </form>
-
-      <div class="divider">
-        <span class="line"></span>
-        <span>or</span>
-        <span class="line"></span>
-      </div>
 
       <div class="auth-footer">
         <p>Already have an account? <a routerLink="/login">Sign in</a></p>

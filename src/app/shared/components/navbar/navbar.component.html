@@ -80,6 +80,8 @@
   @if (mobileMenuOpen()) {
     <div class="mobile-nav">
       @if (!isLoggedIn) {
+        <a (click)="navigateToMapSearch('sale'); closeMobileMenu()">Buy</a>
+        <a (click)="navigateToMapSearch('rent'); closeMobileMenu()">Rent</a>
         <a routerLink="/about" (click)="closeMobileMenu()">About</a>
         <div class="mobile-auth-buttons">
           <a
@@ -87,13 +89,11 @@
             class="btn btn-outline"
             (click)="closeMobileMenu()"
             >Login</a>
-          >
           <a
             routerLink="/register"
             class="btn btn-primary"
             (click)="closeMobileMenu()"
             >Register</a>
-          >
         </div>
       } @else {
         <div class="mobile-user-info">

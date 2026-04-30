@@ -4,6 +4,8 @@ import { Component } from '@angular/core';
   selector: 'app-buyer-appointments',
   imports: [],
   templateUrl: './buyer-appointments.component.html',
-  styleUrl: './buyer-appointments.component.scss',
+  styleUrl: './buyer-appointments.component.scss'
 })
-export class BuyerAppointmentsComponent {}
+export class BuyerAppointmentsComponent {
+
+}
