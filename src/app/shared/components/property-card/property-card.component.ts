@@ -10,6 +10,11 @@ import { FavoritesService } from '../../../core/services/favorites.service';
 import { PropertyTypePipe } from '../../pipes/property-type.pipe';
 import { PriceFormatPipe } from '../../pipes/price-format.pipe';
 
+export interface FavoriteToggleEvent {
+  property: Property;
+  action: 'added' | 'removed';
+}
+
 @Component({
   selector: 'app-property-card',
   standalone: true,
@@ -32,10 +37,11 @@ export class PropertyCardComponent {
 
   @Input() property!: Property;
   @Input() mode: 'view' | 'full' = 'view';
+  @Input() showFavoriteFeedback = true;
 
   @Output() viewDetails = new EventEmitter<number>();
   @Output() bookAppointment = new EventEmitter<number>();
-  @Output() favoriteToggled = new EventEmitter<number>();
+  @Output() favoriteToggled = new EventEmitter<FavoriteToggleEvent>();
 
   isFavorite = computed(() =>
     this.favoritesService.isFavorite(this.property?.id)
@@ -79,7 +85,7 @@ export class PropertyCardComponent {
 
     this.favoritesService.toggleFavorite(this.property.id, userId).subscribe({
       next: (result) => {
-        if (result.action === 'removed') {
+        if (result.action === 'removed' && this.showFavoriteFeedback) {
           this.snackBar.open('Removed from favorites', 'Undo', {
             duration: 3000,
             horizontalPosition: 'start',
@@ -88,7 +94,10 @@ export class PropertyCardComponent {
             this.favoritesService.toggleFavorite(this.property.id, userId).subscribe();
           });
         }
-        this.favoriteToggled.emit(this.property.id);
+        this.favoriteToggled.emit({
+          property: this.property,
+          action: result.action,
+        });
       },
     });
   }

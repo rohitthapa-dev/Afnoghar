@@ -22,23 +22,22 @@ export class FavoritesService {
   favoriteIds = computed(() => this.favorites().map(f => f.propertyId));
   favoritesCount = computed(() => this.favorites().length);
 
-  loadFavorites(userId: number): void {
-    if (!userId) return;
+  loadFavorites(userId: number): Observable<Favorite[]> {
+    if (!userId) {
+      this.clearFavorites();
+      return of([]);
+    }
 
-    this.http
+    return this.http
       .get<Favorite[]>(`${this.apiUrl}/favorites?buyerId=${userId}`)
-      .subscribe({
-        next: (favorites: Favorite[]) => this.favorites.set(favorites),
-      });
+      .pipe(tap((favorites: Favorite[]) => this.favorites.set(favorites)));
   }
 
   getFavoriteProperties(userId: number): Observable<Property[]> {
     if (!userId) return of([]);
 
-    return this.http
-      .get<Favorite[]>(`${this.apiUrl}/favorites?buyerId=${userId}`)
+    return this.loadFavorites(userId)
       .pipe(
-        tap((favorites: Favorite[]) => this.favorites.set(favorites)),
         map((favorites: Favorite[]) => favorites.map(f => f.propertyId)),
         switchMap((propertyIds: number[]) => {
           if (propertyIds.length === 0) return of([]);
@@ -47,12 +46,14 @@ export class FavoritesService {
       );
   }
 
-  isFavorite(propertyId: number): boolean {
+  isFavorite(propertyId?: number): boolean {
+    if (!propertyId) return false;
     return this.favoriteIds().includes(propertyId);
   }
 
   toggleFavorite(propertyId: number, userId: number): Observable<{ action: 'added' | 'removed'; favorite?: Favorite }> {
     if (!userId) return throwError(() => new Error('User not logged in'));
+    if (!propertyId) return throwError(() => new Error('Property is required'));
 
     const existing = this.favorites().find(
       f => f.propertyId === propertyId && f.buyerId === userId
@@ -74,7 +75,16 @@ export class FavoritesService {
       })
       .pipe(
         tap((favorite: Favorite) => {
-          this.favorites.update(favs => [...favs, favorite]);
+          this.favorites.update(favs => {
+            const alreadyExists = favs.some(
+              f =>
+                f.id === favorite.id ||
+                (f.buyerId === favorite.buyerId &&
+                  f.propertyId === favorite.propertyId)
+            );
+
+            return alreadyExists ? favs : [...favs, favorite];
+          });
         }),
         map((favorite: Favorite) => ({ action: 'added' as const, favorite })),
       );

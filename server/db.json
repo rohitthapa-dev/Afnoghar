@@ -656,24 +656,6 @@
   ],
   "favorites": [
     {
-      "id": 1,
-      "buyerId": 3,
-      "propertyId": 1,
-      "createdAt": "2025-03-20T00:00:00.000Z"
-    },
-    {
-      "id": 2,
-      "buyerId": 3,
-      "propertyId": 4,
-      "createdAt": "2025-03-21T00:00:00.000Z"
-    },
-    {
-      "id": 3,
-      "buyerId": 3,
-      "propertyId": 5,
-      "createdAt": "2025-03-22T00:00:00.000Z"
-    },
-    {
       "id": 4,
       "buyerId": 5,
       "propertyId": 2,

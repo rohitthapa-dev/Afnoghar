@@ -1,10 +1,13 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { PropertyCardComponent } from '../../../shared/components/property-card/property-card.component';
+import {
+  FavoriteToggleEvent,
+  PropertyCardComponent,
+} from '../../../shared/components/property-card/property-card.component';
 import { FavoritesService } from '../../../core/services/favorites.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Property } from '../../../core/models/property.model';
@@ -12,14 +15,20 @@ import { Property } from '../../../core/models/property.model';
 @Component({
   selector: 'app-buyer-favorites',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatSnackBarModule, PropertyCardComponent],
+  imports: [
+    CommonModule,
+    RouterLink,
+    MatIconModule,
+    MatButtonModule,
+    MatSnackBarModule,
+    PropertyCardComponent,
+  ],
   templateUrl: './buyer-favorites.component.html',
   styleUrl: './buyer-favorites.component.scss',
 })
 export class BuyerFavoritesComponent implements OnInit {
   private favoritesService = inject(FavoritesService);
   private authService = inject(AuthService);
-  private router = inject(Router);
   private snackBar = inject(MatSnackBar);
 
   favoriteProperties = signal<Property[]>([]);
@@ -35,10 +44,13 @@ export class BuyerFavoritesComponent implements OnInit {
 
   private loadFavorites(): void {
     const userId = this.getUserId();
-    if (!userId) return;
+    if (!userId) {
+      this.favoriteProperties.set([]);
+      this.isLoading.set(false);
+      return;
+    }
 
     this.isLoading.set(true);
-    this.favoritesService.loadFavorites(userId);
     this.favoritesService.getFavoriteProperties(userId).subscribe({
       next: (properties) => {
         this.favoriteProperties.set(properties);
@@ -48,33 +60,41 @@ export class BuyerFavoritesComponent implements OnInit {
     });
   }
 
-  onViewDetails(propertyId: number): void {
-    this.router.navigate(['/buyer/properties', propertyId]);
-  }
-
-  onRemoveFavorite(propertyId: number): void {
+  onFavoriteToggled(event: FavoriteToggleEvent): void {
     const userId = this.getUserId();
     if (!userId) return;
 
-    this.favoritesService.removeFavoriteByPropertyId(propertyId).subscribe({
-      next: () => {
-        this.favoriteProperties.update(props =>
-          props.filter(p => p.id !== propertyId)
-        );
-        this.snackBar.open('Removed from favorites', 'Undo', {
-          duration: 3000,
-          horizontalPosition: 'start',
-          verticalPosition: 'bottom',
-        }).onAction().subscribe(() => {
-          this.favoritesService.toggleFavorite(propertyId, userId).subscribe({
-            next: (result) => {
-              if (result.action === 'added') {
-                this.loadFavorites();
-              }
-            },
-          });
-        });
-      },
+    if (event.action === 'added') {
+      this.favoriteProperties.update(props => {
+        const alreadyVisible = props.some(p => p.id === event.property.id);
+        return alreadyVisible ? props : [event.property, ...props];
+      });
+      return;
+    }
+
+    this.favoriteProperties.update(props =>
+      props.filter(p => p.id !== event.property.id)
+    );
+
+    this.snackBar.open('Removed from favorites', 'Undo', {
+      duration: 3000,
+      horizontalPosition: 'start',
+      verticalPosition: 'bottom',
+    }).onAction().subscribe(() => {
+      this.favoritesService.toggleFavorite(event.property.id, userId).subscribe({
+        next: (result) => {
+          if (result.action === 'added') {
+            this.favoriteProperties.update(props => {
+              const alreadyVisible = props.some(
+                p => p.id === event.property.id
+              );
+
+              return alreadyVisible ? props : [event.property, ...props];
+            });
+          }
+        },
+        error: () => this.loadFavorites(),
+      });
     });
   }
 }

@@ -1,10 +1,12 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
 import { AuthService } from './core/services/auth.service';
-import { filter } from 'rxjs/operators';
+import { FavoritesService } from './core/services/favorites.service';
+import { catchError, filter, of, switchMap } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-root',
@@ -15,14 +17,34 @@ import { filter } from 'rxjs/operators';
 })
 export class AppComponent implements OnInit {
   private authService = inject(AuthService);
+  private favoritesService = inject(FavoritesService);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
     this.router.events.pipe(
-      filter((event): event is NavigationEnd => event instanceof NavigationEnd)
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+      takeUntilDestroyed(this.destroyRef)
     ).subscribe(() => {
       window.scrollTo(0, 0);
     });
+
+    this.authService.currentUser$.pipe(
+      switchMap(user => {
+        if (user?.role !== 'buyer') {
+          this.favoritesService.clearFavorites();
+          return of([]);
+        }
+
+        return this.favoritesService.loadFavorites(user.id).pipe(
+          catchError(() => {
+            this.favoritesService.clearFavorites();
+            return of([]);
+          })
+        );
+      }),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe();
   }
 
   get showNavbar(): boolean {

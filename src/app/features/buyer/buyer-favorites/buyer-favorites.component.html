@@ -19,7 +19,8 @@
         <div class="property-item">
           <app-property-card
             [property]="property"
-            (favoriteToggled)="onRemoveFavorite(property.id)"
+            [showFavoriteFeedback]="false"
+            (favoriteToggled)="onFavoriteToggled($event)"
           />
         </div>
       }

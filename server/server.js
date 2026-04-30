@@ -313,12 +313,20 @@ app.get("/favorites", verifyToken, (req, res) => {
   try {
     const db = getDB();
     const { buyerId } = req.query;
-    
-    if (buyerId) {
-      return res.json(db.favorites.filter(f => f.buyerId === Number(buyerId)));
+
+    const requestedBuyerId = buyerId ? Number(buyerId) : req.user.id;
+
+    if (Number.isNaN(requestedBuyerId)) {
+      return res.status(400).json({ message: "Invalid buyer id." });
     }
-    
-    res.json(db.favorites);
+
+    if (req.user.role !== "admin" && requestedBuyerId !== req.user.id) {
+      return res
+        .status(403)
+        .json({ message: "Cannot access another user's favorites." });
+    }
+
+    res.json(db.favorites.filter((f) => f.buyerId === requestedBuyerId));
   } catch (error) {
     res.status(500).json({ message: "Error fetching favorites." });
   }
@@ -327,11 +335,36 @@ app.get("/favorites", verifyToken, (req, res) => {
 app.post("/favorites", verifyToken, (req, res) => {
   try {
     const db = getDB();
+    const propertyId = Number(req.body.propertyId);
+
+    if (!propertyId || Number.isNaN(propertyId)) {
+      return res.status(400).json({ message: "Property id is required." });
+    }
+
+    const propertyExists = db.properties.some((p) => p.id === propertyId);
+
+    if (!propertyExists) {
+      return res.status(404).json({ message: "Property not found." });
+    }
+
+    const existingFavorite = db.favorites.find(
+      (f) => f.buyerId === req.user.id && f.propertyId === propertyId,
+    );
+
+    if (existingFavorite) {
+      return res.json(existingFavorite);
+    }
+
+    const nextId =
+      db.favorites.reduce(
+        (max, favorite) => Math.max(max, favorite.id || 0),
+        0,
+      ) + 1;
 
     const newFavorite = {
-      id: db.favorites.length + 1,
-      ...req.body,
+      id: nextId,
       buyerId: req.user.id,
+      propertyId,
       createdAt: new Date().toISOString(),
     };
 
@@ -351,6 +384,14 @@ app.delete("/favorites/:id", verifyToken, (req, res) => {
 
     if (index === -1) {
       return res.status(404).json({ message: "Favorite not found." });
+    }
+
+    const favorite = db.favorites[index];
+
+    if (req.user.role !== "admin" && favorite.buyerId !== req.user.id) {
+      return res
+        .status(403)
+        .json({ message: "Cannot remove another user's favorite." });
     }
 
     db.favorites.splice(index, 1);

@@ -78,6 +78,7 @@
   font-family: $font-primary;
   font-weight: $font-semibold;
   transition: $transition-fast;
+  cursor: pointer;
 
   &:hover {
     background: $primary-dark;
