@@ -1,0 +1,615 @@
+@use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins" as *;
+
+:host {
+  display: block;
+  background: $background;
+  min-height: calc(100vh - #{$navbar-height});
+}
+
+.appointments-page {
+  max-width: $container-xl;
+  margin: 0 auto;
+  padding: $space-8 $space-8 $space-20;
+
+  @include respond-to(md) {
+    padding: $space-5 $space-4 $space-12;
+  }
+}
+
+.loading-container,
+.error-container {
+  @include flex(column, center, center, $space-4);
+  min-height: calc(100vh - #{$navbar-height});
+  padding: $space-8;
+  text-align: center;
+
+  p {
+    margin: 0;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-base;
+  }
+}
+
+.error-icon {
+  width: 48px;
+  height: 48px;
+  color: $error;
+  font-size: 48px;
+}
+
+.notifications-banner {
+  @include flex(column, flex-start, stretch, $space-3);
+  margin-bottom: $space-6;
+}
+
+.notification-item {
+  @include flex(row, space-between, flex-start, $space-4);
+  padding: $space-4 $space-5;
+  border: 1px solid $divider;
+  border-radius: $radius-md;
+  background: $surface;
+  box-shadow: $shadow-card;
+
+  &.notif-accepted {
+    border-color: rgba($success, 0.3);
+    background: $success-light;
+  }
+
+  &.notif-declined,
+  &.notif-cancelled {
+    border-color: rgba($error, 0.3);
+    background: $error-light;
+  }
+
+  &.notif-rescheduled,
+  &.notif-booked {
+    border-color: rgba($warning, 0.3);
+    background: $warning-light;
+  }
+}
+
+.notif-body {
+  @include flex(row, flex-start, flex-start, $space-3);
+  flex: 1;
+  min-width: 0;
+
+  mat-icon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    color: $text-primary;
+    font-size: 22px;
+  }
+
+  strong {
+    display: block;
+    margin-bottom: $space-1;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-sm;
+    font-weight: $font-semibold;
+  }
+
+  p {
+    margin: 0;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-sm;
+    line-height: $leading-relaxed;
+  }
+}
+
+.appointments-hero,
+.appointments-panel,
+.appointment-card {
+  border: 1px solid $divider;
+  border-radius: $radius-md;
+  background: $surface;
+  box-shadow: $shadow-card;
+}
+
+.appointments-hero {
+  @include flex(row, space-between, stretch, $space-8);
+  margin-bottom: $space-6;
+  padding: $space-8;
+
+  @include respond-to(lg) {
+    flex-direction: column;
+  }
+
+  @include respond-to(sm) {
+    padding: $space-5;
+  }
+}
+
+.hero-copy {
+  max-width: 460px;
+
+  h1 {
+    margin: $space-2 0 $space-3;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-3xl;
+    font-weight: $font-extrabold;
+    line-height: $leading-tight;
+
+    @include respond-to(sm) {
+      font-size: $text-2xl;
+    }
+  }
+
+  p {
+    margin: 0;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-base;
+    line-height: $leading-relaxed;
+  }
+}
+
+.section-kicker {
+  color: $primary;
+  font-family: $font-primary;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+  text-transform: uppercase;
+  letter-spacing: $tracking-wider;
+}
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(120px, 1fr));
+  gap: $space-3;
+  min-width: min(100%, 620px);
+
+  @include respond-to(md) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @include respond-to(sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stat-card {
+  min-height: 94px;
+  padding: $space-4;
+  border: 1px solid $divider;
+  border-radius: $radius-md;
+  background: $background;
+
+  &.wide {
+    min-width: 190px;
+  }
+
+  span {
+    display: block;
+    margin-bottom: $space-2;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-xs;
+    font-weight: $font-semibold;
+    text-transform: uppercase;
+    letter-spacing: $tracking-wider;
+  }
+
+  strong {
+    display: block;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-2xl;
+    font-weight: $font-bold;
+    line-height: $leading-tight;
+  }
+
+  &.wide strong {
+    font-size: $text-md;
+    line-height: $leading-snug;
+  }
+}
+
+.appointments-panel {
+  padding: $space-2 $space-6 $space-6;
+
+  @include respond-to(sm) {
+    padding: $space-1 $space-4 $space-4;
+  }
+}
+
+:host ::ng-deep {
+  .appointment-tabs {
+    .mat-mdc-tab-header {
+      border-bottom: 1px solid $divider;
+    }
+
+    .mdc-tab {
+      min-width: auto;
+      padding: 0 $space-4;
+    }
+
+    .mdc-tab-indicator__content--underline {
+      border-color: $primary !important;
+      border-top-width: 3px;
+      border-radius: $radius-full $radius-full 0 0;
+    }
+
+    .mat-mdc-tab-body-content {
+      overflow: visible;
+    }
+  }
+}
+
+.tab-label {
+  @include flex(row, center, center, $space-2);
+  color: $text-secondary;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  font-weight: $font-semibold;
+
+  mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+  }
+}
+
+.tab-count {
+  min-width: 24px;
+  height: 24px;
+  padding: 0 $space-2;
+  border-radius: $radius-full;
+  background: $primary-tint;
+  color: $primary-dark;
+  font-size: $text-xs;
+  line-height: 24px;
+}
+
+.tab-content {
+  padding-top: $space-6;
+}
+
+.empty-state {
+  @include flex(column, center, center, $space-3);
+  min-height: 360px;
+  padding: $space-12 $space-4;
+  text-align: center;
+
+  h3 {
+    margin: $space-2 0 0;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-xl;
+    font-weight: $font-bold;
+  }
+
+  p {
+    margin: 0;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-sm;
+  }
+}
+
+.empty-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: $radius-full;
+  background: $primary-tint;
+  color: $primary;
+  @include flex(row, center, center);
+
+  mat-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 30px;
+  }
+}
+
+.appointments-list {
+  @include flex(column, flex-start, stretch, $space-4);
+}
+
+.appointment-card {
+  display: grid;
+  grid-template-columns: 76px 168px minmax(0, 1fr) 180px;
+  gap: $space-5;
+  align-items: start;
+  padding: $space-5;
+  transition: $transition-fast;
+
+  &:hover {
+    border-color: $primary-light;
+    box-shadow: $shadow-card-hover;
+    transform: translateY(-2px);
+  }
+
+  &.is-cancelled {
+    opacity: 0.72;
+  }
+
+  @include respond-to(lg) {
+    grid-template-columns: 72px 144px minmax(0, 1fr);
+
+    .appointment-actions {
+      grid-column: 2 / -1;
+    }
+  }
+
+  @include respond-to(sm) {
+    grid-template-columns: 1fr;
+    gap: $space-4;
+  }
+}
+
+.date-badge {
+  width: 72px;
+  height: 78px;
+  border: 1px solid $primary-light;
+  border-radius: $radius-md;
+  background: $primary-tint;
+  text-align: center;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  span {
+    display: block;
+    padding: $space-1 0;
+    background: $primary;
+    color: $surface;
+    font-family: $font-primary;
+    font-size: $text-xs;
+    font-weight: $font-semibold;
+    text-transform: uppercase;
+  }
+
+  strong {
+    display: block;
+    padding-top: $space-2;
+    color: $primary-dark;
+    font-family: $font-heading;
+    font-size: $text-2xl;
+    font-weight: $font-extrabold;
+    line-height: 1;
+  }
+}
+
+.property-image {
+  height: 116px;
+  overflow: hidden;
+  border-radius: $radius-md;
+  background: $surface-alt;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  @include respond-to(sm) {
+    height: 190px;
+  }
+}
+
+.appointment-details {
+  min-width: 0;
+
+  h2 {
+    margin: $space-3 0;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-lg;
+    font-weight: $font-bold;
+    line-height: $leading-snug;
+  }
+}
+
+.card-topline {
+  @include flex(row, flex-start, center, $space-2);
+  flex-wrap: wrap;
+}
+
+.appointment-party {
+  @include flex(row, flex-start, center, $space-2);
+  margin: -$space-1 0 $space-3;
+  color: $text-secondary;
+  font-family: $font-primary;
+  font-size: $text-sm;
+
+  mat-icon {
+    width: 17px;
+    height: 17px;
+    color: $primary;
+    font-size: 17px;
+  }
+
+  span {
+    color: $text-secondary;
+    font-size: $text-xs;
+    font-weight: $font-semibold;
+    text-transform: uppercase;
+    letter-spacing: $tracking-wide;
+  }
+
+  strong {
+    color: $text-primary;
+    font-weight: $font-semibold;
+  }
+}
+
+.status-chip {
+  min-height: 28px !important;
+  border-radius: $radius-full !important;
+  font-family: $font-primary !important;
+  font-size: $text-xs !important;
+  font-weight: $font-semibold !important;
+
+  &.status-pending {
+    background: $warning-light !important;
+    color: $warning !important;
+  }
+
+  &.status-confirmed {
+    background: $success-light !important;
+    color: $success !important;
+  }
+
+  &.status-cancelled {
+    background: $error-light !important;
+    color: $error !important;
+  }
+}
+
+.property-type {
+  color: $text-secondary;
+  font-family: $font-primary;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+  text-transform: uppercase;
+}
+
+.appointment-meta {
+  @include flex(row, flex-start, center, $space-4);
+  flex-wrap: wrap;
+  color: $text-secondary;
+  font-family: $font-primary;
+  font-size: $text-sm;
+
+  span {
+    @include flex(row, flex-start, center, $space-1);
+  }
+
+  mat-icon {
+    width: 16px;
+    height: 16px;
+    color: $primary;
+    font-size: 16px;
+  }
+}
+
+.buyer-note {
+  @include flex(row, flex-start, center, $space-1);
+  margin-top: $space-3;
+  max-width: 100%;
+  color: $text-secondary;
+  font-family: $font-primary;
+  font-size: $text-sm;
+
+  mat-icon {
+    width: 16px;
+    height: 16px;
+    color: $accent;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+}
+
+.reschedule-form {
+  margin-top: $space-4;
+  padding: $space-4;
+  background: $background;
+  border: 1px solid $divider;
+  border-radius: $radius-md;
+}
+
+.reschedule-fields {
+  @include flex(row, flex-start, flex-start, $space-3);
+  flex-wrap: wrap;
+  margin-bottom: $space-3;
+
+  .mat-mdc-form-field {
+    --mdc-outlined-text-field-outline-color: #{$border};
+    --mdc-outlined-text-field-hover-outline-color: #{$primary};
+    --mdc-outlined-text-field-focus-outline-color: #{$primary};
+    --mdc-outlined-text-field-label-text-color: #{$text-secondary};
+    --mdc-outlined-text-field-focus-label-text-color: #{$primary};
+    --mdc-outlined-text-field-input-text-color: #{$text-primary};
+    --mdc-outlined-text-field-container-shape: #{$radius-md};
+    font-family: $font-primary;
+  }
+}
+
+.reschedule-field {
+  flex: 1;
+  min-width: 160px;
+}
+
+.reschedule-actions {
+  @include flex(row, flex-start, center, $space-2);
+}
+
+.confirm-reschedule-btn {
+  height: 38px;
+  border-radius: $radius-md !important;
+  background: $primary !important;
+  color: $surface !important;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  font-weight: $font-semibold;
+
+  &:disabled {
+    background: $text-disabled !important;
+  }
+}
+
+.appointment-actions {
+  @include flex(column, flex-start, stretch, $space-2);
+
+  button {
+    height: 40px;
+    border-radius: $radius-md !important;
+    font-family: $font-primary;
+    font-size: $text-sm;
+    font-weight: $font-semibold;
+  }
+
+  @include respond-to(lg) {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  @include respond-to(sm) {
+    align-items: stretch;
+  }
+}
+
+.view-btn {
+  background: $surface !important;
+  color: $primary !important;
+  border: 1.5px solid $primary !important;
+}
+
+.accept-btn {
+  background: $primary !important;
+  color: $surface !important;
+  box-shadow: 0 4px 12px rgba($primary, 0.2) !important;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    margin-right: $space-1;
+  }
+}
+
+.reschedule-btn {
+  border-color: $warning !important;
+  color: $warning !important;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    margin-right: $space-1;
+  }
+}
+
+.decline-btn {
+  border-color: rgba($error, 0.35) !important;
+  color: $error !important;
+  background: $surface !important;
+}

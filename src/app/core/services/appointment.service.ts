@@ -1,15 +1,30 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 export interface Appointment {
   id?: number;
   propertyId: number;
-  userId: number;
+  userId?: number;
+  buyerId?: number;
+  sellerId?: number;
+  propertyTitle?: string;
+  buyerName?: string;
+  sellerName?: string;
   date: string;
   time: string;
-  status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
+  message?: string;
   notes?: string;
+  rescheduledBy?: 'buyer' | 'seller';
+
+  status:
+    | 'pending'
+    | 'accepted'
+    | 'declined'
+    | 'cancelled'
+    | 'confirmed'
+    | 'completed';
+
   createdAt?: string;
 }
 
@@ -19,7 +34,6 @@ export interface Appointment {
 export class AppointmentService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:3000';
-
   getAppointments(): Observable<Appointment[]> {
     return this.http.get<Appointment[]>(`${this.apiUrl}/appointments`);
   }
@@ -49,5 +63,26 @@ export class AppointmentService {
 
   deleteAppointment(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/appointments/${id}`);
+  }
+
+  isSlotTaken(
+    propertyId: number,
+    date: string,
+    time: string,
+    excludeId?: number,
+  ): Observable<boolean> {
+    return this.getAppointments().pipe(
+      map((appointments) =>
+        appointments.some(
+          (a) =>
+            a.propertyId === propertyId &&
+            a.date === date &&
+            a.time === time &&
+            a.status !== 'cancelled' &&
+            a.status !== 'declined' &&
+            a.id !== excludeId,
+        ),
+      ),
+    );
   }
 }
