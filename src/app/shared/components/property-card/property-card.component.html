@@ -8,13 +8,15 @@
         {{ property.listingType === "sale" ? "For Sale" : "For Rent" }}
       </span>
     </div>
-    <button
-      class="favorite-btn"
-      (click)="onFavoriteClick($event)"
-      mat-icon-button
-    >
-      <mat-icon>{{ isFavorite() ? 'favorite' : 'favorite_border' }}</mat-icon>
-    </button>
+    @if (isBuyer) {
+      <button
+        class="favorite-btn"
+        (click)="onFavoriteClick($event)"
+        mat-icon-button
+      >
+        <mat-icon>{{ isFavorite() ? 'favorite' : 'favorite_border' }}</mat-icon>
+      </button>
+    }
   </div>
 
   <div class="card-content">

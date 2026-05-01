@@ -308,8 +308,86 @@ app.patch("/appointments/:id", verifyToken, (req, res) => {
   }
 });
 
+app.get("/notifications", verifyToken, (req, res) => {
+  try {
+    const db = getDB();
+    const notifications = db.notifications
+      .filter((n) => n.userId === req.user.id)
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt || 0).getTime() -
+          new Date(a.createdAt || 0).getTime(),
+      );
+    res.json(notifications);
+  } catch {
+    res.status(500).json({ message: "Error fetching notifications." });
+  }
+});
+
+app.post("/notifications", verifyToken, (req, res) => {
+  try {
+    const db = getDB();
+
+    const nextId =
+      db.notifications.reduce((max, n) => Math.max(max, n.id || 0), 0) + 1;
+
+    const notification = {
+      id: nextId,
+      ...req.body,
+      createdAt: new Date().toISOString(),
+      read: false,
+    };
+
+    db.notifications.push(notification);
+    saveDB(db);
+
+    res.status(201).json(notification);
+  } catch {
+    res.status(500).json({ message: "Error creating notification." });
+  }
+});
+
+app.patch("/notifications/:id", verifyToken, (req, res) => {
+  try {
+    const db = getDB();
+
+    const index = db.notifications.findIndex(
+      (n) => n.id === Number(req.params.id),
+    );
+
+    if (index === -1) {
+      return res.status(404).json({ message: "Not found." });
+    }
+
+    if (
+      req.user.role !== "admin" &&
+      db.notifications[index].userId !== req.user.id
+    ) {
+      return res
+        .status(403)
+        .json({ message: "Not allowed to update this notification." });
+    }
+
+    db.notifications[index] = {
+      ...db.notifications[index],
+      ...req.body,
+    };
+
+    saveDB(db);
+    res.json(db.notifications[index]);
+  } catch {
+    res.status(500).json({ message: "Error updating notification." });
+  }
+});
+
 app.get("/favorites", verifyToken, (req, res) => {
   try {
+    if (req.user.role !== "buyer" && req.user.role !== "admin") {
+      return res
+        .status(403)
+        .json({ message: "Only buyers can access favorites." });
+    }
+
     const db = getDB();
     const { buyerId } = req.query;
 

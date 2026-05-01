@@ -51,6 +51,10 @@ export class PropertyCardComponent {
     return this.authService.isLoggedIn();
   }
 
+  get isBuyer(): boolean {
+    return this.authService.isBuyer();
+  }
+
   getPropertyUrl(): string {
     return (
       this.property?.images?.[0] ||

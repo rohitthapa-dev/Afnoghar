@@ -22,6 +22,7 @@ import { PropertyService } from '../../../core/services/property.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { FavoritesService } from '../../../core/services/favorites.service';
 import { AppointmentService } from '../../../core/services/appointment.service';
+import { NotificationService } from '../../../core/services/notification.service';
 import { Property } from '../../../core/models/property.model';
 import { PriceFormatPipe } from '../../../shared/pipes/price-format.pipe';
 import { PropertyTypePipe } from '../../../shared/pipes/property-type.pipe';
@@ -58,6 +59,7 @@ export class BuyerPropertyDetailComponent implements OnInit {
   private authService = inject(AuthService);
   private favoritesService = inject(FavoritesService);
   private appointmentService = inject(AppointmentService);
+  private notificationService = inject(NotificationService);
   private fb = inject(FormBuilder);
   private snackBar = inject(MatSnackBar);
   private http = inject(HttpClient);
@@ -232,7 +234,8 @@ export class BuyerPropertyDetailComponent implements OnInit {
     if (this.appointmentForm.invalid || !this.property) return;
 
     this.submitting = true;
-    const userId = this.authService.getCurrentUser()?.id;
+    const currentUser = this.authService.getCurrentUser();
+    const userId = currentUser?.id;
     if (!userId) {
       this.submitting = false;
       this.router.navigate(['/login'], {
@@ -244,23 +247,30 @@ export class BuyerPropertyDetailComponent implements OnInit {
     const selectedDate = this.formatAppointmentDate(
       this.appointmentForm.value.date,
     );
+    const selectedTime = this.appointmentForm.value.time;
 
     const appointment = {
       propertyId: this.property.id,
       userId: userId,
       sellerId: this.property.sellerId,
       propertyTitle: this.property.title,
+      buyerName: currentUser?.name || '',
       date: selectedDate,
-      time: this.appointmentForm.value.time,
+      time: selectedTime,
       message: this.appointmentForm.value.message || '',
       notes: this.appointmentForm.value.message || '',
     };
 
     this.appointmentService.createAppointment(appointment).subscribe({
-      next: () => {
+      next: (createdAppointment) => {
         this.submitting = false;
         this.appointmentSuccess = true;
         this.appointmentForm.reset();
+        this.notifySellerOfBooking(
+          createdAppointment.id,
+          selectedDate,
+          selectedTime,
+        );
         this.snackBar.open('Appointment booked successfully!', 'Close', {
           duration: 5000,
           horizontalPosition: 'start',
@@ -278,6 +288,29 @@ export class BuyerPropertyDetailComponent implements OnInit {
     });
   }
 
+  private notifySellerOfBooking(
+    appointmentId: number | undefined,
+    date: string,
+    time: string,
+  ): void {
+    if (!this.property || !appointmentId) return;
+
+    const buyerName =
+      this.authService.getCurrentUser()?.name || 'A buyer';
+
+    this.notificationService
+      .createNotification({
+        userId: this.property.sellerId,
+        type: 'booked',
+        title: 'New Tour Request',
+        message: `${buyerName} requested a tour for ${this.property.title} on ${this.formatAppointmentLabel(date)} at ${time}.`,
+        appointmentId,
+        propertyTitle: this.property.title,
+        read: false,
+      })
+      .subscribe();
+  }
+
   private formatAppointmentDate(value: Date | string): string {
     if (value instanceof Date) {
       const year = value.getFullYear();
@@ -287,5 +320,22 @@ export class BuyerPropertyDetailComponent implements OnInit {
     }
 
     return value;
+  }
+
+  private formatAppointmentLabel(date: string): string {
+    const parts = date.split('-').map(Number);
+    const parsed =
+      parts.length === 3 && parts.every((part) => !Number.isNaN(part))
+        ? new Date(parts[0], parts[1] - 1, parts[2])
+        : new Date(date);
+
+    if (Number.isNaN(parsed.getTime())) return 'the selected date';
+
+    return new Intl.DateTimeFormat('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    }).format(parsed);
   }
 }

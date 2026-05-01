@@ -20,15 +20,17 @@
           Back to properties
         </button>
 
-        <button
-          mat-stroked-button
-          class="save-action"
-          [class.saved]="isFavorite"
-          (click)="toggleFavorite()"
-        >
-          <mat-icon>{{ isFavorite ? "favorite" : "favorite_border" }}</mat-icon>
-          {{ isFavorite ? "Saved" : "Save" }}
-        </button>
+        @if (isBuyer) {
+          <button
+            mat-stroked-button
+            class="save-action"
+            [class.saved]="isFavorite"
+            (click)="toggleFavorite()"
+          >
+            <mat-icon>{{ isFavorite ? "favorite" : "favorite_border" }}</mat-icon>
+            {{ isFavorite ? "Saved" : "Save" }}
+          </button>
+        }
       </div>
 
       <section class="media-section">
