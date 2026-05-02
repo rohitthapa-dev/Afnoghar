@@ -208,6 +208,15 @@ export class SellerAppointmentsComponent implements OnInit {
   }
 
   accept(appointment: EnrichedAppointment): void {
+    if (this.isAwaitingBuyerConfirmation(appointment)) {
+      this.snackBar.open(
+        'Waiting for the buyer to confirm the rescheduled time.',
+        'Close',
+        { duration: 3500 },
+      );
+      return;
+    }
+
     this.appointmentService
       .isSlotTaken(
         appointment.propertyId,
@@ -366,6 +375,14 @@ export class SellerAppointmentsComponent implements OnInit {
 
   isPending(a: EnrichedAppointment): boolean {
     return this.normalizeStatus(a.status) === 'pending';
+  }
+
+  isAwaitingBuyerConfirmation(a: EnrichedAppointment): boolean {
+    return a.status === 'pending' && a.rescheduledBy === 'seller';
+  }
+
+  canSellerRespond(a: EnrichedAppointment): boolean {
+    return this.isPending(a) && !this.isAwaitingBuyerConfirmation(a);
   }
 
   isConfirmed(a: EnrichedAppointment): boolean {

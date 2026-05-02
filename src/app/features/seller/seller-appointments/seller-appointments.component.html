@@ -120,7 +120,11 @@
                             class="status-chip"
                             [ngClass]="getStatusClass(appointment.status)"
                           >
-                            {{ getStatusLabel(appointment.status) }}
+                            {{
+                              isAwaitingBuyerConfirmation(appointment)
+                                ? "Awaiting Buyer"
+                                : getStatusLabel(appointment.status)
+                            }}
                           </mat-chip>
                           @if (appointment.propertyType) {
                             <span class="property-type">
@@ -163,6 +167,14 @@
                           <div class="buyer-note">
                             <mat-icon>chat_bubble_outline</mat-icon>
                             {{ appointment.notes || appointment.message }}
+                          </div>
+                        }
+
+                        @if (isAwaitingBuyerConfirmation(appointment)) {
+                          <div class="seller-waiting-note">
+                            <mat-icon>hourglass_top</mat-icon>
+                            Buyer confirmation is required for this rescheduled
+                            time.
                           </div>
                         }
 
@@ -246,7 +258,8 @@
                         }
 
                         @if (
-                          isPending(appointment) && !appointment.isRescheduling
+                          canSellerRespond(appointment) &&
+                          !appointment.isRescheduling
                         ) {
                           <button
                             mat-flat-button
@@ -270,6 +283,20 @@
                             (click)="decline(appointment)"
                           >
                             Decline
+                          </button>
+                        }
+
+                        @if (
+                          isAwaitingBuyerConfirmation(appointment) &&
+                          !appointment.isRescheduling
+                        ) {
+                          <button
+                            mat-stroked-button
+                            class="reschedule-btn"
+                            (click)="startReschedule(appointment)"
+                          >
+                            <mat-icon>edit_calendar</mat-icon>
+                            Update Time
                           </button>
                         }
 

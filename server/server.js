@@ -299,6 +299,20 @@ app.patch("/appointments/:id", verifyToken, (req, res) => {
       return res.status(404).json({ message: "Appointment not found." });
     }
 
+    const appointment = db.appointments[index];
+    const sellerApprovingOwnReschedule =
+      req.user.role !== "admin" &&
+      appointment.rescheduledBy === "seller" &&
+      appointment.sellerId === req.user.id &&
+      ["accepted", "confirmed"].includes(req.body.status);
+
+    if (sellerApprovingOwnReschedule) {
+      return res.status(400).json({
+        message:
+          "Buyer confirmation is required before this rescheduled appointment can be accepted.",
+      });
+    }
+
     db.appointments[index] = { ...db.appointments[index], ...req.body };
     saveDB(db);
 
