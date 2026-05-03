@@ -1,0 +1,586 @@
+@use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins" as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: $navbar-height;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.filter-bar {
+  flex-shrink: 0;
+  background: $surface;
+  border-bottom: 1px solid $divider;
+  padding: $space-3 $space-6;
+  z-index: $z-sticky;
+}
+
+.filter-bar-inner {
+  @include flex(row, flex-start, center, $space-4);
+  max-width: 100%;
+  flex-wrap: wrap;
+  gap: $space-3;
+}
+
+.search-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 220px;
+
+  .search-icon {
+    position: absolute;
+    left: $space-4;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $text-disabled;
+    font-size: 14px;
+    pointer-events: none;
+  }
+
+  .search-input {
+    width: 100%;
+    height: 40px;
+    padding: 0 $space-4 0 $space-10;
+    font-family: $font-primary;
+    font-size: $text-sm;
+    color: $text-primary;
+    background: $background;
+    border: 1.5px solid $border;
+    border-radius: $radius-md;
+    transition: $transition-fast;
+
+    &::placeholder {
+      color: $text-disabled;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $primary;
+      background: $surface;
+    }
+  }
+}
+
+.filter-chips {
+  @include flex(row, flex-start, center, $space-2);
+  flex-wrap: wrap;
+}
+
+.filter-select {
+  height: 40px;
+  padding: 0 $space-8 0 $space-4;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  color: $text-primary;
+  background: $background;
+  border: 1.5px solid $border;
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: $transition-fast;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6b6b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right $space-3 center;
+  background-color: $background;
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    background-color: $surface;
+  }
+}
+
+.price-range {
+  @include flex(row, flex-start, center, $space-2);
+  background: $background;
+  border: 1.5px solid $border;
+  border-radius: $radius-md;
+  padding: 0 $space-3;
+  height: 40px;
+  transition: $transition-fast;
+
+  &:focus-within {
+    border-color: $primary;
+    background: $surface;
+  }
+
+  .price-input {
+    width: 72px;
+    height: 100%;
+    border: none;
+    background: transparent;
+    font-family: $font-primary;
+    font-size: $text-sm;
+    color: $text-primary;
+
+    &::placeholder {
+      color: $text-disabled;
+    }
+    &:focus {
+      outline: none;
+    }
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
+  }
+
+  .price-sep {
+    color: $text-disabled;
+    font-size: $text-xs;
+    flex-shrink: 0;
+  }
+}
+
+.clear-btn {
+  @include flex(row, center, center, $space-1);
+  height: 40px;
+  padding: 0 $space-4;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  font-weight: $font-medium;
+  color: $error;
+  background: $error-light;
+  border: 1.5px solid rgba($error, 0.2);
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: $transition-fast;
+  white-space: nowrap;
+
+  i {
+    font-size: 14px;
+  }
+
+  &:hover {
+    background: rgba($error, 0.15);
+    border-color: $error;
+  }
+}
+
+// Layout
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  min-height: 0;
+  height: 100%;
+}
+
+.map-panel {
+  flex: 0 0 50%;
+  position: relative;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+
+  app-map-view {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.property-panel {
+  flex: 0 0 50%;
+  display: flex;
+  flex-direction: column;
+  background: $background;
+  border-left: 1px solid $divider;
+  height: 100%;
+  overflow: hidden;
+}
+
+.panel-header {
+  padding: $space-4 $space-5;
+  background: $surface;
+  border-bottom: 1px solid $divider;
+  flex-shrink: 0;
+
+  .results-count {
+    font-family: $font-primary;
+    font-size: $text-sm;
+    color: $text-secondary;
+
+    strong {
+      color: $text-primary;
+      font-weight: $font-semibold;
+    }
+  }
+}
+
+.property-scroll-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: $space-4;
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  min-height: 0;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: $border;
+    border-radius: $radius-full;
+    &:hover {
+      background: $text-disabled;
+    }
+  }
+}
+
+.property-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-4;
+}
+
+.pagination-controls {
+  @include flex(row, center, center, $space-2);
+  padding: $space-4 0;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+
+  .pagination-btn {
+    padding: $space-2 $space-4;
+    border: 1px solid $border;
+    border-radius: $radius-md;
+    background: $surface;
+    color: $text-primary;
+    cursor: pointer;
+    font-family: $font-primary;
+    font-size: $text-sm;
+    transition: $transition-fast;
+    min-width: 36px;
+
+    &:hover:not(:disabled):not(.active) {
+      background: $primary-tint;
+      border-color: $primary;
+      color: $primary;
+    }
+
+    &.active {
+      background: $primary;
+      border-color: $primary;
+      color: $surface;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+:host ::ng-deep .map-search-footer {
+  flex-shrink: 0;
+  padding: $space-4 $space-6;
+  background: $surface;
+  border-top: 1px solid $divider;
+  font-size: $text-xs;
+
+  .footer-top {
+    padding: $space-2 0;
+  }
+
+  .footer-container {
+    flex-direction: column;
+    gap: $space-2;
+  }
+
+  .footer-brand {
+    margin-bottom: $space-2;
+
+    .footer-logo {
+      margin-bottom: $space-1;
+    }
+
+    .tagline {
+      font-size: $text-xs;
+      margin-bottom: $space-1;
+    }
+
+    .description {
+      font-size: $text-xs;
+      line-height: 1.4;
+    }
+  }
+
+  .footer-links,
+  .footer-contact,
+  .footer-social {
+    margin-bottom: $space-2;
+
+    .footer-heading {
+      font-size: $text-sm;
+      margin-bottom: $space-1;
+    }
+
+    ul {
+      font-size: $text-xs;
+
+      li {
+        margin-bottom: 2px;
+      }
+    }
+
+    .social-icons {
+      gap: $space-2;
+
+      .social-link {
+        font-size: $text-base;
+      }
+    }
+  }
+
+  .footer-bottom {
+    padding: $space-2 0;
+    font-size: $text-xs;
+  }
+}
+
+.property-item {
+  border-radius: $radius-xl;
+  transition: $transition-base;
+  cursor: pointer;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+
+  &:hover {
+    outline-color: $primary-light;
+  }
+
+  &.is-selected {
+    outline-color: $primary;
+    outline-width: 2.5px;
+  }
+}
+
+.state-container {
+  @include flex(column, center, center, $space-4);
+  padding: $space-16 $space-8;
+  text-align: center;
+  grid-column: 1 / -1;
+
+  .empty-icon {
+    font-size: 48px;
+    color: $text-disabled;
+  }
+
+  p {
+    font-family: $font-primary;
+    font-size: $text-base;
+    color: $text-secondary;
+    margin: 0;
+  }
+}
+
+.loading-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid $primary-light;
+  border-top-color: $primary;
+  border-radius: $radius-full;
+  animation: spin 0.8s linear infinite;
+}
+
+.reset-btn {
+  height: 40px;
+  padding: 0 $space-6;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  font-weight: $font-semibold;
+  background: $primary;
+  color: $surface;
+  border: none;
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: $transition-fast;
+
+  &:hover {
+    background: $primary-dark;
+  }
+}
+
+@include respond-to(lg) {
+  .map-panel {
+    flex: 0 0 50%;
+  }
+  .property-panel {
+    flex: 0 0 50%;
+  }
+
+  .property-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mobile-toggle {
+  display: none;
+
+  @include respond-to(md) {
+    display: flex;
+    justify-content: center;
+    gap: $space-2;
+    padding: $space-2 $space-4;
+    background: $surface;
+    border-bottom: 1px solid $divider;
+    z-index: $z-sticky;
+  }
+}
+
+.toggle-btn {
+  padding: $space-2 $space-4;
+  border: 1px solid $border;
+  border-radius: $radius-md;
+  background: $surface;
+  color: $text-primary;
+  cursor: pointer;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  transition: $transition-fast;
+
+  &:hover:not(.active) {
+    background: $primary-tint;
+  }
+
+  &.active {
+    background: $primary;
+    border-color: $primary;
+    color: $surface;
+  }
+}
+
+@include respond-to(md) {
+  :host {
+    position: relative;
+    top: auto;
+    height: calc(100dvh - #{$navbar-height});
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .filter-bar {
+    padding: $space-2 $space-4;
+  }
+
+  .filter-bar-inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $space-2;
+  }
+
+  .search-wrapper {
+    flex: none;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .filter-chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .filter-select,
+  .price-range,
+  .clear-btn {
+    flex: 0 0 auto;
+  }
+
+  .main-content {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    height: auto;
+    overflow: hidden;
+  }
+
+  .map-panel {
+    flex: none;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.18s ease;
+  }
+
+  .property-panel {
+    flex: none;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    border-left: none;
+    border-top: none;
+    min-height: 0;
+    z-index: 1;
+  }
+
+  .property-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .show-map-only {
+    .map-panel {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      z-index: 2;
+    }
+    .property-panel {
+      display: none !important;
+    }
+  }
+
+  .show-list-only {
+    .map-panel {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .property-panel {
+      display: flex;
+      max-height: none;
+    }
+  }
+}
+
+@include respond-to(xs) {
+  .filter-select {
+    max-width: 148px;
+  }
+
+  .price-range {
+    padding: 0 $space-2;
+
+    .price-input {
+      width: 58px;
+    }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

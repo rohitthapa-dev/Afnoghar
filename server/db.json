@@ -608,7 +608,7 @@
       "date": "2025-04-10",
       "time": "10:00 AM",
       "message": "I would like to visit this property this weekend. Please confirm.",
-      "status": "pending",
+      "status": "cancelled",
       "createdAt": "2025-04-01T00:00:00.000Z"
     },
     {
@@ -619,8 +619,8 @@
       "buyerName": "Anita Rai",
       "buyerPhone": "9800000005",
       "propertyTitle": "Cozy Apartment in Lazimpat",
-      "date": "2025-04-12",
-      "time": "2:00 PM",
+      "date": "2026-05-02",
+      "time": "01:00 PM",
       "message": "Interested in long term rent. Can we meet?",
       "status": "accepted",
       "createdAt": "2025-04-02T00:00:00.000Z"
@@ -650,29 +650,98 @@
       "date": "2025-04-18",
       "time": "3:00 PM",
       "message": "Looking for a family home. Would like to visit.",
-      "status": "pending",
+      "status": "cancelled",
       "createdAt": "2025-04-05T00:00:00.000Z"
+    },
+    {
+      "id": 5,
+      "propertyId": 2,
+      "userId": 3,
+      "date": "2026-03-02",
+      "time": "10:00 AM",
+      "message": "",
+      "buyerId": 3,
+      "status": "cancelled",
+      "createdAt": "2026-04-30T10:31:53.642Z"
+    },
+    {
+      "id": 6,
+      "propertyId": 1,
+      "userId": 3,
+      "sellerId": 2,
+      "propertyTitle": "Modern Villa in Bansbari",
+      "date": "2026-05-02",
+      "time": "01:00 PM",
+      "message": "i would like to visit this property",
+      "notes": "i would like to visit this property",
+      "buyerId": 3,
+      "status": "cancelled",
+      "createdAt": "2026-05-01T06:06:26.883Z"
+    },
+    {
+      "id": 7,
+      "propertyId": 5,
+      "userId": 3,
+      "sellerId": 2,
+      "propertyTitle": "Family Home in Patan Mangalbazar",
+      "buyerName": "Sita Thapa",
+      "date": "2026-05-03",
+      "time": "09:00 AM",
+      "message": "",
+      "notes": "",
+      "buyerId": 3,
+      "status": "accepted",
+      "createdAt": "2026-05-01T07:55:33.269Z",
+      "rescheduledBy": "seller"
+    },
+    {
+      "id": 8,
+      "propertyId": 1,
+      "userId": 5,
+      "sellerId": 2,
+      "propertyTitle": "Modern Villa in Bansbari",
+      "buyerName": "Anita Rai",
+      "date": "2026-05-02",
+      "time": "09:00 AM",
+      "message": "",
+      "notes": "",
+      "buyerId": 5,
+      "status": "pending",
+      "createdAt": "2026-05-01T07:57:40.406Z"
+    },
+    {
+      "id": 9,
+      "propertyId": 1,
+      "userId": 3,
+      "sellerId": 2,
+      "propertyTitle": "Modern Villa in Bansbari",
+      "buyerName": "Sita Thapa",
+      "date": "2026-05-02",
+      "time": "09:00 AM",
+      "message": "",
+      "notes": "",
+      "buyerId": 3,
+      "status": "pending",
+      "createdAt": "2026-05-01T07:58:11.342Z"
+    },
+    {
+      "id": 10,
+      "propertyId": 5,
+      "userId": 3,
+      "sellerId": 2,
+      "propertyTitle": "Family Home in Patan Mangalbazar",
+      "buyerName": "Sita Thapa",
+      "date": "2026-05-07",
+      "time": "10:00 AM",
+      "message": "",
+      "notes": "",
+      "buyerId": 3,
+      "status": "pending",
+      "createdAt": "2026-05-01T08:00:26.694Z",
+      "rescheduledBy": "seller"
     }
   ],
   "favorites": [
-    {
-      "id": 1,
-      "buyerId": 3,
-      "propertyId": 1,
-      "createdAt": "2025-03-20T00:00:00.000Z"
-    },
-    {
-      "id": 2,
-      "buyerId": 3,
-      "propertyId": 4,
-      "createdAt": "2025-03-21T00:00:00.000Z"
-    },
-    {
-      "id": 3,
-      "buyerId": 3,
-      "propertyId": 5,
-      "createdAt": "2025-03-22T00:00:00.000Z"
-    },
     {
       "id": 4,
       "buyerId": 5,
@@ -684,6 +753,228 @@
       "buyerId": 5,
       "propertyId": 14,
       "createdAt": "2025-03-24T00:00:00.000Z"
+    }
+  ],
+  "notifications": [
+    {
+      "id": 1,
+      "userId": 5,
+      "type": "rescheduled",
+      "title": "Appointment Rescheduled",
+      "message": "Your visit to Cozy Apartment in Lazimpat has been rescheduled to Sat, May 2, 2026 at 01:00 PM.",
+      "appointmentId": 2,
+      "propertyTitle": "Cozy Apartment in Lazimpat",
+      "read": false,
+      "createdAt": "2026-05-01T05:57:49.285Z"
+    },
+    {
+      "id": 2,
+      "userId": 2,
+      "type": "booked",
+      "title": "New Tour Request",
+      "message": "Sita Thapa requested a tour for Modern Villa in Bansbari on Sat, May 2, 2026 at 10:00 AM.",
+      "appointmentId": 6,
+      "propertyTitle": "Modern Villa in Bansbari",
+      "read": true,
+      "createdAt": "2026-05-01T06:06:26.897Z"
+    },
+    {
+      "id": 3,
+      "userId": 5,
+      "type": "accepted",
+      "title": "Tour Confirmed",
+      "message": "Your visit to Family Home in Patan Mangalbazar on Fri, Apr 18, 2025 at 3:00 PM has been confirmed.",
+      "appointmentId": 4,
+      "propertyTitle": "Family Home in Patan Mangalbazar",
+      "read": false,
+      "createdAt": "2026-05-01T07:26:26.703Z"
+    },
+    {
+      "id": 4,
+      "userId": 3,
+      "type": "accepted",
+      "title": "Tour Confirmed",
+      "message": "Your visit to Modern Villa in Bansbari on Sat, May 2, 2026 at 10:00 AM has been confirmed.",
+      "appointmentId": 6,
+      "propertyTitle": "Modern Villa in Bansbari",
+      "read": true,
+      "createdAt": "2026-05-01T07:32:53.552Z"
+    },
+    {
+      "id": 5,
+      "userId": 3,
+      "type": "rescheduled",
+      "title": "Appointment Rescheduled",
+      "message": "Your visit to Modern Villa in Bansbari has been rescheduled to Sat, May 2, 2026 at 01:00 PM.",
+      "appointmentId": 6,
+      "propertyTitle": "Modern Villa in Bansbari",
+      "read": true,
+      "createdAt": "2026-05-01T07:33:09.645Z"
+    },
+    {
+      "id": 6,
+      "userId": 2,
+      "type": "cancelled",
+      "title": "Tour Cancelled",
+      "message": "The buyer cancelled the tour for Modern Villa in Bansbari on Sat, May 2, 2026 at 01:00 PM.",
+      "appointmentId": 6,
+      "propertyTitle": "Modern Villa in Bansbari",
+      "read": true,
+      "createdAt": "2026-05-01T07:51:38.387Z"
+    },
+    {
+      "id": 7,
+      "userId": 2,
+      "type": "booked",
+      "title": "New Tour Request",
+      "message": "Sita Thapa requested a tour for Family Home in Patan Mangalbazar on Sat, May 2, 2026 at 09:00 AM.",
+      "appointmentId": 7,
+      "propertyTitle": "Family Home in Patan Mangalbazar",
+      "read": true,
+      "createdAt": "2026-05-01T07:55:33.276Z"
+    },
+    {
+      "id": 8,
+      "userId": 2,
+      "type": "cancelled",
+      "title": "Tour Cancelled",
+      "message": "The buyer cancelled the tour for Family Home in Patan Mangalbazar on Fri, Apr 18, 2025 at 3:00 PM.",
+      "appointmentId": 4,
+      "propertyTitle": "Family Home in Patan Mangalbazar",
+      "read": true,
+      "createdAt": "2026-05-01T07:56:54.257Z"
+    },
+    {
+      "id": 9,
+      "userId": 2,
+      "type": "booked",
+      "title": "New Tour Request",
+      "message": "Anita Rai requested a tour for Modern Villa in Bansbari on Sat, May 2, 2026 at 09:00 AM.",
+      "appointmentId": 8,
+      "propertyTitle": "Modern Villa in Bansbari",
+      "read": true,
+      "createdAt": "2026-05-01T07:57:40.411Z"
+    },
+    {
+      "id": 10,
+      "userId": 2,
+      "type": "booked",
+      "title": "New Tour Request",
+      "message": "Sita Thapa requested a tour for Modern Villa in Bansbari on Sat, May 2, 2026 at 09:00 AM.",
+      "appointmentId": 9,
+      "propertyTitle": "Modern Villa in Bansbari",
+      "read": true,
+      "createdAt": "2026-05-01T07:58:11.350Z"
+    },
+    {
+      "id": 11,
+      "userId": 3,
+      "type": "accepted",
+      "title": "Tour Confirmed",
+      "message": "Your visit to Family Home in Patan Mangalbazar on Sat, May 2, 2026 at 09:00 AM has been confirmed.",
+      "appointmentId": 7,
+      "propertyTitle": "Family Home in Patan Mangalbazar",
+      "read": true,
+      "createdAt": "2026-05-01T07:59:12.249Z"
+    },
+    {
+      "id": 12,
+      "userId": 2,
+      "type": "booked",
+      "title": "New Tour Request",
+      "message": "Sita Thapa requested a tour for Family Home in Patan Mangalbazar on Sat, May 2, 2026 at 09:00 AM.",
+      "appointmentId": 10,
+      "propertyTitle": "Family Home in Patan Mangalbazar",
+      "read": true,
+      "createdAt": "2026-05-01T08:00:26.704Z"
+    },
+    {
+      "id": 13,
+      "userId": 3,
+      "type": "rescheduled",
+      "title": "Appointment Rescheduled",
+      "message": "Your visit to Family Home in Patan Mangalbazar has been rescheduled to Sun, May 3, 2026 at 09:00 AM.",
+      "appointmentId": 7,
+      "propertyTitle": "Family Home in Patan Mangalbazar",
+      "read": true,
+      "createdAt": "2026-05-01T08:02:19.439Z"
+    },
+    {
+      "id": 14,
+      "userId": 3,
+      "type": "accepted",
+      "title": "Tour Confirmed",
+      "message": "Your visit to Family Home in Patan Mangalbazar on Sat, May 2, 2026 at 09:00 AM has been confirmed.",
+      "appointmentId": 10,
+      "propertyTitle": "Family Home in Patan Mangalbazar",
+      "read": true,
+      "createdAt": "2026-05-01T08:02:27.792Z"
+    },
+    {
+      "id": 15,
+      "userId": 3,
+      "type": "accepted",
+      "title": "Tour Confirmed",
+      "message": "Your visit to Family Home in Patan Mangalbazar on Sun, May 3, 2026 at 09:00 AM has been confirmed.",
+      "appointmentId": 7,
+      "propertyTitle": "Family Home in Patan Mangalbazar",
+      "read": true,
+      "createdAt": "2026-05-01T08:02:31.196Z"
+    },
+    {
+      "id": 16,
+      "userId": 5,
+      "type": "accepted",
+      "title": "Tour Confirmed",
+      "message": "Your visit to Cozy Apartment in Lazimpat on Sat, May 2, 2026 at 01:00 PM has been confirmed.",
+      "appointmentId": 2,
+      "propertyTitle": "Cozy Apartment in Lazimpat",
+      "read": false,
+      "createdAt": "2026-05-01T08:02:39.326Z"
+    },
+    {
+      "id": 17,
+      "userId": 3,
+      "type": "rescheduled",
+      "title": "Appointment Rescheduled",
+      "message": "Your visit to Family Home in Patan Mangalbazar has been rescheduled to Sat, May 2, 2026 at 10:00 AM.",
+      "appointmentId": 10,
+      "propertyTitle": "Family Home in Patan Mangalbazar",
+      "read": true,
+      "createdAt": "2026-05-01T08:03:13.647Z"
+    },
+    {
+      "id": 18,
+      "userId": 3,
+      "type": "rescheduled",
+      "title": "Appointment Rescheduled",
+      "message": "Your visit to Family Home in Patan Mangalbazar has been rescheduled to Sat, May 2, 2026 at 09:00 AM.",
+      "appointmentId": 10,
+      "propertyTitle": "Family Home in Patan Mangalbazar",
+      "read": true,
+      "createdAt": "2026-05-01T08:03:56.769Z"
+    },
+    {
+      "id": 19,
+      "userId": 3,
+      "type": "accepted",
+      "title": "Tour Confirmed",
+      "message": "Your visit to Family Home in Patan Mangalbazar on Sat, May 2, 2026 at 09:00 AM has been confirmed.",
+      "appointmentId": 10,
+      "propertyTitle": "Family Home in Patan Mangalbazar",
+      "read": true,
+      "createdAt": "2026-05-01T08:04:09.322Z"
+    },
+    {
+      "id": 20,
+      "userId": 3,
+      "type": "rescheduled",
+      "title": "Appointment Rescheduled",
+      "message": "Your visit to Family Home in Patan Mangalbazar has been rescheduled to Thu, May 7, 2026 at 10:00 AM.",
+      "appointmentId": 10,
+      "propertyTitle": "Family Home in Patan Mangalbazar",
+      "read": true,
+      "createdAt": "2026-05-01T10:53:03.080Z"
     }
   ]
 }

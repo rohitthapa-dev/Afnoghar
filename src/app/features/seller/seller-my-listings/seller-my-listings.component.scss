@@ -1,0 +1,471 @@
+@use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins" as *;
+
+:host {
+  display: block;
+  min-height: calc(100vh - #{$navbar-height});
+  background: $background;
+}
+
+.seller-page {
+  max-width: $container-xl;
+  margin: 0 auto;
+  padding: $space-8 $space-8 $space-20;
+
+  @include respond-to(md) {
+    padding: $space-5 $space-4 $space-12;
+  }
+}
+
+.page-hero,
+.listings-panel,
+.summary-card,
+.listing-card {
+  border: 1px solid $divider;
+  border-radius: $radius-md;
+  background: $surface;
+  box-shadow: $shadow-card;
+}
+
+.page-hero {
+  @include flex(row, space-between, center, $space-6);
+  margin-bottom: $space-5;
+  padding: $space-8;
+
+  @include respond-to(md) {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: $space-5;
+  }
+}
+
+.section-kicker {
+  color: $primary;
+  font-family: $font-primary;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+  letter-spacing: $tracking-wider;
+  text-transform: uppercase;
+}
+
+.hero-copy {
+  max-width: 560px;
+
+  h1 {
+    margin: $space-2 0 $space-3;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-3xl;
+    font-weight: $font-extrabold;
+    line-height: $leading-tight;
+
+    @include respond-to(sm) {
+      font-size: $text-2xl;
+    }
+  }
+
+  p {
+    margin: 0;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-base;
+    line-height: $leading-relaxed;
+  }
+}
+
+.hero-actions {
+  flex-shrink: 0;
+}
+
+.primary-action {
+  min-height: 44px;
+  border-radius: $radius-md !important;
+  background: $primary !important;
+  color: $surface !important;
+  font-family: $font-primary;
+  font-weight: $font-semibold;
+
+  mat-icon {
+    width: 18px;
+    height: 18px;
+    margin-right: $space-1;
+    font-size: 18px;
+  }
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: $space-4;
+  margin-bottom: $space-6;
+
+  @include respond-to(lg) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @include respond-to(sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.summary-card {
+  min-height: 110px;
+  padding: $space-5;
+
+  span {
+    display: block;
+    margin-bottom: $space-3;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-xs;
+    font-weight: $font-semibold;
+    letter-spacing: $tracking-wider;
+    text-transform: uppercase;
+  }
+
+  strong {
+    display: block;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-2xl;
+    font-weight: $font-bold;
+    line-height: $leading-tight;
+  }
+
+  &.wide strong {
+    font-size: $text-xl;
+  }
+}
+
+.listings-panel {
+  padding: $space-5;
+
+  @include respond-to(sm) {
+    padding: $space-4;
+  }
+}
+
+.panel-toolbar {
+  @include flex(row, space-between, center, $space-4);
+  margin-bottom: $space-5;
+
+  @include respond-to(lg) {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
+.tabs-row {
+  @include flex(row, flex-start, center, $space-2);
+  flex-wrap: wrap;
+}
+
+.tab-button {
+  @include flex(row, center, center, $space-2);
+  height: 42px;
+  padding: 0 $space-3;
+  border: 1px solid $divider;
+  border-radius: $radius-md;
+  background: $surface;
+  color: $text-secondary;
+  cursor: pointer;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  font-weight: $font-semibold;
+  transition: $transition-fast;
+
+  mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+  }
+
+  strong {
+    min-width: 22px;
+    height: 22px;
+    border-radius: $radius-full;
+    background: $surface-alt;
+    color: $text-secondary;
+    font-size: $text-xs;
+    line-height: 22px;
+    text-align: center;
+  }
+
+  &.active {
+    border-color: rgba($primary, 0.24);
+    background: $primary-tint;
+    color: $primary-dark;
+
+    strong {
+      background: $surface;
+      color: $primary-dark;
+    }
+  }
+}
+
+.search-box {
+  @include flex(row, flex-start, center, $space-2);
+  width: min(100%, 340px);
+  height: 44px;
+  padding: 0 $space-3;
+  border: 1px solid $divider;
+  border-radius: $radius-md;
+  background: $surface;
+  color: $text-secondary;
+
+  @include respond-to(lg) {
+    width: 100%;
+  }
+
+  mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: $text-primary;
+    font-family: $font-primary;
+    font-size: $text-sm;
+  }
+
+  button {
+    @include flex(row, center, center);
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: $radius-full;
+    background: transparent;
+    color: $text-secondary;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+}
+
+.state-panel {
+  @include flex(column, center, center, $space-3);
+  min-height: 320px;
+  padding: $space-8;
+  text-align: center;
+
+  mat-icon {
+    width: 44px;
+    height: 44px;
+    color: $primary;
+    font-size: 44px;
+  }
+
+  h2 {
+    margin: 0;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-xl;
+  }
+
+  p {
+    max-width: 360px;
+    margin: 0;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-sm;
+    line-height: $leading-relaxed;
+  }
+}
+
+.listing-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $space-4;
+
+  @include respond-to(lg) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.listing-card {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  overflow: hidden;
+
+  @include respond-to(sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.listing-media {
+  position: relative;
+  min-height: 190px;
+  background: $surface-alt;
+
+  img {
+    width: 100%;
+    height: 100%;
+    min-height: 190px;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.listing-mode {
+  position: absolute;
+  top: $space-3;
+  left: $space-3;
+  padding: $space-1 $space-3;
+  border-radius: $radius-full;
+  background: rgba($text-primary, 0.72);
+  color: $surface;
+  font-family: $font-primary;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+  text-transform: uppercase;
+}
+
+.listing-body {
+  @include flex(column, space-between, stretch, $space-4);
+  min-width: 0;
+  padding: $space-5;
+}
+
+.listing-topline,
+.listing-meta,
+.listing-footer,
+.listing-actions {
+  @include flex(row, flex-start, center, $space-2);
+  flex-wrap: wrap;
+}
+
+.listing-topline {
+  span {
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-xs;
+    font-weight: $font-semibold;
+    letter-spacing: $tracking-wider;
+    text-transform: uppercase;
+  }
+}
+
+.status-chip {
+  min-height: 28px;
+  border-radius: $radius-full !important;
+  font-family: $font-primary;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+
+  &.status-approved {
+    background: $success-light !important;
+    color: $success !important;
+  }
+
+  &.status-pending {
+    background: $warning-light !important;
+    color: $warning !important;
+  }
+
+  &.status-rejected {
+    background: $error-light !important;
+    color: $error !important;
+  }
+}
+
+h2 {
+  @include truncate(2);
+  margin: 0;
+  color: $text-primary;
+  font-family: $font-heading;
+  font-size: $text-lg;
+  font-weight: $font-bold;
+  line-height: $leading-snug;
+}
+
+.listing-meta {
+  color: $text-secondary;
+  font-family: $font-primary;
+  font-size: $text-sm;
+
+  span {
+    @include flex(row, flex-start, center, $space-1);
+    min-width: 0;
+  }
+
+  mat-icon {
+    width: 16px;
+    height: 16px;
+    color: $primary;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+}
+
+.listing-footer {
+  justify-content: space-between;
+  gap: $space-3;
+  padding-top: $space-3;
+  border-top: 1px solid $divider;
+
+  > strong {
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-md;
+    font-weight: $font-bold;
+  }
+}
+
+.listing-actions {
+  margin-left: auto;
+
+  button {
+    @include flex(row, center, center);
+    width: 38px !important;
+    height: 38px !important;
+    padding: 0 !important;
+    border-radius: $radius-full !important;
+    color: $primary;
+    line-height: 1 !important;
+    transition: $transition-fast;
+
+    mat-icon {
+      width: 20px;
+      height: 20px;
+      margin: 0;
+      font-size: 20px;
+      line-height: 20px;
+    }
+
+    &:hover {
+      background: $primary-tint;
+      color: $primary-dark;
+    }
+
+    &:focus-visible {
+      outline: 2px solid rgba($primary, 0.32);
+      outline-offset: 2px;
+    }
+
+    ::ng-deep .mat-mdc-button-touch-target {
+      width: 38px;
+      height: 38px;
+    }
+
+    ::ng-deep .mat-mdc-button-persistent-ripple,
+    ::ng-deep .mat-mdc-button-ripple {
+      border-radius: $radius-full;
+      inset: 0;
+    }
+
+    &.danger {
+      color: $error;
+
+      &:hover {
+        background: $error-light;
+        color: $error;
+      }
+    }
+  }
+}

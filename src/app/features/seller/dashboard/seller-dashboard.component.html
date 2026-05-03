@@ -1,1 +1,141 @@
-<p>dashboard works!</p>
+<div class="dashboard-page">
+  @if (loading()) {
+    <div class="state-panel">
+      <mat-spinner diameter="44"></mat-spinner>
+      <p>Loading dashboard...</p>
+    </div>
+  } @else if (error()) {
+    <div class="state-panel">
+      <mat-icon>error_outline</mat-icon>
+      <p>{{ error() }}</p>
+      <button mat-stroked-button (click)="loadDashboard()">Try Again</button>
+    </div>
+  } @else {
+    <section class="dashboard-hero">
+      <div class="hero-copy">
+        <span class="section-kicker">Seller Dashboard</span>
+        <h1>Welcome back, {{ sellerName() }}</h1>
+        <p>Monitor listings, buyer interest, and tour activity in one place.</p>
+      </div>
+
+      <div class="hero-actions">
+        <button mat-flat-button class="primary-action" routerLink="/seller/properties/new">
+          <mat-icon>add_home</mat-icon>
+          Add Property
+        </button>
+        <button mat-stroked-button class="secondary-action" routerLink="/seller/appointments">
+          <mat-icon>event_note</mat-icon>
+          Appointments
+        </button>
+      </div>
+    </section>
+
+    <section class="metrics-grid">
+      <div class="metric-card">
+        <span>Total Listings</span>
+        <strong>{{ properties().length }}</strong>
+        <small>{{ approvedListings().length }} approved</small>
+      </div>
+      <div class="metric-card">
+        <span>Pending Review</span>
+        <strong>{{ pendingListings().length }}</strong>
+        <small>{{ rejectedListings().length }} rejected</small>
+      </div>
+      <div class="metric-card">
+        <span>Tour Requests</span>
+        <strong>{{ pendingAppointments().length }}</strong>
+        <small>{{ awaitingBuyerAppointments().length }} awaiting buyer</small>
+      </div>
+      <div class="metric-card wide">
+        <span>Portfolio Value</span>
+        <strong>{{ portfolioValue() | priceFormat: "sale" }}</strong>
+        <small>{{ confirmedAppointments().length }} confirmed tours</small>
+      </div>
+    </section>
+
+    <section class="dashboard-grid">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <span class="section-kicker">Listings</span>
+            <h2>Recent Properties</h2>
+          </div>
+          <a routerLink="/seller/properties">View all</a>
+        </div>
+
+        @if (recentListings().length === 0) {
+          <div class="empty-panel">
+            <mat-icon>home_work</mat-icon>
+            <p>No listings yet.</p>
+          </div>
+        } @else {
+          <div class="listing-stack">
+            @for (property of recentListings(); track property.id) {
+              <article class="mini-listing">
+                <img
+                  [src]="
+                    property.images[0] ||
+                    'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=500'
+                  "
+                  [alt]="property.title"
+                />
+                <div>
+                  <mat-chip class="status-chip" [ngClass]="'status-' + property.status">
+                    {{ property.status | titlecase }}
+                  </mat-chip>
+                  <h3>{{ property.title }}</h3>
+                  <p>
+                    {{ property.type | propertyType }} in
+                    {{ property.location.city }}
+                  </p>
+                </div>
+                <strong>{{ property.price | priceFormat: property.listingType }}</strong>
+              </article>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <span class="section-kicker">Tours</span>
+            <h2>Recent Activity</h2>
+          </div>
+          <a routerLink="/seller/appointments">Manage</a>
+        </div>
+
+        @if (recentAppointments().length === 0) {
+          <div class="empty-panel">
+            <mat-icon>event_busy</mat-icon>
+            <p>No tour requests yet.</p>
+          </div>
+        } @else {
+          <div class="activity-stack">
+            @for (appointment of recentAppointments(); track appointment.id) {
+              <article class="activity-row">
+                <div class="activity-icon">
+                  <mat-icon>event</mat-icon>
+                </div>
+                <div>
+                  <mat-chip
+                    class="status-chip"
+                    [ngClass]="getAppointmentStatusClass(appointment)"
+                  >
+                    {{ getAppointmentStatusLabel(appointment) }}
+                  </mat-chip>
+                  <h3>
+                    {{ appointment.propertyTitle || "Property #" + appointment.propertyId }}
+                  </h3>
+                  <p>
+                    {{ formatDate(appointment.date) }} at {{ appointment.time }}
+                  </p>
+                </div>
+              </article>
+            }
+          </div>
+        }
+      </div>
+    </section>
+  }
+</div>

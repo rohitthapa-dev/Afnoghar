@@ -1,1 +1,353 @@
-<p>buyer-property-detail works!</p>
+@if (loading) {
+  <div class="loading-container">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Loading property details...</p>
+  </div>
+} @else if (error) {
+  <div class="error-container">
+    <mat-icon class="error-icon">error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" routerLink="/buyer/properties">
+      Back to Properties
+    </button>
+  </div>
+} @else if (property) {
+  <div class="property-detail-page">
+    <div class="detail-shell">
+      <div class="top-bar">
+        <button mat-button class="back-button" routerLink="/buyer/properties">
+          <mat-icon>arrow_back</mat-icon>
+          Back to properties
+        </button>
+
+        @if (isBuyer) {
+          <button
+            mat-stroked-button
+            class="save-action"
+            [class.saved]="isFavorite"
+            (click)="toggleFavorite()"
+          >
+            <mat-icon>{{ isFavorite ? "favorite" : "favorite_border" }}</mat-icon>
+            {{ isFavorite ? "Saved" : "Save" }}
+          </button>
+        }
+      </div>
+
+      <section class="media-section">
+        <div
+          class="media-grid"
+          [class.single-image]="previewImages.length === 1"
+        >
+          <div class="main-image-container">
+            <img
+              [src]="displayImages[currentImageIndex] || fallbackImage"
+              [alt]="property.title"
+              class="main-image"
+            />
+
+            <div class="listing-pill">
+              <span></span>
+              {{ property.listingType | propertyType: "listingType" }}
+            </div>
+
+            @if (hasMultipleImages) {
+              <button
+                type="button"
+                class="gallery-nav prev"
+                aria-label="Previous image"
+                (click)="prevImage()"
+              >
+                <mat-icon>chevron_left</mat-icon>
+              </button>
+              <button
+                type="button"
+                class="gallery-nav next"
+                aria-label="Next image"
+                (click)="nextImage()"
+              >
+                <mat-icon>chevron_right</mat-icon>
+              </button>
+            }
+
+            <div class="image-counter">
+              <mat-icon>photo_library</mat-icon>
+              {{ images.length || 1 }} {{ (images.length || 1) === 1 ? "photo" : "photos" }}
+            </div>
+          </div>
+
+          @if (previewImages.length > 1) {
+            <div class="side-gallery">
+              @for (image of previewImages; track $index; let i = $index) {
+                @if (i > 0) {
+                  <button
+                    type="button"
+                    class="side-image"
+                    [class.active]="i === currentImageIndex"
+                    (click)="setImageIndex(i)"
+                  >
+                    <img [src]="image" [alt]="'Property image ' + (i + 1)" />
+                  </button>
+                }
+              }
+            </div>
+          }
+        </div>
+
+        @if (hasMultipleImages) {
+          <div class="thumbnail-strip">
+            @for (image of images; track $index; let i = $index) {
+              <button
+                type="button"
+                class="thumbnail"
+                [class.active]="i === currentImageIndex"
+                (click)="setImageIndex(i)"
+              >
+                <img [src]="image" [alt]="'Thumbnail ' + (i + 1)" />
+              </button>
+            }
+          </div>
+        }
+      </section>
+
+      <section class="property-summary-card">
+        <div class="summary-meta">
+          <mat-chip-set class="property-badges">
+            <mat-chip class="type-badge">
+              {{ property.type | propertyType }}
+            </mat-chip>
+            <mat-chip class="listing-badge">
+              {{ property.listingType | propertyType: "listingType" }}
+            </mat-chip>
+            @if (property.status === "approved") {
+              <mat-chip class="status-approved">Verified</mat-chip>
+            }
+          </mat-chip-set>
+
+          <span class="listed-date">
+            Listed {{ property.createdAt | date: "mediumDate" }}
+          </span>
+        </div>
+
+        <div class="summary-headline">
+          <div class="title-block">
+            <h1 class="property-title">{{ property.title }}</h1>
+            <div class="property-location">
+              <mat-icon>location_on</mat-icon>
+              <span>
+                {{ property.location.address }}, {{ property.location.city }},
+                {{ property.location.district }}
+              </span>
+            </div>
+          </div>
+
+          <div class="price-block">
+            <span class="price">
+              {{ property.price | priceFormat: property.listingType }}
+            </span>
+          </div>
+        </div>
+
+        <div class="summary-metrics">
+          @if (property.bedrooms > 0) {
+            <div class="metric">
+              <mat-icon>bed</mat-icon>
+              <strong>{{ property.bedrooms }}</strong>
+              <span>Bedrooms</span>
+            </div>
+          }
+          @if (property.bathrooms > 0) {
+            <div class="metric">
+              <mat-icon>bathtub</mat-icon>
+              <strong>{{ property.bathrooms }}</strong>
+              <span>Bathrooms</span>
+            </div>
+          }
+          @if (property.floors > 0) {
+            <div class="metric">
+              <mat-icon>layers</mat-icon>
+              <strong>{{ property.floors }}</strong>
+              <span>Floors</span>
+            </div>
+          }
+          @if (property.area > 0) {
+            <div class="metric">
+              <mat-icon>square_foot</mat-icon>
+              <strong>{{ property.area }}</strong>
+              <span>Sq. ft.</span>
+            </div>
+          }
+          @if (property.aana > 0) {
+            <div class="metric">
+              <mat-icon>landscape</mat-icon>
+              <strong>{{ property.aana }}</strong>
+              <span>Aana</span>
+            </div>
+          }
+        </div>
+      </section>
+
+      <div class="property-layout">
+        <main class="property-main">
+          <section class="content-panel">
+            <div class="section-heading">
+              <span class="section-kicker">Overview</span>
+              <h2>About this property</h2>
+            </div>
+            <p class="description-text">{{ property.description }}</p>
+          </section>
+
+          @if (property.features && property.features.length > 0) {
+            <section class="content-panel">
+              <div class="section-heading">
+                <span class="section-kicker">Details</span>
+                <h2>Features and amenities</h2>
+              </div>
+              <div class="features-grid">
+                @for (feature of property.features; track feature) {
+                  <div class="feature-item">
+                    <i [class]="getFeatureIcon(feature)" aria-hidden="true"></i>
+                    <span>{{ feature }}</span>
+                  </div>
+                }
+              </div>
+            </section>
+          }
+
+          <section class="content-panel map-panel">
+            <div class="section-heading">
+              <span class="section-kicker">Location</span>
+              <h2>{{ property.location.city }}, {{ property.location.district }}</h2>
+            </div>
+            <div class="map-address">
+              <mat-icon>place</mat-icon>
+              <span>{{ property.location.address }}</span>
+            </div>
+            <div class="map-frame">
+              <app-map-view
+                [properties]="[property]"
+                mode="detail"
+                [selectedPropertyId]="property.id"
+              />
+            </div>
+          </section>
+        </main>
+
+        <aside class="property-sidebar">
+          <section class="sidebar-card contact-card">
+            <div class="contact-heading">
+              <span class="section-kicker">Contact</span>
+              <h2>Schedule a Visit</h2>
+            </div>
+
+            <div class="seller-info">
+              <div class="seller-avatar">
+                {{ sellerName ? sellerName.charAt(0).toUpperCase() : "S" }}
+              </div>
+              <div class="seller-details">
+                <span class="seller-name">{{ sellerName || "Verified seller" }}</span>
+                <span class="seller-phone">
+                  <mat-icon>phone</mat-icon>
+                  {{ sellerPhone || "Available after request" }}
+                </span>
+              </div>
+            </div>
+
+            @if (isLoggedIn && isBuyer) {
+              @if (!appointmentSuccess) {
+                <form
+                  [formGroup]="appointmentForm"
+                  (ngSubmit)="onSubmitAppointment()"
+                  class="appointment-form"
+                >
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Preferred Date</mat-label>
+                    <input
+                      matInput
+                      [matDatepicker]="appointmentPicker"
+                      [min]="minAppointmentDate"
+                      formControlName="date"
+                      readonly
+                    />
+                    <mat-datepicker-toggle
+                      matIconSuffix
+                      [for]="appointmentPicker"
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker #appointmentPicker></mat-datepicker>
+                    @if (
+                      appointmentForm.get("date")?.invalid &&
+                      appointmentForm.get("date")?.touched
+                    ) {
+                      <mat-error>Date is required</mat-error>
+                    }
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Preferred Time</mat-label>
+                    <mat-select formControlName="time">
+                      <mat-option value="09:00 AM">09:00 AM</mat-option>
+                      <mat-option value="10:00 AM">10:00 AM</mat-option>
+                      <mat-option value="11:00 AM">11:00 AM</mat-option>
+                      <mat-option value="12:00 PM">12:00 PM</mat-option>
+                      <mat-option value="01:00 PM">01:00 PM</mat-option>
+                      <mat-option value="02:00 PM">02:00 PM</mat-option>
+                      <mat-option value="03:00 PM">03:00 PM</mat-option>
+                      <mat-option value="04:00 PM">04:00 PM</mat-option>
+                      <mat-option value="05:00 PM">05:00 PM</mat-option>
+                    </mat-select>
+                    @if (
+                      appointmentForm.get("time")?.invalid &&
+                      appointmentForm.get("time")?.touched
+                    ) {
+                      <mat-error>Time is required</mat-error>
+                    }
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Message</mat-label>
+                    <textarea
+                      matInput
+                      formControlName="message"
+                      rows="3"
+                      placeholder="I would like to tour this property..."
+                    ></textarea>
+                  </mat-form-field>
+
+                  <button
+                    mat-flat-button
+                    class="submit-btn"
+                    type="submit"
+                    [disabled]="appointmentForm.invalid || submitting"
+                  >
+                    @if (submitting) {
+                      <mat-spinner diameter="20"></mat-spinner>
+                    } @else {
+                      <ng-container>
+                        <mat-icon>calendar_month</mat-icon>
+                        Request Tour
+                      </ng-container>
+                    }
+                  </button>
+                </form>
+              } @else {
+                <div class="appointment-success">
+                  <mat-icon class="success-icon">check_circle</mat-icon>
+                  <h3>Request Sent</h3>
+                  <p>The seller will review your preferred schedule.</p>
+                  <button mat-button routerLink="/buyer/appointments">
+                    View appointments
+                  </button>
+                </div>
+              }
+            } @else if (!isLoggedIn) {
+              <div class="login-prompt">
+                <mat-icon>lock</mat-icon>
+                <p>Log in as a buyer to request a tour.</p>
+                <button mat-flat-button routerLink="/login">Log in</button>
+              </div>
+            }
+          </section>
+        </aside>
+      </div>
+    </div>
+  </div>
+}

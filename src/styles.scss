@@ -4,8 +4,6 @@
 @use "styles/mixins" as *;
 @use "@angular/material" as mat;
 
-@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
-
 @include mat.core();
 
 $afnoghar-primary: mat.m2-define-palette(mat.$m2-teal-palette, 600);
@@ -35,4 +33,20 @@ app-root {
   margin: 0;
   padding: 0;
   background-color: $background;
+}
+app-buyer-map-search {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - #{$navbar-height});
+  overflow: hidden;
+}
+
+:root {
+  --color-primary: #{$primary};
+  --color-primary-dark: #{$primary-dark};
+  --color-info: #{$info};
+  --color-info-dark: #1558a3;
+  --color-surface: #{$surface};
+  --pulse-primary: #{rgba($primary, 0.5)};
+  --pulse-info: #{rgba($info, 0.5)};
 }

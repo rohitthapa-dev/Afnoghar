@@ -1,0 +1,255 @@
+import {
+  Component,
+  AfterViewInit,
+  OnDestroy,
+  Input,
+  Output,
+  EventEmitter,
+  OnChanges,
+  SimpleChanges,
+  ElementRef,
+  ViewChild,
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import * as L from 'leaflet';
+import 'leaflet.markercluster';
+import { Property } from '../../../core/models/property.model';
+
+@Component({
+  selector: 'app-map-view',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './map-view.component.html',
+  styleUrl: './map-view.component.scss',
+})
+export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
+  @ViewChild('mapContainer', { static: true })
+  private mapContainer!: ElementRef<HTMLDivElement>;
+
+  @Input() properties: Property[] = [];
+  @Input() selectedPropertyId?: number;
+  @Input() mode: 'search' | 'detail' = 'search';
+
+  @Output() markerClick = new EventEmitter<number>();
+  @Output() boundsChanged = new EventEmitter<L.LatLngBounds>();
+
+  private map!: L.Map;
+  private markersLayer!: L.LayerGroup;
+  private clusterGroup!: L.MarkerClusterGroup;
+  private markerMap = new Map<number, L.Marker>();
+  private isInitialized = false;
+  private initTimeout?: ReturnType<typeof setTimeout>;
+  private invalidateTimeout?: ReturnType<typeof setTimeout>;
+  private resizeObserver?: ResizeObserver;
+
+  private get css() {
+    const s = getComputedStyle(document.documentElement);
+    return {
+      primary: s.getPropertyValue('--color-primary').trim(),
+      primaryDark: s.getPropertyValue('--color-primary-dark').trim(),
+      info: s.getPropertyValue('--color-info').trim(),
+      infoDark: s.getPropertyValue('--color-info-dark').trim(),
+      surface: s.getPropertyValue('--color-surface').trim(),
+      pulsePrimary: s.getPropertyValue('--pulse-primary').trim(),
+      pulseInfo: s.getPropertyValue('--pulse-info').trim(),
+    };
+  }
+
+  private readonly DEFAULT_CENTER: L.LatLngTuple = [27.7172, 85.324];
+  private readonly DEFAULT_ZOOM = 12;
+  private readonly TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+
+  ngAfterViewInit(): void {
+    this.initTimeout = setTimeout(() => {
+      this.initMap();
+      this.isInitialized = true;
+      this.addMarkers();
+    });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (!this.isInitialized) return;
+    if (changes['properties']) {
+      this.clearMarkers();
+      this.addMarkers();
+    }
+    if (changes['selectedPropertyId']) {
+      this.highlightSelectedMarker();
+    }
+  }
+
+  ngOnDestroy(): void {
+    clearTimeout(this.initTimeout);
+    clearTimeout(this.invalidateTimeout);
+    this.resizeObserver?.disconnect();
+    if (this.map) {
+      this.map.remove();
+      this.map = undefined!;
+    }
+    this.markerMap.clear();
+  }
+
+  private initMap(): void {
+    this.map = L.map(this.mapContainer.nativeElement, {
+      center: this.DEFAULT_CENTER,
+      zoom: this.DEFAULT_ZOOM,
+      zoomControl: false,
+      scrollWheelZoom: true,
+    });
+
+    L.tileLayer(this.TILE_URL, {
+      attribution: '© CartoDB | © OpenStreetMap',
+      maxZoom: 18,
+      minZoom: 8,
+    }).addTo(this.map);
+
+    this.invalidateTimeout = setTimeout(() => {
+      this.map?.invalidateSize();
+    }, 100);
+
+    if (this.mode === 'search') {
+      this.clusterGroup = L.markerClusterGroup({
+        chunkedLoading: true,
+        maxClusterRadius: 50,
+        iconCreateFunction: (cluster) => this.createClusterIcon(cluster),
+      });
+      this.map.addLayer(this.clusterGroup);
+    } else {
+      this.markersLayer = L.layerGroup().addTo(this.map);
+    }
+
+    this.map.on('moveend', () => {
+      const bounds = this.map.getBounds();
+      if (bounds && this.mode === 'search') {
+        this.boundsChanged.emit(bounds);
+      }
+    });
+
+    this.resizeObserver = new ResizeObserver(() => {
+      this.map?.invalidateSize();
+    });
+    this.resizeObserver.observe(this.mapContainer.nativeElement);
+  }
+
+  private addMarkers(): void {
+    if (!this.properties?.length) return;
+
+    this.properties.forEach((property) => {
+      if (property.location?.lat == null || property.location?.lng == null)
+        return;
+
+      const isSelected = property.id === this.selectedPropertyId;
+      const marker = L.marker([property.location.lat, property.location.lng], {
+        icon: this.createCustomIcon(isSelected, property.listingType),
+      });
+
+      marker.on('click', () => {
+        this.markerClick.emit(property.id);
+        this.flyToProperty(property);
+      });
+
+      if (this.mode === 'search' && this.clusterGroup) {
+        this.clusterGroup.addLayer(marker);
+      } else if (this.markersLayer) {
+        this.markersLayer.addLayer(marker);
+      }
+
+      this.markerMap.set(property.id, marker);
+    });
+
+    if (this.mode === 'detail' && this.properties.length === 1) {
+      const prop = this.properties[0];
+      this.map.flyTo([prop.location.lat, prop.location.lng], 15, {
+        animate: true,
+      });
+    }
+  }
+
+  private clearMarkers(): void {
+    if (this.mode === 'search' && this.clusterGroup) {
+      this.clusterGroup.clearLayers();
+    } else if (this.markersLayer) {
+      this.markersLayer.clearLayers();
+    }
+    this.markerMap.clear();
+  }
+
+  private highlightSelectedMarker(): void {
+    this.markerMap.forEach((marker, id) => {
+      const prop = this.properties.find((p) => p.id === id);
+      marker.setIcon(
+        this.createCustomIcon(
+          id === this.selectedPropertyId,
+          prop?.listingType,
+        ),
+      );
+    });
+
+    if (
+      this.selectedPropertyId &&
+      this.markerMap.has(this.selectedPropertyId)
+    ) {
+      const latLng = this.markerMap.get(this.selectedPropertyId)?.getLatLng();
+      if (latLng) this.map.flyTo(latLng, 15, { animate: true });
+    }
+  }
+
+  private createCustomIcon(
+    isSelected: boolean,
+    listingType?: string,
+  ): L.DivIcon {
+    const c = this.css;
+    const isRent = listingType === 'rent';
+    const color = isRent
+      ? isSelected
+        ? c.infoDark
+        : c.info
+      : isSelected
+        ? c.primaryDark
+        : c.primary;
+    const pulseColor = isRent ? c.pulseInfo : c.pulsePrimary;
+
+    return L.divIcon({
+      className: 'custom-map-pin',
+      html: `<div
+        class="pin ${isSelected ? 'selected' : ''}"
+        style="background:${color};--pulse-color:${pulseColor};"
+      ></div>`,
+      iconSize: [32, 32],
+      iconAnchor: [16, 32],
+      popupAnchor: [0, -36],
+    });
+  }
+
+  private createClusterIcon(cluster: L.MarkerCluster): L.DivIcon {
+    const c = this.css;
+    const markers = cluster.getAllChildMarkers();
+    const rentCount = markers.filter((m) => {
+      const ll = m.getLatLng();
+      return (
+        this.properties.find(
+          (p) => p.location.lat === ll.lat && p.location.lng === ll.lng,
+        )?.listingType === 'rent'
+      );
+    }).length;
+
+    const color = rentCount > markers.length / 2 ? c.info : c.primary;
+    const count = cluster.getChildCount();
+
+    return L.divIcon({
+      html: `<div class="cluster-icon" style="background:${color}">${count}</div>`,
+      className: 'custom-cluster',
+      iconSize: L.point(40, 40),
+    });
+  }
+
+  private flyToProperty(property: Property): void {
+    this.map.flyTo([property.location.lat, property.location.lng], 15, {
+      animate: true,
+    });
+  }
+
+  invalidateMapSize(): void {
+    this.map?.invalidateSize();
+  }
+}

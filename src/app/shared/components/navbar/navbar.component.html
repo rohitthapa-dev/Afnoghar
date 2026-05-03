@@ -11,60 +11,23 @@
 
     <div class="nav-links desktop-nav">
       @if (!isLoggedIn) {
-        <a
-          routerLink="/"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-          >Home</a
-        >
-        <a routerLink="/buyer/properties" routerLinkActive="active"
-          >Properties</a
-        >
-        <a routerLink="/about" routerLinkActive="active">About</a>
+        <a (click)="navigateToMapSearch('sale')">Buy</a>
+        <a (click)="navigateToMapSearch('rent')">Rent</a>
+        <a routerLink="/about">About</a>
       } @else if (userRole === "buyer") {
-        <a
-          routerLink="/buyer/home"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-          >Home</a
-        >
-        <a routerLink="/buyer/properties" routerLinkActive="active"
-          >Properties</a
-        >
-        <a routerLink="/buyer/favorites" routerLinkActive="active">Favorites</a>
-        <a routerLink="/buyer/appointments" routerLinkActive="active"
-          >Appointments</a
-        >
-        <a routerLink="/buyer/map-search" routerLinkActive="active"
-          >Map Search</a
-        >
+        <a routerLink="/buyer/favorites">Favorites</a>
+        <a routerLink="/buyer/appointments">Appointments</a>
+        <a (click)="navigateToMapSearch('sale')">Buy</a>
+        <a (click)="navigateToMapSearch('rent')">Rent</a>
       } @else if (userRole === "seller") {
-        <a
-          routerLink="/seller/dashboard"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-          >Dashboard</a
-        >
-        <a routerLink="/seller/properties" routerLinkActive="active"
-          >My Listings</a
-        >
-        <a routerLink="/seller/properties/new" routerLinkActive="active"
-          >Upload Property</a
-        >
-        <a routerLink="/seller/appointments" routerLinkActive="active"
-          >Appointments</a
-        >
+        <a routerLink="/seller/dashboard">Dashboard</a>
+        <a routerLink="/seller/properties">My Listings</a>
+        <a routerLink="/seller/properties/new">Upload Property</a>
+        <a routerLink="/seller/appointments">Appointments</a>
       } @else if (userRole === "admin") {
-        <a
-          routerLink="/admin/dashboard"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-          >Dashboard</a
-        >
-        <a routerLink="/admin/listings" routerLinkActive="active"
-          >Manage Listings</a
-        >
-        <a routerLink="/admin/users" routerLinkActive="active">Manage Users</a>
+        <a routerLink="/admin/dashboard">Dashboard</a>
+        <a routerLink="/admin/listings">Manage Listings</a>
+        <a routerLink="/admin/users">Manage Users</a>
       }
     </div>
 
@@ -74,40 +37,163 @@
         <a routerLink="/register" class="btn btn-primary">Register</a>
       } @else {
         <button
-          mat-button
-          [matMenuTriggerFor]="userMenu"
-          class="user-menu-trigger"
+          type="button"
+          class="navbar-icon-button notification-trigger"
+          [class.active]="notificationPanelOpen()"
+          aria-label="Notifications"
+          (click)="toggleNotificationPanel($event)"
         >
-          <div class="user-avatar">{{ userInitials }}</div>
-          <span class="user-name">{{ userName }}</span>
-          <mat-icon class="dropdown-icon">keyboard_arrow_down</mat-icon>
+          <i class="bi bi-bell"></i>
+          @if (unreadNotificationCount > 0) {
+            <span class="notification-badge">{{ notificationCountLabel }}</span>
+          }
         </button>
 
-        <mat-menu #userMenu="matMenu" xPosition="before">
-          <div class="user-menu-header">
-            <div class="user-avatar-lg">{{ userInitials }}</div>
-            <div class="user-info">
-              <span class="user-name">{{ userName }}</span>
-              <span class="user-email">{{ userEmail }}</span>
+        <button
+          type="button"
+          [matMenuTriggerFor]="userMenu"
+          class="user-menu-trigger"
+          aria-label="Open profile menu"
+        >
+          <span class="profile-avatar">
+            @if (hasUserAvatar) {
+              <img [src]="userAvatar" [alt]="userName" />
+            } @else {
+              <span>{{ userInitials }}</span>
+            }
+          </span>
+        </button>
+
+        @if (notificationPanelOpen()) {
+          <div
+            class="notification-popover"
+            role="dialog"
+            aria-label="Notifications"
+            (click)="$event.stopPropagation()"
+          >
+            <div class="notification-header">
+              <div>
+                <strong>Notifications</strong>
+                <span>{{ unreadNotificationCount }} unread</span>
+              </div>
+              @if (unreadNotificationCount > 0) {
+                <button
+                  type="button"
+                  class="mark-read-btn"
+                  (click)="markAllNotificationsRead($event)"
+                >
+                  Mark all read
+                </button>
+              }
             </div>
+
+            @if (notificationCount === 0) {
+              <div class="notification-empty">
+                <i class="bi bi-bell"></i>
+                <span>No new notifications</span>
+              </div>
+            } @else {
+              <div class="notification-list">
+                @for (notification of notifications(); track notification.id) {
+                  <div
+                    class="notification-row"
+                    [class.unread]="!notification.read"
+                  >
+                    <span class="notification-icon-wrap">
+                      <i
+                        class="notification-type-icon"
+                        [ngClass]="getNotificationIcon(notification.type)"
+                      ></i>
+                    </span>
+                    <a
+                      class="notification-copy"
+                      [routerLink]="notificationsRoute"
+                      (click)="closeNotificationPanel()"
+                    >
+                      <strong>{{ notification.title }}</strong>
+                      <span>{{ notification.message }}</span>
+                      <time [dateTime]="notification.createdAt">
+                        {{ notification.createdAt | date: "MMM d, y, h:mm a" }}
+                      </time>
+                    </a>
+                    @if (!notification.read) {
+                      <button
+                        type="button"
+                        class="notification-read-btn"
+                        aria-label="Mark notification as read"
+                        (click)="dismissNotification(notification.id, $event)"
+                      >
+                        <span></span>
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
+            }
+
+            <a
+              class="notification-footer"
+              [routerLink]="notificationsRoute"
+              (click)="closeNotificationPanel()"
+            >
+              View appointments
+            </a>
           </div>
-          <mat-divider></mat-divider>
-          <button mat-menu-item routerLink="/profile">
-            <mat-icon>person_outline</mat-icon>
-            <span>My Profile</span>
-          </button>
-          <button mat-menu-item routerLink="/settings">
-            <mat-icon>settings_outlined</mat-icon>
-            <span>Settings</span>
-          </button>
-          <mat-divider></mat-divider>
-          <button mat-menu-item (click)="logout()">
-            <mat-icon>logout</mat-icon>
-            <span>Logout</span>
-          </button>
+        }
+
+        <mat-menu
+          #userMenu="matMenu"
+          xPosition="before"
+          yPosition="below"
+          [overlapTrigger]="false"
+          class="app-profile-menu"
+        >
+          <div class="profile-menu-shell">
+            <div class="profile-menu-header">
+              <div class="profile-avatar-lg">
+                @if (hasUserAvatar) {
+                  <img [src]="userAvatar" [alt]="userName" />
+                } @else {
+                  <span>{{ userInitials }}</span>
+                }
+              </div>
+              <div class="profile-menu-info">
+                <strong>{{ userName }}</strong>
+                <span>{{ userEmail }}</span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="profile-menu-item"
+              matMenuClose
+              (click)="goToProfile()"
+            >
+              <i class="bi bi-person"></i>
+              <span>Profile</span>
+            </button>
+            <button
+              type="button"
+              class="profile-menu-item"
+              matMenuClose
+              (click)="goToSettings()"
+            >
+              <i class="bi bi-gear"></i>
+              <span>Settings</span>
+            </button>
+            <button
+              type="button"
+              class="profile-menu-item danger"
+              matMenuClose
+              (click)="logout()"
+            >
+              <i class="bi bi-box-arrow-right"></i>
+              <span>Log out</span>
+            </button>
+          </div>
         </mat-menu>
       }
-
+  
       <button class="mobile-menu-toggle" (click)="toggleMobileMenu()">
         <mat-icon>{{ mobileMenuOpen() ? "close" : "menu" }}</mat-icon>
       </button>
@@ -117,70 +203,62 @@
   @if (mobileMenuOpen()) {
     <div class="mobile-nav">
       @if (!isLoggedIn) {
-        <a routerLink="/" (click)="closeMobileMenu()">Home</a>
-        <a routerLink="/properties" (click)="closeMobileMenu()">Properties</a>
+        <a (click)="navigateToMapSearch('sale'); closeMobileMenu()">Buy</a>
+        <a (click)="navigateToMapSearch('rent'); closeMobileMenu()">Rent</a>
         <a routerLink="/about" (click)="closeMobileMenu()">About</a>
         <div class="mobile-auth-buttons">
           <a
             routerLink="/login"
             class="btn btn-outline"
             (click)="closeMobileMenu()"
-            >Login</a
-          >
+            >Login</a>
           <a
             routerLink="/register"
             class="btn btn-primary"
             (click)="closeMobileMenu()"
-            >Register</a
-          >
+            >Register</a>
         </div>
       } @else {
         <div class="mobile-user-info">
-          <div class="user-avatar">{{ userInitials }}</div>
+          <div class="user-avatar">
+            @if (hasUserAvatar) {
+              <img [src]="userAvatar" [alt]="userName" />
+            } @else {
+              <span>{{ userInitials }}</span>
+            }
+          </div>
           <div>
             <div class="user-name">{{ userName }}</div>
             <div class="user-role">{{ userRole | titlecase }}</div>
           </div>
         </div>
+        <a
+          class="mobile-notification-link"
+          [routerLink]="notificationsRoute"
+          (click)="closeMobileMenu()"
+        >
+          <i class="bi bi-bell"></i>
+          <span>Notifications</span>
+          <span class="mobile-notification-badge">{{
+            notificationCountLabel
+          }}</span>
+        </a>
         <mat-divider></mat-divider>
-
+        
         @if (userRole === "buyer") {
-          <a routerLink="/buyer/home" (click)="closeMobileMenu()">Home</a>
-          <a routerLink="/buyer/properties" (click)="closeMobileMenu()"
-            >Properties</a
-          >
-          <a routerLink="/buyer/favorites" (click)="closeMobileMenu()"
-            >Favorites</a
-          >
-          <a routerLink="/buyer/appointments" (click)="closeMobileMenu()"
-            >Appointments</a
-          >
-          <a routerLink="/buyer/map-search" (click)="closeMobileMenu()"
-            >Map Search</a
-          >
+          <a routerLink="/buyer/favorites" (click)="closeMobileMenu()">Favorites</a>
+          <a routerLink="/buyer/appointments" (click)="closeMobileMenu()">Appointments</a>
+          <a (click)="navigateToMapSearch('sale'); closeMobileMenu()">Buy</a>
+          <a (click)="navigateToMapSearch('rent'); closeMobileMenu()">Rent</a>
         } @else if (userRole === "seller") {
-          <a routerLink="/seller/dashboard" (click)="closeMobileMenu()"
-            >Dashboard</a
-          >
-          <a routerLink="/seller/properties" (click)="closeMobileMenu()"
-            >My Listings</a
-          >
-          <a routerLink="/seller/properties/new" (click)="closeMobileMenu()"
-            >Upload Property</a
-          >
-          <a routerLink="/seller/appointments" (click)="closeMobileMenu()"
-            >Appointments</a
-          >
+          <a routerLink="/seller/dashboard" (click)="closeMobileMenu()">Dashboard</a>
+          <a routerLink="/seller/properties" (click)="closeMobileMenu()">My Listings</a>
+          <a routerLink="/seller/properties/new" (click)="closeMobileMenu()">Upload Property</a>
+          <a routerLink="/seller/appointments" (click)="closeMobileMenu()">Appointments</a>
         } @else if (userRole === "admin") {
-          <a routerLink="/admin/dashboard" (click)="closeMobileMenu()"
-            >Dashboard</a
-          >
-          <a routerLink="/admin/listings" (click)="closeMobileMenu()"
-            >Manage Listings</a
-          >
-          <a routerLink="/admin/users" (click)="closeMobileMenu()"
-            >Manage Users</a
-          >
+          <a routerLink="/admin/dashboard" (click)="closeMobileMenu()">Dashboard</a>
+          <a routerLink="/admin/listings" (click)="closeMobileMenu()">Manage Listings</a>
+          <a routerLink="/admin/users" (click)="closeMobileMenu()">Manage Users</a>
         }
 
         <mat-divider></mat-divider>

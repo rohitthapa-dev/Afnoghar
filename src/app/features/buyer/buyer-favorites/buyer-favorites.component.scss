@@ -1,0 +1,97 @@
+@use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins" as *;
+
+.favorites-container {
+  max-width: $container-max;
+  margin: 0 auto;
+  padding: $space-8 $space-6;
+  min-height: calc(100vh - #{$navbar-height});
+}
+
+.page-title {
+  font-family: $font-heading;
+  font-size: $text-3xl;
+  font-weight: $font-bold;
+  color: $text-primary;
+  margin-bottom: $space-8;
+}
+
+.loading-state {
+  @include flex(column, center, center);
+  min-height: 400px;
+  gap: $space-4;
+
+  p {
+    font-family: $font-primary;
+    color: $text-secondary;
+  }
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid $divider;
+  border-top-color: $primary;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.empty-state {
+  @include flex(column, center, center);
+  min-height: 400px;
+  text-align: center;
+  gap: $space-4;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: $text-disabled;
+  }
+
+  h2 {
+    font-family: $font-heading;
+    font-size: $text-2xl;
+    font-weight: $font-semibold;
+    color: $text-primary;
+  }
+
+  p {
+    font-family: $font-primary;
+    font-size: $text-base;
+    color: $text-secondary;
+    max-width: 400px;
+  }
+}
+
+.btn-primary {
+  display: inline-block;
+  padding: $space-3 $space-8;
+  background: $primary;
+  color: $surface;
+  text-decoration: none;
+  border-radius: $radius-md;
+  font-family: $font-primary;
+  font-weight: $font-semibold;
+  transition: $transition-fast;
+  cursor: pointer;
+
+  &:hover {
+    background: $primary-dark;
+    transform: translateY(-2px);
+  }
+}
+
+.properties-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax($card-width, 1fr));
+  gap: $space-6;
+}
+
+.property-item {
+  position: relative;
+}

@@ -1,1 +1,327 @@
-<p>seller-appointments works!</p>
+@if (loading) {
+  <div class="loading-container">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Loading appointments...</p>
+  </div>
+} @else if (error) {
+  <div class="error-container">
+    <mat-icon class="error-icon">error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="loadAppointments()">
+      Try Again
+    </button>
+  </div>
+} @else {
+  <div class="appointments-page">
+    @if (notifications.length > 0) {
+      <div class="notifications-banner">
+        @for (n of notifications; track n.id) {
+          <div class="notification-item" [ngClass]="'notif-' + n.type">
+            <div class="notif-body">
+              <mat-icon>{{ getNotificationIcon(n.type) }}</mat-icon>
+              <div>
+                <strong>{{ n.title }}</strong>
+                <p>{{ n.message }}</p>
+              </div>
+            </div>
+            <button mat-icon-button (click)="dismissNotification(n.id)">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        }
+      </div>
+    }
+
+    <section class="appointments-hero">
+      <div class="hero-copy">
+        <span class="section-kicker">Tour Requests</span>
+        <h1>Appointments</h1>
+        <p>Manage buyer visit requests and schedule property tours.</p>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-card">
+          <span>Total</span>
+          <strong>{{ appointments.length }}</strong>
+        </div>
+        <div class="stat-card">
+          <span>Pending</span>
+          <strong>{{ pendingCount }}</strong>
+        </div>
+        <div class="stat-card">
+          <span>Confirmed</span>
+          <strong>{{ confirmedCount }}</strong>
+        </div>
+        <div class="stat-card wide">
+          <span>Next Tour</span>
+          <strong>{{ nextTourLabel }}</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="appointments-panel">
+      <mat-tab-group
+        class="appointment-tabs"
+        [selectedIndex]="selectedTab"
+        (selectedIndexChange)="onTabChange($event)"
+      >
+        @for (tab of appointmentTabs; track tab.status) {
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <span class="tab-label">
+                <mat-icon>{{ tab.icon }}</mat-icon>
+                <span>{{ tab.label }}</span>
+                <span class="tab-count">{{ getTabCount(tab.status) }}</span>
+              </span>
+            </ng-template>
+
+            <div class="tab-content">
+              @if (filteredAppointments.length === 0) {
+                <div class="empty-state">
+                  <div class="empty-icon">
+                    <mat-icon>{{ tab.icon }}</mat-icon>
+                  </div>
+                  <h3>
+                    No
+                    {{
+                      tab.status === "all" ? "" : tab.label.toLowerCase()
+                    }}
+                    appointments
+                  </h3>
+                  <p>Buyer tour requests will appear here once submitted.</p>
+                </div>
+              } @else {
+                <div class="appointments-list">
+                  @for (
+                    appointment of filteredAppointments;
+                    track appointment.id
+                  ) {
+                    <article
+                      class="appointment-card"
+                      [class.is-cancelled]="
+                        getStatusClass(appointment.status) ===
+                        'status-cancelled'
+                      "
+                    >
+                      <div class="date-badge">
+                        <span>{{ getMonth(appointment.date) }}</span>
+                        <strong>{{ getDay(appointment.date) }}</strong>
+                      </div>
+
+                      <div class="property-image">
+                        <img
+                          [src]="appointment.propertyImage || fallbackImage"
+                          [alt]="appointment.propertyTitle || 'Property'"
+                        />
+                      </div>
+
+                      <div class="appointment-details">
+                        <div class="card-topline">
+                          <mat-chip
+                            class="status-chip"
+                            [ngClass]="getStatusClass(appointment.status)"
+                          >
+                            {{
+                              isAwaitingBuyerConfirmation(appointment)
+                                ? "Awaiting Buyer"
+                                : getStatusLabel(appointment.status)
+                            }}
+                          </mat-chip>
+                          @if (appointment.propertyType) {
+                            <span class="property-type">
+                              {{ appointment.propertyType | propertyType }}
+                            </span>
+                          }
+                        </div>
+
+                        <h2>
+                          {{
+                            appointment.propertyTitle ||
+                              "Property #" + appointment.propertyId
+                          }}
+                        </h2>
+
+                        <div class="appointment-party">
+                          <mat-icon>person</mat-icon>
+                          <span>Buyer</span>
+                          <strong>{{ getBuyerName(appointment) }}</strong>
+                        </div>
+
+                        <div class="appointment-meta">
+                          <span>
+                            <mat-icon>event</mat-icon>
+                            {{ formatFullDate(appointment.date) }}
+                          </span>
+                          <span>
+                            <mat-icon>schedule</mat-icon>
+                            {{ appointment.time }}
+                          </span>
+                          @if (appointment.propertyLocation) {
+                            <span>
+                              <mat-icon>location_on</mat-icon>
+                              {{ appointment.propertyLocation }}
+                            </span>
+                          }
+                        </div>
+
+                        @if (appointment.notes || appointment.message) {
+                          <div class="buyer-note">
+                            <mat-icon>chat_bubble_outline</mat-icon>
+                            {{ appointment.notes || appointment.message }}
+                          </div>
+                        }
+
+                        @if (isAwaitingBuyerConfirmation(appointment)) {
+                          <div class="seller-waiting-note">
+                            <mat-icon>hourglass_top</mat-icon>
+                            Buyer confirmation is required for this rescheduled
+                            time.
+                          </div>
+                        }
+
+                        @if (
+                          appointment.isRescheduling &&
+                          appointment.rescheduleForm
+                        ) {
+                          <form
+                            [formGroup]="appointment.rescheduleForm"
+                            (ngSubmit)="submitReschedule(appointment)"
+                            class="reschedule-form"
+                          >
+                            <div class="reschedule-fields">
+                              <mat-form-field
+                                appearance="outline"
+                                class="reschedule-field"
+                              >
+                                <mat-label>New Date</mat-label>
+                                <input
+                                  matInput
+                                  [matDatepicker]="reschedulePicker"
+                                  [min]="minRescheduleDate"
+                                  formControlName="date"
+                                  readonly
+                                />
+                                <mat-datepicker-toggle
+                                  matIconSuffix
+                                  [for]="reschedulePicker"
+                                />
+                                <mat-datepicker #reschedulePicker />
+                              </mat-form-field>
+
+                              <mat-form-field
+                                appearance="outline"
+                                class="reschedule-field"
+                              >
+                                <mat-label>New Time</mat-label>
+                                <mat-select formControlName="time">
+                                  @for (slot of timeSlots; track slot) {
+                                    <mat-option [value]="slot">{{
+                                      slot
+                                    }}</mat-option>
+                                  }
+                                </mat-select>
+                              </mat-form-field>
+                            </div>
+
+                            <div class="reschedule-actions">
+                              <button
+                                mat-flat-button
+                                class="confirm-reschedule-btn"
+                                type="submit"
+                                [disabled]="appointment.rescheduleForm.invalid"
+                              >
+                                Confirm Reschedule
+                              </button>
+                              <button
+                                mat-button
+                                type="button"
+                                (click)="cancelReschedule(appointment)"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </form>
+                        }
+                      </div>
+
+                      <div class="appointment-actions">
+                        @if (appointment.propertyId) {
+                          <button
+                            mat-flat-button
+                            class="view-btn"
+                            [routerLink]="[
+                              '/buyer/properties',
+                              appointment.propertyId,
+                            ]"
+                          >
+                            View Property
+                          </button>
+                        }
+
+                        @if (
+                          canSellerRespond(appointment) &&
+                          !appointment.isRescheduling
+                        ) {
+                          <button
+                            mat-flat-button
+                            class="accept-btn"
+                            (click)="accept(appointment)"
+                          >
+                            <mat-icon>check</mat-icon>
+                            Accept
+                          </button>
+                          <button
+                            mat-stroked-button
+                            class="reschedule-btn"
+                            (click)="startReschedule(appointment)"
+                          >
+                            <mat-icon>edit_calendar</mat-icon>
+                            Reschedule
+                          </button>
+                          <button
+                            mat-stroked-button
+                            class="decline-btn"
+                            (click)="decline(appointment)"
+                          >
+                            Decline
+                          </button>
+                        }
+
+                        @if (
+                          isAwaitingBuyerConfirmation(appointment) &&
+                          !appointment.isRescheduling
+                        ) {
+                          <button
+                            mat-stroked-button
+                            class="reschedule-btn"
+                            (click)="startReschedule(appointment)"
+                          >
+                            <mat-icon>edit_calendar</mat-icon>
+                            Update Time
+                          </button>
+                        }
+
+                        @if (
+                          isConfirmed(appointment) &&
+                          !appointment.isRescheduling
+                        ) {
+                          <button
+                            mat-stroked-button
+                            class="reschedule-btn"
+                            (click)="startReschedule(appointment)"
+                          >
+                            <mat-icon>edit_calendar</mat-icon>
+                            Reschedule
+                          </button>
+                        }
+                      </div>
+                    </article>
+                  }
+                </div>
+              }
+            </div>
+          </mat-tab>
+        }
+      </mat-tab-group>
+    </section>
+  </div>
+}

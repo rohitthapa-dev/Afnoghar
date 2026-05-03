@@ -1,1 +1,272 @@
-<p>seller-property-upload works!</p>
+<div class="editor-page">
+  <section class="editor-hero">
+    <div>
+      <span class="section-kicker">Listing Studio</span>
+      <h1>{{ pageTitle() }}</h1>
+      <p>
+        Present the property with clear details, polished media, and accurate
+        location data.
+      </p>
+    </div>
+
+    <button mat-stroked-button class="secondary-action" routerLink="/seller/properties">
+      <mat-icon>arrow_back</mat-icon>
+      My Listings
+    </button>
+  </section>
+
+  @if (loading()) {
+    <div class="state-panel">
+      <mat-spinner diameter="44"></mat-spinner>
+      <p>Loading listing...</p>
+    </div>
+  } @else if (error()) {
+    <div class="state-panel">
+      <mat-icon>lock</mat-icon>
+      <h2>{{ error() }}</h2>
+      <button mat-flat-button class="primary-action" routerLink="/seller/properties">
+        Back to Listings
+      </button>
+    </div>
+  } @else {
+    <form class="editor-layout" [formGroup]="form" (ngSubmit)="saveProperty()">
+      <div class="form-stack">
+        <section class="form-section">
+          <div class="section-heading">
+            <span>01</span>
+            <div>
+              <h2>Property Details</h2>
+              <p>Core listing information buyers will scan first.</p>
+            </div>
+          </div>
+
+          <div class="field-grid">
+            <mat-form-field appearance="outline" class="wide">
+              <mat-label>Property title</mat-label>
+              <input matInput formControlName="title" />
+              @if (isInvalid("title")) {
+                <mat-error>Enter a clear title.</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Property type</mat-label>
+              <mat-select formControlName="type">
+                @for (option of propertyTypes; track option.value) {
+                  <mat-option [value]="option.value">{{ option.label }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Listing type</mat-label>
+              <mat-select formControlName="listingType">
+                @for (option of listingTypes; track option.value) {
+                  <mat-option [value]="option.value">{{ option.label }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="wide">
+              <mat-label>Description</mat-label>
+              <textarea matInput rows="5" formControlName="description"></textarea>
+              @if (isInvalid("description")) {
+                <mat-error>Add a stronger description.</mat-error>
+              }
+            </mat-form-field>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="section-heading">
+            <span>02</span>
+            <div>
+              <h2>Price & Layout</h2>
+              <p>Numbers should be precise enough for quick comparison.</p>
+            </div>
+          </div>
+
+          <div class="field-grid compact">
+            <mat-form-field appearance="outline">
+              <mat-label>Price</mat-label>
+              <input matInput type="number" formControlName="price" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Area</mat-label>
+              <input matInput type="number" formControlName="area" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Aana</mat-label>
+              <input matInput type="number" formControlName="aana" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Bedrooms</mat-label>
+              <input matInput type="number" formControlName="bedrooms" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Bathrooms</mat-label>
+              <input matInput type="number" formControlName="bathrooms" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Floors</mat-label>
+              <input matInput type="number" formControlName="floors" />
+            </mat-form-field>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="section-heading">
+            <span>03</span>
+            <div>
+              <h2>Location</h2>
+              <p>Enter the address, then click the map to place the property pin.</p>
+            </div>
+          </div>
+
+          <div class="field-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>District</mat-label>
+              <input matInput formControlName="district" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>City</mat-label>
+              <input matInput formControlName="city" />
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="wide">
+              <mat-label>Address</mat-label>
+              <input matInput formControlName="address" />
+            </mat-form-field>
+          </div>
+
+          <div class="map-picker">
+            <div class="map-picker-header">
+              <div>
+                <strong>Property pin</strong>
+                <span>{{ selectedLocationLabel }}</span>
+              </div>
+              <button
+                mat-stroked-button
+                class="secondary-action"
+                type="button"
+                (click)="resetMapToKathmandu()"
+              >
+                Reset Pin
+              </button>
+            </div>
+
+            <div #locationMap class="location-map" aria-label="Property location picker"></div>
+
+            <div class="map-helper">
+              <mat-icon>place</mat-icon>
+              <span>Click anywhere on the map, or drag the pin to fine-tune the location.</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="section-heading">
+            <span>04</span>
+            <div>
+              <h2>Media & Features</h2>
+              <p>Upload local images or keep carefully selected external URLs.</p>
+            </div>
+          </div>
+
+          <div class="upload-dropzone">
+            <input
+              #imageInput
+              type="file"
+              accept="image/*"
+              multiple
+              (change)="onFilesSelected($event)"
+            />
+            <div>
+              <mat-icon>cloud_upload</mat-icon>
+              <strong>Upload property images</strong>
+              <span>Stored locally under the application asset folder.</span>
+            </div>
+            <button
+              mat-stroked-button
+              class="secondary-action"
+              type="button"
+              (click)="imageInput.click()"
+            >
+              Choose Images
+            </button>
+          </div>
+
+          @if (selectedFiles().length > 0) {
+            <div class="selected-images">
+              @for (file of selectedFiles(); track file.name; let i = $index) {
+                <div class="selected-image">
+                  <img [src]="selectedFilePreviews()[i]" [alt]="file.name" />
+                  <span>{{ file.name }}</span>
+                  <button
+                    mat-icon-button
+                    type="button"
+                    aria-label="Remove selected image"
+                    (click)="removeSelectedFile(i)"
+                  >
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </div>
+              }
+            </div>
+          }
+
+          <div class="field-grid">
+            <mat-form-field appearance="outline" class="wide">
+              <mat-label>External or existing image URLs</mat-label>
+              <textarea matInput rows="4" formControlName="imagesRaw"></textarea>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="wide">
+              <mat-label>Features</mat-label>
+              <textarea matInput rows="3" formControlName="featuresRaw"></textarea>
+            </mat-form-field>
+          </div>
+        </section>
+      </div>
+
+      <aside class="preview-panel">
+        <div class="preview-card">
+          <div class="preview-image">
+            @if (getPreviewImages().length > 0) {
+              <img [src]="getPreviewImages()[0]" alt="Property preview" />
+            } @else {
+              <mat-icon>add_photo_alternate</mat-icon>
+            }
+          </div>
+
+          <div class="preview-body">
+            <span class="preview-chip">{{ form.controls.listingType.value }}</span>
+            <h2>{{ form.controls.title.value || "Untitled property" }}</h2>
+            <p>
+              {{ form.controls.city.value || "City" }},
+              {{ form.controls.district.value || "District" }}
+            </p>
+          </div>
+        </div>
+
+        <div class="save-panel">
+          <button
+            mat-flat-button
+            class="primary-action full"
+            type="submit"
+            [disabled]="saving()"
+          >
+            @if (saving()) {
+              <mat-spinner diameter="18"></mat-spinner>
+            } @else {
+              <mat-icon>{{ isEditMode() ? "save" : "publish" }}</mat-icon>
+            }
+            {{ isEditMode() ? "Save Changes" : "Submit Listing" }}
+          </button>
+          <button mat-button type="button" routerLink="/seller/properties">
+            Cancel
+          </button>
+        </div>
+      </aside>
+    </form>
+  }
+</div>

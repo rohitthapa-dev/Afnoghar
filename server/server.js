@@ -2,15 +2,24 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
+const path = require("path");
 const cors = require("cors");
+const multer = require("multer");
 
 const app = express();
 const PORT = 3000;
 const JWT_SECRET = "afnoghar-secret-key-2025";
 const DB_PATH = "./server/db.json";
+const PUBLIC_DIR = path.join(__dirname, "public");
+const ASSETS_DIR = path.join(PUBLIC_DIR, "assets");
+const PROPERTY_ASSETS_DIR = path.join(ASSETS_DIR, "properties");
+const PUBLIC_ASSET_BASE_URL = "http://localhost:3000";
+
+fs.mkdirSync(PROPERTY_ASSETS_DIR, { recursive: true });
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use("/assets", express.static(ASSETS_DIR));
 
 const getDB = () => {
   const data = fs.readFileSync(DB_PATH, "utf8");
@@ -20,6 +29,111 @@ const getDB = () => {
 const saveDB = (db) => {
   fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2), "utf8");
 };
+
+const toPublicAssetUrl = (relativeUrl) =>
+  `${PUBLIC_ASSET_BASE_URL}${relativeUrl}`;
+
+const isManagedPropertyImage = (imageUrl = "") => {
+  if (typeof imageUrl !== "string") return false;
+
+  return (
+    imageUrl.startsWith("/assets/properties/") ||
+    imageUrl.startsWith(`${PUBLIC_ASSET_BASE_URL}/assets/properties/`)
+  );
+};
+
+const imageUrlToFilePath = (imageUrl) => {
+  if (!isManagedPropertyImage(imageUrl)) return null;
+
+  const relativeUrl = imageUrl.replace(PUBLIC_ASSET_BASE_URL, "");
+  const relativePath = relativeUrl.replace(/^\/assets\/properties\//, "");
+  const filePath = path.normalize(path.join(PROPERTY_ASSETS_DIR, relativePath));
+
+  if (!filePath.startsWith(PROPERTY_ASSETS_DIR)) return null;
+  return filePath;
+};
+
+const deleteManagedImage = (imageUrl) => {
+  const filePath = imageUrlToFilePath(imageUrl);
+  if (!filePath || !fs.existsSync(filePath)) return;
+  fs.unlinkSync(filePath);
+};
+
+const deleteRemovedManagedImages = (oldImages = [], newImages = []) => {
+  const next = new Set(newImages);
+  oldImages
+    .filter((imageUrl) => isManagedPropertyImage(imageUrl))
+    .filter((imageUrl) => !next.has(imageUrl))
+    .forEach(deleteManagedImage);
+};
+
+const deletePropertyAssetFolder = (propertyId) => {
+  const folderPath = path.join(PROPERTY_ASSETS_DIR, String(propertyId));
+  if (fs.existsSync(folderPath)) {
+    fs.rmSync(folderPath, { recursive: true, force: true });
+  }
+};
+
+const requirePropertyAccess = (req, res, next) => {
+  const db = getDB();
+  const index = db.properties.findIndex(
+    (p) => p.id === Number(req.params.id),
+  );
+
+  if (index === -1) {
+    return res.status(404).json({ message: "Property not found." });
+  }
+
+  if (
+    req.user.role !== "admin" &&
+    db.properties[index].sellerId !== req.user.id
+  ) {
+    return res
+      .status(403)
+      .json({ message: "Not allowed to manage this property." });
+  }
+
+  req.db = db;
+  req.propertyIndex = index;
+  req.property = db.properties[index];
+  next();
+};
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const propertyFolder = path.join(
+      PROPERTY_ASSETS_DIR,
+      String(req.params.id),
+    );
+    fs.mkdirSync(propertyFolder, { recursive: true });
+    cb(null, propertyFolder);
+  },
+  filename: (req, file, cb) => {
+    const extension = path.extname(file.originalname).toLowerCase() || ".jpg";
+    const safeName = path
+      .basename(file.originalname, extension)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 40);
+    cb(null, `${Date.now()}-${safeName || "property"}${extension}`);
+  },
+});
+
+const uploadPropertyImages = multer({
+  storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+    files: 12,
+  },
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.startsWith("image/")) {
+      cb(new Error("Only image files are allowed."));
+      return;
+    }
+    cb(null, true);
+  },
+});
 
 const verifyToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -131,12 +245,11 @@ app.post("/register", (req, res) => {
   }
 });
 
-// Public endpoint for fetching agents (for home page)
 app.get("/agents", (req, res) => {
   try {
     const db = getDB();
     const agents = db.users
-      .filter(u => u.role === 'seller' && u.isActive)
+      .filter((u) => u.role === "seller" && u.isActive)
       .map(({ password, ...user }) => user);
     res.json(agents);
   } catch (error) {
@@ -219,6 +332,33 @@ app.post("/properties", verifyToken, (req, res) => {
   }
 });
 
+app.post(
+  "/properties/:id/images",
+  verifyToken,
+  requirePropertyAccess,
+  uploadPropertyImages.array("images", 12),
+  (req, res) => {
+    try {
+      const db = req.db;
+      const index = req.propertyIndex;
+      const propertyId = Number(req.params.id);
+      const uploadedImages = (req.files || []).map((file) =>
+        toPublicAssetUrl(`/assets/properties/${propertyId}/${file.filename}`),
+      );
+
+      db.properties[index] = {
+        ...db.properties[index],
+        images: [...(db.properties[index].images || []), ...uploadedImages],
+      };
+      saveDB(db);
+
+      res.json(db.properties[index]);
+    } catch (error) {
+      res.status(500).json({ message: "Error uploading property images." });
+    }
+  },
+);
+
 app.patch("/properties/:id", verifyToken, (req, res) => {
   try {
     const db = getDB();
@@ -228,6 +368,19 @@ app.patch("/properties/:id", verifyToken, (req, res) => {
 
     if (index === -1) {
       return res.status(404).json({ message: "Property not found." });
+    }
+
+    if (
+      req.user.role !== "admin" &&
+      db.properties[index].sellerId !== req.user.id
+    ) {
+      return res
+        .status(403)
+        .json({ message: "Not allowed to update this property." });
+    }
+
+    if (Array.isArray(req.body.images)) {
+      deleteRemovedManagedImages(db.properties[index].images, req.body.images);
     }
 
     db.properties[index] = { ...db.properties[index], ...req.body };
@@ -249,6 +402,18 @@ app.delete("/properties/:id", verifyToken, (req, res) => {
     if (index === -1) {
       return res.status(404).json({ message: "Property not found." });
     }
+
+    if (
+      req.user.role !== "admin" &&
+      db.properties[index].sellerId !== req.user.id
+    ) {
+      return res
+        .status(403)
+        .json({ message: "Not allowed to delete this property." });
+    }
+
+    deleteRemovedManagedImages(db.properties[index].images, []);
+    deletePropertyAssetFolder(db.properties[index].id);
 
     db.properties.splice(index, 1);
     saveDB(db);
@@ -300,6 +465,20 @@ app.patch("/appointments/:id", verifyToken, (req, res) => {
       return res.status(404).json({ message: "Appointment not found." });
     }
 
+    const appointment = db.appointments[index];
+    const sellerApprovingOwnReschedule =
+      req.user.role !== "admin" &&
+      appointment.rescheduledBy === "seller" &&
+      appointment.sellerId === req.user.id &&
+      ["accepted", "confirmed"].includes(req.body.status);
+
+    if (sellerApprovingOwnReschedule) {
+      return res.status(400).json({
+        message:
+          "Buyer confirmation is required before this rescheduled appointment can be accepted.",
+      });
+    }
+
     db.appointments[index] = { ...db.appointments[index], ...req.body };
     saveDB(db);
 
@@ -309,10 +488,102 @@ app.patch("/appointments/:id", verifyToken, (req, res) => {
   }
 });
 
-app.get("/favorites", verifyToken, (req, res) => {
+app.get("/notifications", verifyToken, (req, res) => {
   try {
     const db = getDB();
-    res.json(db.favorites);
+    const notifications = db.notifications
+      .filter((n) => n.userId === req.user.id)
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt || 0).getTime() -
+          new Date(a.createdAt || 0).getTime(),
+      );
+    res.json(notifications);
+  } catch {
+    res.status(500).json({ message: "Error fetching notifications." });
+  }
+});
+
+app.post("/notifications", verifyToken, (req, res) => {
+  try {
+    const db = getDB();
+
+    const nextId =
+      db.notifications.reduce((max, n) => Math.max(max, n.id || 0), 0) + 1;
+
+    const notification = {
+      id: nextId,
+      ...req.body,
+      createdAt: new Date().toISOString(),
+      read: false,
+    };
+
+    db.notifications.push(notification);
+    saveDB(db);
+
+    res.status(201).json(notification);
+  } catch {
+    res.status(500).json({ message: "Error creating notification." });
+  }
+});
+
+app.patch("/notifications/:id", verifyToken, (req, res) => {
+  try {
+    const db = getDB();
+
+    const index = db.notifications.findIndex(
+      (n) => n.id === Number(req.params.id),
+    );
+
+    if (index === -1) {
+      return res.status(404).json({ message: "Not found." });
+    }
+
+    if (
+      req.user.role !== "admin" &&
+      db.notifications[index].userId !== req.user.id
+    ) {
+      return res
+        .status(403)
+        .json({ message: "Not allowed to update this notification." });
+    }
+
+    db.notifications[index] = {
+      ...db.notifications[index],
+      ...req.body,
+    };
+
+    saveDB(db);
+    res.json(db.notifications[index]);
+  } catch {
+    res.status(500).json({ message: "Error updating notification." });
+  }
+});
+
+app.get("/favorites", verifyToken, (req, res) => {
+  try {
+    if (req.user.role !== "buyer" && req.user.role !== "admin") {
+      return res
+        .status(403)
+        .json({ message: "Only buyers can access favorites." });
+    }
+
+    const db = getDB();
+    const { buyerId } = req.query;
+
+    const requestedBuyerId = buyerId ? Number(buyerId) : req.user.id;
+
+    if (Number.isNaN(requestedBuyerId)) {
+      return res.status(400).json({ message: "Invalid buyer id." });
+    }
+
+    if (req.user.role !== "admin" && requestedBuyerId !== req.user.id) {
+      return res
+        .status(403)
+        .json({ message: "Cannot access another user's favorites." });
+    }
+
+    res.json(db.favorites.filter((f) => f.buyerId === requestedBuyerId));
   } catch (error) {
     res.status(500).json({ message: "Error fetching favorites." });
   }
@@ -321,11 +592,36 @@ app.get("/favorites", verifyToken, (req, res) => {
 app.post("/favorites", verifyToken, (req, res) => {
   try {
     const db = getDB();
+    const propertyId = Number(req.body.propertyId);
+
+    if (!propertyId || Number.isNaN(propertyId)) {
+      return res.status(400).json({ message: "Property id is required." });
+    }
+
+    const propertyExists = db.properties.some((p) => p.id === propertyId);
+
+    if (!propertyExists) {
+      return res.status(404).json({ message: "Property not found." });
+    }
+
+    const existingFavorite = db.favorites.find(
+      (f) => f.buyerId === req.user.id && f.propertyId === propertyId,
+    );
+
+    if (existingFavorite) {
+      return res.json(existingFavorite);
+    }
+
+    const nextId =
+      db.favorites.reduce(
+        (max, favorite) => Math.max(max, favorite.id || 0),
+        0,
+      ) + 1;
 
     const newFavorite = {
-      id: db.favorites.length + 1,
-      ...req.body,
+      id: nextId,
       buyerId: req.user.id,
+      propertyId,
       createdAt: new Date().toISOString(),
     };
 
@@ -347,6 +643,14 @@ app.delete("/favorites/:id", verifyToken, (req, res) => {
       return res.status(404).json({ message: "Favorite not found." });
     }
 
+    const favorite = db.favorites[index];
+
+    if (req.user.role !== "admin" && favorite.buyerId !== req.user.id) {
+      return res
+        .status(403)
+        .json({ message: "Cannot remove another user's favorite." });
+    }
+
     db.favorites.splice(index, 1);
     saveDB(db);
 
@@ -354,6 +658,18 @@ app.delete("/favorites/:id", verifyToken, (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Error removing favorite." });
   }
+});
+
+app.use((error, req, res, next) => {
+  if (error instanceof multer.MulterError) {
+    return res.status(400).json({ message: error.message });
+  }
+
+  if (error?.message === "Only image files are allowed.") {
+    return res.status(400).json({ message: error.message });
+  }
+
+  next(error);
 });
 
 app.listen(PORT, () => {

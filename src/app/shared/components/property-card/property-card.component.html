@@ -1,6 +1,6 @@
 <div class="property-card" (click)="onCardClick()">
   <div class="card-image">
-    <img [src]="getPropertyUrl()" [alt]="property.title" loading="lazy" />
+    <img [src]="getPropertyUrl()" [alt]="property.title" loading="eager" />
 
     <div class="card-badges">
       <span class="badge type-badge">{{ property.type | propertyType }}</span>
@@ -8,21 +8,21 @@
         {{ property.listingType === "sale" ? "For Sale" : "For Rent" }}
       </span>
     </div>
-    <button
-      class="favorite-btn"
-      (click)="onFavoriteClick($event)"
-      mat-icon-button
-    >
-      <mat-icon>favorite_border</mat-icon>
-    </button>
+    @if (isBuyer) {
+      <button
+        class="favorite-btn"
+        (click)="onFavoriteClick($event)"
+        mat-icon-button
+      >
+        <mat-icon>{{ isFavorite() ? 'favorite' : 'favorite_border' }}</mat-icon>
+      </button>
+    }
   </div>
 
   <div class="card-content">
-    @if (mode === "full") {
-      <div class="property-price">
-        {{ property.price | priceFormat: property.listingType }}
-      </div>
-    }
+    <div class="property-price">
+      {{ property.price | priceFormat: property.listingType }}
+    </div>
 
     <h3 class="property-title">{{ property.title }}</h3>
 

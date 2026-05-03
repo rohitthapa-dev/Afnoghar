@@ -1,1 +1,184 @@
-<p>buyer-map-search works!</p>
+<div class="filter-bar">
+  <div class="filter-bar-inner">
+    <div class="search-wrapper">
+      <i class="bi bi-search search-icon"></i>
+      <input
+        type="text"
+        placeholder="Search by city, district or property name..."
+        [(ngModel)]="searchTerm"
+        (input)="onFilterChange()"
+        class="search-input"
+      />
+    </div>
+
+    <div class="filter-chips">
+      <select
+        [(ngModel)]="selectedType"
+        (change)="onFilterChange()"
+        class="filter-select"
+      >
+        <option value="">All Types</option>
+        <option value="house">House</option>
+        <option value="apartment">Apartment</option>
+        <option value="land">Land</option>
+        <option value="commercial">Commercial</option>
+      </select>
+
+      <select
+        [(ngModel)]="selectedListingType"
+        (change)="onFilterChange()"
+        class="filter-select"
+      >
+        <option value="">Sale & Rent</option>
+        <option value="sale">For Sale</option>
+        <option value="rent">For Rent</option>
+      </select>
+
+      <select
+        [(ngModel)]="bedrooms"
+        (change)="onFilterChange()"
+        class="filter-select"
+      >
+        <option [ngValue]="undefined">Any Beds</option>
+        <option [ngValue]="1">1+ Beds</option>
+        <option [ngValue]="2">2+ Beds</option>
+        <option [ngValue]="3">3+ Beds</option>
+        <option [ngValue]="4">4+ Beds</option>
+      </select>
+
+      <div class="price-range">
+        <input
+          type="number"
+          placeholder="Min"
+          [(ngModel)]="minPrice"
+          (input)="onFilterChange()"
+          class="price-input"
+        />
+        <span class="price-sep">—</span>
+        <input
+          type="number"
+          placeholder="Max"
+          [(ngModel)]="maxPrice"
+          (input)="onFilterChange()"
+          class="price-input"
+        />
+      </div>
+
+      @if (hasActiveFilters) {
+        <button class="clear-btn" (click)="clearFilters()">
+          <i class="bi bi-x"></i>
+          Clear
+        </button>
+      }
+    </div>
+  </div>
+</div>
+
+<div class="mobile-toggle">
+  <button
+    class="toggle-btn"
+    [class.active]="viewMode === 'list'"
+    (click)="setViewMode('list')"
+  >
+    List
+  </button>
+  <button
+    class="toggle-btn"
+    [class.active]="viewMode === 'map'"
+    (click)="setViewMode('map')"
+  >
+    Map
+  </button>
+</div>
+
+<div
+  class="main-content"
+  [class.show-map-only]="viewMode === 'map'"
+  [class.show-list-only]="viewMode === 'list'"
+>
+  <div class="map-panel">
+    <app-map-view
+      [properties]="filteredProperties"
+      [selectedPropertyId]="selectedPropertyId"
+      mode="search"
+      (markerClick)="onMarkerClick($event)"
+      (boundsChanged)="onBoundsChanged($event)"
+    />
+  </div>
+
+  <div class="property-panel">
+    <div class="panel-header">
+      <span class="results-count">
+        <strong>{{ filteredProperties.length }}</strong>
+        {{ filteredProperties.length === 1 ? "property" : "properties" }}
+        found
+      </span>
+    </div>
+
+    <div class="property-scroll-content">
+      @if (isLoading) {
+        <div class="property-grid">
+          <div class="state-container">
+            <div class="loading-spinner"></div>
+            <p>Loading properties...</p>
+          </div>
+        </div>
+      } @else if (filteredProperties.length === 0) {
+        <div class="property-grid">
+          <div class="state-container">
+            <i class="bi bi-house-slash empty-icon"></i>
+            <p>No properties match your search</p>
+            <button class="reset-btn" (click)="clearFilters()">
+              Reset Filters
+            </button>
+          </div>
+        </div>
+      } @else {
+        <div class="property-grid">
+          @for (property of paginatedProperties; track property.id) {
+            <div
+              [id]="'property-' + property.id"
+              class="property-item"
+              [class.is-selected]="selectedPropertyId === property.id"
+              (click)="selectProperty(property.id)"
+            >
+              <app-property-card [property]="property" mode="view" />
+            </div>
+          }
+        </div>
+
+        @if (totalPages > 1) {
+          <div class="pagination-controls">
+            <button
+              (click)="prevPage()"
+              [disabled]="currentPage === 1"
+              class="pagination-btn"
+            >
+              Previous
+            </button>
+
+            @for (page of getPages(); track page) {
+              <button
+                (click)="goToPage(page)"
+                [class.active]="page === currentPage"
+                class="pagination-btn"
+              >
+                {{ page }}
+              </button>
+            }
+
+            <button
+              (click)="nextPage()"
+              [disabled]="currentPage === totalPages"
+              class="pagination-btn"
+            >
+              Next
+            </button>
+          </div>
+        }
+      }
+
+      <app-footer class="map-search-footer"></app-footer>
+    </div>
+  </div>
+</div>

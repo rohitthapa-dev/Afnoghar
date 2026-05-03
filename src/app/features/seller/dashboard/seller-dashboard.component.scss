@@ -1,0 +1,336 @@
+@use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins" as *;
+
+:host {
+  display: block;
+  min-height: calc(100vh - #{$navbar-height});
+  background: $background;
+}
+
+.dashboard-page {
+  max-width: $container-xl;
+  margin: 0 auto;
+  padding: $space-8 $space-8 $space-20;
+
+  @include respond-to(md) {
+    padding: $space-5 $space-4 $space-12;
+  }
+}
+
+.dashboard-hero,
+.metric-card,
+.panel,
+.state-panel {
+  border: 1px solid $divider;
+  border-radius: $radius-md;
+  background: $surface;
+  box-shadow: $shadow-card;
+}
+
+.dashboard-hero {
+  @include flex(row, space-between, center, $space-6);
+  margin-bottom: $space-5;
+  padding: $space-8;
+
+  @include respond-to(md) {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: $space-5;
+  }
+}
+
+.section-kicker {
+  color: $primary;
+  font-family: $font-primary;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+  letter-spacing: $tracking-wider;
+  text-transform: uppercase;
+}
+
+.hero-copy {
+  max-width: 650px;
+
+  h1 {
+    margin: $space-2 0 $space-3;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-3xl;
+    font-weight: $font-extrabold;
+    line-height: $leading-tight;
+
+    @include respond-to(sm) {
+      font-size: $text-2xl;
+    }
+  }
+
+  p {
+    margin: 0;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-base;
+    line-height: $leading-relaxed;
+  }
+}
+
+.hero-actions {
+  @include flex(row, flex-end, center, $space-2);
+  flex-wrap: wrap;
+}
+
+.primary-action,
+.secondary-action {
+  min-height: 44px;
+  border-radius: $radius-md !important;
+  font-family: $font-primary;
+  font-weight: $font-semibold;
+
+  mat-icon {
+    width: 18px;
+    height: 18px;
+    margin-right: $space-1;
+    font-size: 18px;
+  }
+}
+
+.primary-action {
+  background: $primary !important;
+  color: $surface !important;
+}
+
+.secondary-action {
+  border-color: rgba($primary, 0.35) !important;
+  color: $primary !important;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: $space-4;
+  margin-bottom: $space-6;
+
+  @include respond-to(lg) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @include respond-to(sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.metric-card {
+  min-height: 120px;
+  padding: $space-5;
+
+  span,
+  small {
+    display: block;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-xs;
+    font-weight: $font-semibold;
+    letter-spacing: $tracking-wider;
+    text-transform: uppercase;
+  }
+
+  strong {
+    display: block;
+    margin: $space-3 0 $space-2;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-2xl;
+    font-weight: $font-bold;
+    line-height: $leading-tight;
+  }
+
+  small {
+    font-weight: $font-medium;
+    letter-spacing: $tracking-normal;
+    text-transform: none;
+  }
+
+  &.wide strong {
+    font-size: $text-xl;
+  }
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  gap: $space-5;
+
+  @include respond-to(lg) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel {
+  padding: $space-5;
+}
+
+.panel-header {
+  @include flex(row, space-between, center, $space-4);
+  margin-bottom: $space-4;
+
+  h2 {
+    margin: $space-1 0 0;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-lg;
+    font-weight: $font-bold;
+  }
+
+  a {
+    color: $primary;
+    font-family: $font-primary;
+    font-size: $text-sm;
+    font-weight: $font-semibold;
+    text-decoration: none;
+  }
+}
+
+.listing-stack,
+.activity-stack {
+  @include flex(column, flex-start, stretch, $space-3);
+}
+
+.mini-listing {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr) auto;
+  gap: $space-3;
+  align-items: center;
+  padding: $space-3;
+  border: 1px solid $divider;
+  border-radius: $radius-md;
+  background: $surface;
+
+  @include respond-to(sm) {
+    grid-template-columns: 72px minmax(0, 1fr);
+
+    > strong {
+      grid-column: 2;
+    }
+  }
+
+  img {
+    width: 84px;
+    height: 72px;
+    border-radius: $radius-sm;
+    object-fit: cover;
+
+    @include respond-to(sm) {
+      width: 72px;
+      height: 72px;
+    }
+  }
+
+  h3 {
+    @include truncate(1);
+    margin: $space-2 0 $space-1;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-base;
+    font-weight: $font-bold;
+  }
+
+  p,
+  > strong {
+    margin: 0;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-sm;
+  }
+
+  > strong {
+    color: $text-primary;
+    font-weight: $font-bold;
+    text-align: right;
+  }
+}
+
+.activity-row {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: $space-3;
+  padding: $space-3;
+  border: 1px solid $divider;
+  border-radius: $radius-md;
+  background: $surface;
+
+  h3 {
+    @include truncate(1);
+    margin: $space-2 0 $space-1;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-base;
+    font-weight: $font-bold;
+  }
+
+  p {
+    margin: 0;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-sm;
+  }
+}
+
+.activity-icon {
+  @include flex(row, center, center);
+  width: 42px;
+  height: 42px;
+  border-radius: $radius-md;
+  background: $primary-tint;
+  color: $primary;
+
+  mat-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+  }
+}
+
+.status-chip {
+  min-height: 26px;
+  border-radius: $radius-full !important;
+  font-family: $font-primary;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+
+  &.status-approved {
+    background: $success-light !important;
+    color: $success !important;
+  }
+
+  &.status-pending,
+  &.status-awaiting {
+    background: $warning-light !important;
+    color: $warning !important;
+  }
+
+  &.status-rejected {
+    background: $error-light !important;
+    color: $error !important;
+  }
+}
+
+.empty-panel,
+.state-panel {
+  @include flex(column, center, center, $space-3);
+  min-height: 240px;
+  padding: $space-8;
+  text-align: center;
+
+  mat-icon {
+    width: 42px;
+    height: 42px;
+    color: $primary;
+    font-size: 42px;
+  }
+
+  p {
+    margin: 0;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-sm;
+  }
+}
