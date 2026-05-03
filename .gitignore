@@ -51,6 +51,10 @@ testem.log
 # Environment files
 /src/environments/*.local.ts
 
+# Runtime property uploads
+/server/public/assets/properties/*
+!/server/public/assets/properties/.gitkeep
+
 # System files
 .DS_Store
 Thumbs.db
