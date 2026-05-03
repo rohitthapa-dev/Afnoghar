@@ -1,0 +1,320 @@
+@use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins" as *;
+
+:host {
+  display: block;
+  min-height: calc(100vh - #{$navbar-height});
+  background:
+    linear-gradient(180deg, rgba($surface, 0.74), rgba($background, 0) 320px),
+    $background;
+}
+
+.admin-page {
+  max-width: $container-xl;
+  margin: 0 auto;
+  padding: $space-8 $space-8 $space-20;
+
+  @include respond-to(md) {
+    padding: $space-5 $space-4 $space-12;
+  }
+}
+
+.metric-card,
+.panel,
+.state-panel {
+  border: 1px solid rgba($border, 0.72);
+  border-radius: $radius-md;
+  background: rgba($surface, 0.96);
+  box-shadow: 0 18px 44px rgba(28, 28, 28, 0.06);
+}
+
+.section-kicker {
+  color: $primary;
+  font-family: $font-primary;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+  letter-spacing: $tracking-wider;
+  text-transform: uppercase;
+}
+
+.page-header {
+  max-width: 760px;
+  margin-bottom: $space-6;
+
+  h1 {
+    margin: $space-2 0 $space-3;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-3xl;
+    font-weight: $font-extrabold;
+    line-height: $leading-tight;
+
+    @include respond-to(sm) {
+      font-size: $text-2xl;
+    }
+  }
+
+  p {
+    max-width: 660px;
+    margin: 0;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-base;
+    line-height: $leading-relaxed;
+  }
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: $space-4;
+  margin-bottom: $space-6;
+
+  @include respond-to(lg) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @include respond-to(sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.metric-card {
+  min-height: 124px;
+  padding: $space-5;
+  transition: $transition-fast;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: rgba($primary, 0.28);
+  }
+
+  span,
+  small {
+    display: block;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-xs;
+    font-weight: $font-semibold;
+    letter-spacing: $tracking-wider;
+    text-transform: uppercase;
+  }
+
+  strong {
+    display: block;
+    margin: $space-3 0 $space-2;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-2xl;
+    font-weight: $font-bold;
+    line-height: $leading-tight;
+  }
+
+  small {
+    font-weight: $font-medium;
+    letter-spacing: $tracking-normal;
+    text-transform: none;
+  }
+
+  &.urgent strong {
+    color: $warning;
+  }
+
+  &.wide strong {
+    font-size: $text-xl;
+  }
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(340px, 0.9fr);
+  gap: $space-5;
+
+  @include respond-to(lg) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel {
+  padding: $space-5;
+}
+
+.panel-header {
+  @include flex(row, space-between, center, $space-4);
+  margin-bottom: $space-4;
+
+  h2 {
+    margin: $space-1 0 0;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-lg;
+    font-weight: $font-bold;
+  }
+
+  a {
+    color: $primary;
+    font-family: $font-primary;
+    font-size: $text-sm;
+    font-weight: $font-semibold;
+    text-decoration: none;
+  }
+}
+
+.listing-stack,
+.user-stack {
+  @include flex(column, flex-start, stretch, $space-3);
+}
+
+.review-listing {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr) auto;
+  gap: $space-3;
+  align-items: center;
+  padding: $space-3;
+  border: 1px solid $divider;
+  border-radius: $radius-md;
+  background: $surface;
+
+  @include respond-to(sm) {
+    grid-template-columns: 76px minmax(0, 1fr);
+
+    > strong {
+      grid-column: 2;
+      text-align: left;
+    }
+  }
+
+  img {
+    width: 88px;
+    height: 76px;
+    border-radius: $radius-sm;
+    object-fit: cover;
+
+    @include respond-to(sm) {
+      width: 76px;
+      height: 76px;
+    }
+  }
+
+  h3 {
+    @include truncate(1);
+    margin: $space-2 0 $space-1;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-base;
+    font-weight: $font-bold;
+  }
+
+  p,
+  > strong {
+    margin: 0;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-sm;
+  }
+
+  > strong {
+    color: $text-primary;
+    font-weight: $font-bold;
+    text-align: right;
+  }
+}
+
+.user-row {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) auto;
+  gap: $space-3;
+  align-items: center;
+  padding: $space-3;
+  border: 1px solid $divider;
+  border-radius: $radius-md;
+  background: $surface;
+
+  h3 {
+    @include truncate(1);
+    margin: 0 0 $space-1;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-sm;
+    font-weight: $font-bold;
+  }
+
+  p {
+    margin: 0;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-xs;
+  }
+
+  > span {
+    padding: $space-1 $space-2;
+    border-radius: $radius-full;
+    background: $success-light;
+    color: $success;
+    font-family: $font-primary;
+    font-size: $text-xs;
+    font-weight: $font-semibold;
+
+    &.inactive {
+      background: $error-light;
+      color: $error;
+    }
+  }
+}
+
+.user-avatar {
+  @include flex(row, center, center);
+  width: 42px;
+  height: 42px;
+  border-radius: $radius-full;
+  background: linear-gradient(135deg, $primary, $primary-dark);
+  color: $surface;
+  font-family: $font-primary;
+  font-size: $text-xs;
+  font-weight: $font-bold;
+}
+
+.status-chip {
+  min-height: 26px;
+  border-radius: $radius-full !important;
+  font-family: $font-primary;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+
+  &.status-approved {
+    background: $success-light !important;
+    color: $success !important;
+  }
+
+  &.status-pending {
+    background: $warning-light !important;
+    color: $warning !important;
+  }
+
+  &.status-rejected {
+    background: $error-light !important;
+    color: $error !important;
+  }
+}
+
+.empty-panel,
+.state-panel {
+  @include flex(column, center, center, $space-3);
+  min-height: 240px;
+  padding: $space-8;
+  text-align: center;
+
+  mat-icon {
+    width: 42px;
+    height: 42px;
+    color: $primary;
+    font-size: 42px;
+  }
+
+  p {
+    margin: 0;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-sm;
+  }
+}
