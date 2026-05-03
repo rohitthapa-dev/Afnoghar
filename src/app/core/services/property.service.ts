@@ -32,6 +32,16 @@ export class PropertyService {
     );
   }
 
+  uploadPropertyImages(id: number, files: File[]): Observable<Property> {
+    const formData = new FormData();
+    files.forEach((file) => formData.append('images', file));
+
+    return this.http.post<Property>(
+      `${this.apiUrl}/properties/${id}/images`,
+      formData,
+    );
+  }
+
   deleteProperty(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/properties/${id}`);
   }
