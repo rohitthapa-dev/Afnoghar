@@ -1,1 +1,164 @@
-<p>seller-my-listings works!</p>
+<div class="seller-page">
+  <section class="page-hero">
+    <div class="hero-copy">
+      <span class="section-kicker">Seller Studio</span>
+      <h1>My Listings</h1>
+      <p>Manage live, pending, and rejected properties from one focused view.</p>
+    </div>
+
+    <div class="hero-actions">
+      <button mat-flat-button class="primary-action" routerLink="/seller/properties/new">
+        <mat-icon>add_home</mat-icon>
+        Add Property
+      </button>
+    </div>
+  </section>
+
+  <section class="summary-grid">
+    <div class="summary-card">
+      <span>Total Listings</span>
+      <strong>{{ listings().length }}</strong>
+    </div>
+    <div class="summary-card">
+      <span>Approved</span>
+      <strong>{{ approvedCount() }}</strong>
+    </div>
+    <div class="summary-card">
+      <span>Pending Review</span>
+      <strong>{{ pendingCount() }}</strong>
+    </div>
+    <div class="summary-card wide">
+      <span>Portfolio Value</span>
+      <strong>{{ totalPortfolioValue() | priceFormat: "sale" }}</strong>
+    </div>
+  </section>
+
+  <section class="listings-panel">
+    <div class="panel-toolbar">
+      <div class="tabs-row" role="tablist" aria-label="Listing status filters">
+        @for (tab of tabs; track tab.value) {
+          <button
+            type="button"
+            class="tab-button"
+            [class.active]="selectedFilter() === tab.value"
+            (click)="selectFilter(tab.value)"
+          >
+            <mat-icon>{{ tab.icon }}</mat-icon>
+            <span>{{ tab.label }}</span>
+            <strong>{{ getTabCount(tab.value) }}</strong>
+          </button>
+        }
+      </div>
+
+      <div class="search-box">
+        <mat-icon>search</mat-icon>
+        <input
+          type="search"
+          placeholder="Search listings"
+          [ngModel]="searchTerm()"
+          (ngModelChange)="updateSearch($event)"
+        />
+        @if (searchTerm()) {
+          <button type="button" aria-label="Clear search" (click)="clearSearch()">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="state-panel">
+        <mat-spinner diameter="44"></mat-spinner>
+        <p>Loading listings...</p>
+      </div>
+    } @else if (error()) {
+      <div class="state-panel">
+        <mat-icon>error_outline</mat-icon>
+        <p>{{ error() }}</p>
+        <button mat-stroked-button (click)="loadListings()">Try Again</button>
+      </div>
+    } @else if (filteredListings().length === 0) {
+      <div class="state-panel">
+        <mat-icon>home_work</mat-icon>
+        <h2>No listings found</h2>
+        <p>Create a new property or adjust your search.</p>
+        <button mat-flat-button class="primary-action" routerLink="/seller/properties/new">
+          Add Property
+        </button>
+      </div>
+    } @else {
+      <div class="listing-grid">
+        @for (listing of filteredListings(); track listing.id) {
+          <article class="listing-card">
+            <div class="listing-media">
+              <img [src]="getImage(listing)" [alt]="listing.title" />
+              <span class="listing-mode">{{ listing.listingType }}</span>
+            </div>
+
+            <div class="listing-body">
+              <div class="listing-topline">
+                <mat-chip
+                  class="status-chip"
+                  [ngClass]="getStatusClass(listing.status)"
+                >
+                  {{ getStatusLabel(listing.status) }}
+                </mat-chip>
+                <span>{{ listing.type | propertyType }}</span>
+              </div>
+
+              <h2>{{ listing.title }}</h2>
+
+              <div class="listing-meta">
+                <span>
+                  <mat-icon>location_on</mat-icon>
+                  {{ getLocation(listing) }}
+                </span>
+                <span>
+                  <mat-icon>straighten</mat-icon>
+                  {{ listing.area }} sq.ft
+                </span>
+                @if (listing.bedrooms > 0) {
+                  <span>
+                    <mat-icon>bed</mat-icon>
+                    {{ listing.bedrooms }} beds
+                  </span>
+                }
+              </div>
+
+              <div class="listing-footer">
+                <strong>{{ listing.price | priceFormat: listing.listingType }}</strong>
+                <div class="listing-actions">
+                  <button
+                    mat-icon-button
+                    type="button"
+                    aria-label="View listing"
+                    (click)="viewListing(listing)"
+                  >
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+                  <button
+                    mat-icon-button
+                    type="button"
+                    aria-label="Edit listing"
+                    (click)="editListing(listing)"
+                  >
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button
+                    mat-icon-button
+                    type="button"
+                    class="danger"
+                    aria-label="Delete listing"
+                    (click)="deleteListing(listing)"
+                  >
+                    <mat-icon>delete_outline</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </section>
+</div>

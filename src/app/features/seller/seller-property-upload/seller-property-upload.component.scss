@@ -1,0 +1,527 @@
+@use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins" as *;
+
+:host {
+  display: block;
+  min-height: calc(100vh - #{$navbar-height});
+  background: $background;
+}
+
+.editor-page {
+  max-width: $container-xl;
+  margin: 0 auto;
+  padding: $space-8 $space-8 $space-20;
+
+  @include respond-to(md) {
+    padding: $space-5 $space-4 $space-12;
+  }
+}
+
+.editor-hero,
+.form-section,
+.preview-card,
+.save-panel,
+.state-panel {
+  border: 1px solid $divider;
+  border-radius: $radius-md;
+  background: $surface;
+  box-shadow: $shadow-card;
+}
+
+.editor-hero {
+  @include flex(row, space-between, center, $space-6);
+  margin-bottom: $space-6;
+  padding: $space-8;
+
+  @include respond-to(md) {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: $space-5;
+  }
+
+  h1 {
+    margin: $space-2 0 $space-3;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-3xl;
+    font-weight: $font-extrabold;
+    line-height: $leading-tight;
+
+    @include respond-to(sm) {
+      font-size: $text-2xl;
+    }
+  }
+
+  p {
+    max-width: 620px;
+    margin: 0;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-base;
+    line-height: $leading-relaxed;
+  }
+}
+
+.section-kicker {
+  color: $primary;
+  font-family: $font-primary;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+  letter-spacing: $tracking-wider;
+  text-transform: uppercase;
+}
+
+.primary-action,
+.secondary-action {
+  min-height: 44px;
+  border-radius: $radius-md !important;
+  font-family: $font-primary;
+  font-weight: $font-semibold;
+
+  mat-icon {
+    width: 18px;
+    height: 18px;
+    margin-right: $space-1;
+    font-size: 18px;
+  }
+}
+
+.primary-action {
+  background: $primary !important;
+  color: $surface !important;
+
+  &.full {
+    width: 100%;
+  }
+}
+
+.secondary-action {
+  border-color: rgba($primary, 0.35) !important;
+  color: $primary !important;
+}
+
+.state-panel {
+  @include flex(column, center, center, $space-3);
+  min-height: 360px;
+  padding: $space-10;
+  text-align: center;
+
+  mat-icon {
+    width: 44px;
+    height: 44px;
+    color: $primary;
+    font-size: 44px;
+  }
+
+  h2,
+  p {
+    margin: 0;
+  }
+}
+
+.editor-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: $space-5;
+  align-items: start;
+
+  @include respond-to(lg) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-stack {
+  @include flex(column, flex-start, stretch, $space-5);
+}
+
+.form-section {
+  padding: $space-6;
+
+  @include respond-to(sm) {
+    padding: $space-4;
+  }
+}
+
+.section-heading {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: $space-3;
+  margin-bottom: $space-5;
+
+  > span {
+    @include flex(row, center, center);
+    width: 42px;
+    height: 42px;
+    border-radius: $radius-md;
+    background: $primary-tint;
+    color: $primary-dark;
+    font-family: $font-heading;
+    font-size: $text-sm;
+    font-weight: $font-bold;
+  }
+
+  h2 {
+    margin: 0 0 $space-1;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-lg;
+    font-weight: $font-bold;
+  }
+
+  p {
+    margin: 0;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-sm;
+    line-height: $leading-relaxed;
+  }
+}
+
+.upload-dropzone {
+  @include flex(row, space-between, center, $space-4);
+  margin-bottom: $space-4;
+  padding: $space-4;
+  border: 1px dashed rgba($primary, 0.35);
+  border-radius: $radius-md;
+  background: $primary-tint;
+
+  @include respond-to(md) {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  input {
+    display: none;
+  }
+
+  > div {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+    column-gap: $space-3;
+    align-items: center;
+  }
+
+  mat-icon {
+    grid-row: span 2;
+    width: 28px;
+    height: 28px;
+    color: $primary;
+    font-size: 28px;
+  }
+
+  strong,
+  span {
+    font-family: $font-primary;
+  }
+
+  strong {
+    color: $text-primary;
+    font-size: $text-sm;
+    font-weight: $font-semibold;
+  }
+
+  span {
+    color: $text-secondary;
+    font-size: $text-sm;
+    line-height: $leading-snug;
+  }
+}
+
+.selected-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: $space-3;
+  margin-bottom: $space-4;
+}
+
+.selected-image {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid $divider;
+  border-radius: $radius-md;
+  background: $surface;
+
+  img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+  }
+
+  span {
+    @include truncate(1);
+    display: block;
+    padding: $space-2 $space-3;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-xs;
+  }
+
+  button {
+    position: absolute;
+    top: $space-2;
+    right: $space-2;
+    width: 30px;
+    height: 30px;
+    background: rgba($surface, 0.92);
+    color: $text-primary;
+  }
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $space-4;
+
+  &.compact {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  @include respond-to(md) {
+    grid-template-columns: 1fr;
+
+    &.compact {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @include respond-to(sm) {
+    &.compact {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+.wide {
+  grid-column: 1 / -1;
+}
+
+.map-picker {
+  margin-top: $space-1;
+  overflow: hidden;
+  border: 1px solid $divider;
+  border-radius: $radius-md;
+  background: $surface;
+}
+
+.map-picker-header {
+  @include flex(row, space-between, center, $space-4);
+  padding: $space-4;
+  border-bottom: 1px solid $divider;
+
+  @include respond-to(sm) {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  strong,
+  span {
+    display: block;
+    font-family: $font-primary;
+  }
+
+  strong {
+    margin-bottom: $space-1;
+    color: $text-primary;
+    font-size: $text-sm;
+    font-weight: $font-semibold;
+  }
+
+  span {
+    color: $text-secondary;
+    font-family: $font-mono;
+    font-size: $text-xs;
+  }
+}
+
+.location-map {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-height: 360px;
+  height: 360px;
+  background: $surface-alt;
+
+  @include respond-to(sm) {
+    height: 300px;
+  }
+}
+
+.map-helper {
+  @include flex(row, flex-start, center, $space-2);
+  padding: $space-3 $space-4;
+  border-top: 1px solid $divider;
+  background: $primary-tint;
+  color: $primary-dark;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  line-height: $leading-snug;
+
+  mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+}
+
+:host ::ng-deep {
+  .mat-mdc-form-field {
+    width: 100%;
+    font-family: $font-primary;
+  }
+
+  .mdc-text-field--outlined {
+    --mdc-outlined-text-field-outline-color: #{$border};
+    --mdc-outlined-text-field-hover-outline-color: #{$primary};
+    --mdc-outlined-text-field-focus-outline-color: #{$primary};
+    --mdc-outlined-text-field-container-shape: #{$radius-md};
+  }
+
+  .map-picker {
+    .leaflet-container {
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+      font-family: $font-primary;
+      background: $background;
+    }
+
+    .leaflet-control-attribution {
+      font-size: 10px;
+      background: rgba($surface, 0.86) !important;
+      color: $text-disabled !important;
+      padding: 2px $space-2;
+      border-radius: $radius-sm 0 0 0;
+    }
+
+    .leaflet-control-zoom {
+      overflow: hidden;
+      border: 0 !important;
+      border-radius: $radius-md !important;
+      box-shadow: $shadow-md !important;
+
+      a {
+        width: 32px !important;
+        height: 32px !important;
+        border-bottom-color: $divider !important;
+        background: $surface !important;
+        color: $text-primary !important;
+        font-size: 16px !important;
+        line-height: 32px !important;
+
+        &:hover {
+          background: $primary-tint !important;
+          color: $primary !important;
+        }
+      }
+    }
+
+    .seller-location-pin {
+      background: transparent !important;
+      border: 0 !important;
+
+      span {
+        position: relative;
+        display: block;
+        width: 34px;
+        height: 34px;
+        border: 3px solid $surface;
+        border-radius: 50% 50% 50% 0;
+        background: $primary;
+        box-shadow:
+          0 0 0 5px rgba($primary, 0.18),
+          $shadow-lg;
+        transform: rotate(-45deg);
+
+        &::after {
+          content: "";
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 10px;
+          height: 10px;
+          border-radius: $radius-full;
+          background: $surface;
+          transform: translate(-50%, -50%);
+        }
+      }
+    }
+  }
+}
+
+.preview-panel {
+  position: sticky;
+  top: calc(#{$navbar-height} + #{$space-4});
+  @include flex(column, flex-start, stretch, $space-4);
+
+  @include respond-to(lg) {
+    position: static;
+  }
+}
+
+.preview-card {
+  overflow: hidden;
+}
+
+.preview-image {
+  @include flex(row, center, center);
+  aspect-ratio: 4 / 3;
+  background: $surface-alt;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  mat-icon {
+    width: 44px;
+    height: 44px;
+    color: $text-disabled;
+    font-size: 44px;
+  }
+}
+
+.preview-body {
+  padding: $space-5;
+
+  h2 {
+    @include truncate(2);
+    margin: $space-3 0 $space-2;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-lg;
+    font-weight: $font-bold;
+    line-height: $leading-snug;
+  }
+
+  p {
+    margin: 0;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-sm;
+  }
+}
+
+.preview-chip {
+  display: inline-flex;
+  padding: $space-1 $space-3;
+  border-radius: $radius-full;
+  background: $primary-tint;
+  color: $primary-dark;
+  font-family: $font-primary;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+  text-transform: uppercase;
+}
+
+.save-panel {
+  @include flex(column, flex-start, stretch, $space-2);
+  padding: $space-4;
+
+  button {
+    border-radius: $radius-md !important;
+  }
+}
