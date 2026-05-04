@@ -43,6 +43,12 @@ export class BuyerMapSearchComponent implements OnInit, OnDestroy {
   maxPrice?: number;
   bedrooms?: number;
   currentBounds?: L.LatLngBounds;
+  priceDropdownOpen = false;
+  tempMinPrice?: number;
+  tempMaxPrice?: number;
+
+  readonly priceBucketCount = 24;
+  private readonly fallbackMaxPrice = 50000000;
 
   currentPage = 1;
   pageSize = 10;
@@ -60,10 +66,17 @@ export class BuyerMapSearchComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
+      const previousListingType = this.selectedListingType;
       if (params['type'] === 'sale') {
         this.selectedListingType = 'sale';
       } else if (params['type'] === 'rent') {
         this.selectedListingType = 'rent';
+      } else {
+        this.selectedListingType = '';
+      }
+
+      if (previousListingType !== this.selectedListingType) {
+        this.resetPriceRange();
       }
 
       this.isLoading = true;
@@ -126,10 +139,10 @@ export class BuyerMapSearchComponent implements OnInit, OnDestroy {
     this.searchTerm = '';
     this.selectedType = '';
     this.selectedListingType = '';
-    this.minPrice = undefined;
-    this.maxPrice = undefined;
+    this.resetPriceRange();
     this.bedrooms = undefined;
     this.currentBounds = undefined;
+    this.priceDropdownOpen = false;
     this.currentPage = 1;
     this.selectedPropertyId = undefined;
     this.filteredProperties = [...this.allProperties];
@@ -205,6 +218,172 @@ export class BuyerMapSearchComponent implements OnInit, OnDestroy {
     this.selectedPropertyId = propertyId;
   }
 
+  get availableMinPrice(): number {
+    const properties = this.priceScopeProperties;
+    if (properties.length === 0) return 0;
+
+    const min = Math.min(...properties.map((property) => property.price));
+    return Math.floor(min / this.priceStep) * this.priceStep;
+  }
+
+  get priceStep(): number {
+    const prices = this.priceScopeProperties.map((property) => property.price);
+    const maxPrice = prices.length ? Math.max(...prices) : this.fallbackMaxPrice;
+
+    if (this.selectedListingType === 'rent' || maxPrice <= 500000) {
+      return 1000;
+    }
+
+    if (maxPrice <= 2000000) {
+      return 25000;
+    }
+
+    return 100000;
+  }
+
+  get availableMaxPrice(): number {
+    const properties = this.priceScopeProperties;
+    if (properties.length === 0) return this.fallbackMaxPrice;
+
+    const max = Math.max(...properties.map((property) => property.price));
+    return Math.max(
+      this.availableMinPrice + this.priceStep,
+      Math.ceil(max / this.priceStep) * this.priceStep,
+    );
+  }
+
+  get tempPriceSliderMin(): number {
+    return this.tempMinPrice ?? this.availableMinPrice;
+  }
+
+  get tempPriceSliderMax(): number {
+    return this.tempMaxPrice ?? this.availableMaxPrice;
+  }
+
+  get tempPriceStartPercent(): number {
+    return this.getPricePercent(this.tempPriceSliderMin);
+  }
+
+  get tempPriceEndPercent(): number {
+    return this.getPricePercent(this.tempPriceSliderMax);
+  }
+
+  get priceRangeLabel(): string {
+    if (this.priceDropdownOpen) {
+      return this.getRangeLabel(this.tempMinPrice, this.tempMaxPrice);
+    }
+
+    return this.getRangeLabel(this.minPrice, this.maxPrice);
+  }
+
+  get tempPriceRangeLabel(): string {
+    return this.getRangeLabel(this.tempMinPrice, this.tempMaxPrice);
+  }
+
+  get priceHistogram(): Array<{ height: number; active: boolean }> {
+    const buckets = Array.from({ length: this.priceBucketCount }, () => 0);
+    const min = this.availableMinPrice;
+    const max = this.availableMaxPrice;
+    const range = Math.max(max - min, this.priceStep);
+
+    this.priceScopeProperties.forEach((property) => {
+      const bucketIndex = Math.min(
+        this.priceBucketCount - 1,
+        Math.max(
+          0,
+          Math.floor(((property.price - min) / range) * this.priceBucketCount),
+        ),
+      );
+      buckets[bucketIndex] += 1;
+    });
+
+    const highestCount = Math.max(...buckets, 1);
+    const activeMin = this.tempPriceSliderMin;
+    const activeMax = this.tempPriceSliderMax;
+
+    return buckets.map((count, index) => {
+      const bucketMin = min + (range / this.priceBucketCount) * index;
+      const bucketMax = min + (range / this.priceBucketCount) * (index + 1);
+
+      return {
+        active: bucketMax >= activeMin && bucketMin <= activeMax,
+        height: count === 0 ? 8 : Math.max(14, (count / highestCount) * 100),
+      };
+    });
+  }
+
+  get priceScopeProperties(): Property[] {
+    if (!this.selectedListingType) return this.allProperties;
+
+    return this.allProperties.filter(
+      (property) => property.listingType === this.selectedListingType,
+    );
+  }
+
+  onListingTypeChange(): void {
+    this.resetPriceRange();
+    this.onFilterChange();
+  }
+
+  togglePriceDropdown(): void {
+    if (!this.priceDropdownOpen) {
+      this.syncTempPriceRange();
+    }
+
+    this.priceDropdownOpen = !this.priceDropdownOpen;
+  }
+
+  onTempMinPriceInput(event: Event): void {
+    const value = this.getSliderInputValue(event);
+    const boundedValue = Math.min(
+      value,
+      this.tempPriceSliderMax - this.priceStep,
+    );
+    this.tempMinPrice =
+      boundedValue <= this.availableMinPrice ? undefined : boundedValue;
+    this.minPrice = this.tempMinPrice;
+    this.maxPrice = this.tempMaxPrice;
+    this.onFilterChange();
+  }
+
+  onTempMaxPriceInput(event: Event): void {
+    const value = this.getSliderInputValue(event);
+    const boundedValue = Math.max(
+      value,
+      this.tempPriceSliderMin + this.priceStep,
+    );
+    this.tempMaxPrice =
+      boundedValue >= this.availableMaxPrice ? undefined : boundedValue;
+    this.minPrice = this.tempMinPrice;
+    this.maxPrice = this.tempMaxPrice;
+    this.onFilterChange();
+  }
+
+  closePriceDropdown(): void {
+    this.priceDropdownOpen = false;
+  }
+
+  clearPriceFilter(): void {
+    this.resetPriceRange();
+    this.priceDropdownOpen = false;
+    this.onFilterChange();
+  }
+
+  formatPrice(value: number | undefined): string {
+    const price = value ?? 0;
+    const absPrice = Math.abs(price);
+
+    if (absPrice >= 10000000) {
+      return `Rs. ${this.formatNepaliAmount(price / 10000000)} Cr`;
+    }
+
+    if (absPrice >= 100000) {
+      return `Rs. ${this.formatNepaliAmount(price / 100000)} Lakh`;
+    }
+
+    return `Rs. ${new Intl.NumberFormat('en-IN').format(price)}`;
+  }
+
   private applyFilters(): void {
     let filtered = [...this.allProperties];
 
@@ -258,5 +437,47 @@ export class BuyerMapSearchComponent implements OnInit, OnDestroy {
       this.selectedPropertyId = undefined;
       this.currentPage = 1;
     }
+  }
+
+  private formatNepaliAmount(value: number): string {
+    return new Intl.NumberFormat('en-IN', {
+      maximumFractionDigits: value >= 10 ? 1 : 2,
+      minimumFractionDigits: 0,
+    }).format(value);
+  }
+
+  private getRangeLabel(minPrice?: number, maxPrice?: number): string {
+    if (minPrice == null && maxPrice == null) return 'Any price';
+    if (minPrice != null && maxPrice != null) {
+      return `${this.formatPrice(minPrice)} - ${this.formatPrice(maxPrice)}`;
+    }
+    if (minPrice != null) return `${this.formatPrice(minPrice)}+`;
+    return `Up to ${this.formatPrice(maxPrice)}`;
+  }
+
+  private getSliderInputValue(event: Event): number {
+    const input = event.target as HTMLInputElement;
+    return Number(input.value);
+  }
+
+  private getPricePercent(value: number): number {
+    const range = Math.max(
+      this.availableMaxPrice - this.availableMinPrice,
+      this.priceStep,
+    );
+
+    return ((value - this.availableMinPrice) / range) * 100;
+  }
+
+  private syncTempPriceRange(): void {
+    this.tempMinPrice = this.minPrice;
+    this.tempMaxPrice = this.maxPrice;
+  }
+
+  private resetPriceRange(): void {
+    this.minPrice = undefined;
+    this.maxPrice = undefined;
+    this.tempMinPrice = undefined;
+    this.tempMaxPrice = undefined;
   }
 }
