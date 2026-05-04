@@ -1,1 +1,197 @@
-<p>admin-manage-listings works!</p>
+<div class="admin-page">
+  <section class="page-header">
+    <div>
+      <span class="section-kicker">Listing Curation</span>
+      <h1>Manage Listings</h1>
+      <p>
+        Moderate inventory, promote premium homes, and keep the marketplace
+        polished for serious buyers.
+      </p>
+    </div>
+  </section>
+
+  <section class="summary-grid">
+    <div class="summary-card">
+      <span>Total Listings</span>
+      <strong>{{ listings().length }}</strong>
+    </div>
+    <div class="summary-card warning">
+      <span>Pending Review</span>
+      <strong>{{ pendingCount() }}</strong>
+    </div>
+    <div class="summary-card">
+      <span>Approved</span>
+      <strong>{{ approvedCount() }}</strong>
+    </div>
+    <div class="summary-card">
+      <span>Featured</span>
+      <strong>{{ featuredCount() }}</strong>
+    </div>
+  </section>
+
+  <section class="listings-panel">
+    <div class="panel-toolbar">
+      <div class="tabs-row" role="tablist" aria-label="Listing status filters">
+        @for (tab of tabs; track tab.value) {
+          <button
+            type="button"
+            class="tab-button"
+            [class.active]="selectedFilter() === tab.value"
+            [matTooltip]="'Show ' + tab.label.toLowerCase() + ' listings'"
+            (click)="selectFilter(tab.value)"
+          >
+            <mat-icon>{{ tab.icon }}</mat-icon>
+            <span>{{ tab.label }}</span>
+            <strong>{{ getTabCount(tab.value) }}</strong>
+          </button>
+        }
+      </div>
+
+      <div class="search-box">
+        <mat-icon>search</mat-icon>
+        <input
+          type="search"
+          placeholder="Search listings"
+          [ngModel]="searchTerm()"
+          (ngModelChange)="updateSearch($event)"
+        />
+        @if (searchTerm()) {
+          <button
+            type="button"
+            aria-label="Clear search"
+            matTooltip="Clear search"
+            (click)="clearSearch()"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="state-panel">
+        <mat-spinner diameter="44"></mat-spinner>
+        <p>Loading listings...</p>
+      </div>
+    } @else if (error()) {
+      <div class="state-panel">
+        <mat-icon>error_outline</mat-icon>
+        <p>{{ error() }}</p>
+        <button mat-stroked-button (click)="loadListings()">Try Again</button>
+      </div>
+    } @else if (filteredListings().length === 0) {
+      <div class="state-panel">
+        <mat-icon>home_work</mat-icon>
+        <h2>No listings found</h2>
+        <p>Adjust the filters or search query.</p>
+      </div>
+    } @else {
+      <div class="listing-grid">
+        @for (listing of filteredListings(); track listing.id) {
+          <article class="listing-card">
+            <div class="listing-media">
+              <img [src]="getImage(listing)" [alt]="listing.title" />
+              <span class="listing-mode">{{ listing.listingType }}</span>
+              @if (listing.isFeatured) {
+                <span class="featured-badge">
+                  <mat-icon>workspace_premium</mat-icon>
+                  Featured
+                </span>
+              }
+            </div>
+
+            <div class="listing-body">
+              <div class="listing-topline">
+                <mat-chip
+                  class="status-chip"
+                  [ngClass]="getStatusClass(listing.status)"
+                >
+                  {{ getStatusLabel(listing.status) }}
+                </mat-chip>
+                <span>{{ listing.type | propertyType }}</span>
+              </div>
+
+              <h2>{{ listing.title }}</h2>
+
+              <div class="listing-meta">
+                <span>
+                  <mat-icon>location_on</mat-icon>
+                  {{ getLocation(listing) }}
+                </span>
+                <span>
+                  <mat-icon>straighten</mat-icon>
+                  {{ getSizeLabel(listing) }}
+                </span>
+                <span>
+                  <mat-icon>event</mat-icon>
+                  {{ formatDate(listing.createdAt) }}
+                </span>
+              </div>
+
+              <div class="listing-footer">
+                <strong>{{ listing.price | priceFormat: listing.listingType }}</strong>
+                <div class="listing-actions">
+                  <button
+                    type="button"
+                    class="view-action"
+                    aria-label="View listing"
+                    matTooltip="Open public listing page"
+                    (click)="viewListing(listing)"
+                  >
+                    <mat-icon>visibility</mat-icon>
+                    <span>View</span>
+                  </button>
+
+                  <button
+                    mat-icon-button
+                    type="button"
+                    class="more-action"
+                    aria-label="More listing actions"
+                    matTooltip="Approve, reject, feature, or delete"
+                    [matMenuTriggerFor]="listingActions"
+                    [disabled]="isUpdating(listing)"
+                  >
+                    <mat-icon>more_horiz</mat-icon>
+                  </button>
+
+                  <mat-menu #listingActions="matMenu" xPosition="before">
+                    <button
+                      mat-menu-item
+                      [disabled]="listing.status === 'approved'"
+                      (click)="approveListing(listing)"
+                    >
+                      <mat-icon>check_circle</mat-icon>
+                      <span>Approve listing</span>
+                    </button>
+                    <button
+                      mat-menu-item
+                      [disabled]="listing.status === 'rejected'"
+                      (click)="rejectListing(listing)"
+                    >
+                      <mat-icon>block</mat-icon>
+                      <span>Reject listing</span>
+                    </button>
+                    <button mat-menu-item (click)="toggleFeatured(listing)">
+                      <mat-icon>workspace_premium</mat-icon>
+                      <span>
+                        {{ listing.isFeatured ? "Remove featured" : "Mark featured" }}
+                      </span>
+                    </button>
+                    <button
+                      mat-menu-item
+                      class="danger-menu-item"
+                      (click)="deleteListing(listing)"
+                    >
+                      <mat-icon>delete_outline</mat-icon>
+                      <span>Delete listing</span>
+                    </button>
+                  </mat-menu>
+                </div>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </section>
+</div>

@@ -1,0 +1,490 @@
+@use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins" as *;
+
+:host {
+  display: block;
+  min-height: calc(100vh - #{$navbar-height});
+  background: $background;
+}
+
+.admin-page {
+  max-width: $container-xl;
+  margin: 0 auto;
+  padding: $space-8 $space-8 $space-20;
+
+  @include respond-to(md) {
+    padding: $space-5 $space-4 $space-12;
+  }
+}
+
+.summary-card,
+.listings-panel,
+.listing-card,
+.state-panel {
+  border: 1px solid rgba($border, 0.72);
+  border-radius: $radius-md;
+  background: $surface;
+  box-shadow: 0 14px 36px rgba(28, 28, 28, 0.055);
+}
+
+.section-kicker {
+  color: $primary;
+  font-family: $font-primary;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+  letter-spacing: $tracking-wider;
+  text-transform: uppercase;
+}
+
+.page-header {
+  max-width: 720px;
+  margin-bottom: $space-6;
+
+  h1 {
+    margin: $space-2 0 $space-3;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-3xl;
+    font-weight: $font-extrabold;
+    line-height: $leading-tight;
+
+    @include respond-to(sm) {
+      font-size: $text-2xl;
+    }
+  }
+
+  p {
+    margin: 0;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-base;
+    line-height: $leading-relaxed;
+  }
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: $space-4;
+  margin-bottom: $space-6;
+
+  @include respond-to(lg) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @include respond-to(sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.summary-card {
+  min-height: 112px;
+  padding: $space-5;
+
+  span {
+    display: block;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-xs;
+    font-weight: $font-semibold;
+    letter-spacing: $tracking-wider;
+    text-transform: uppercase;
+  }
+
+  strong {
+    display: block;
+    margin-top: $space-3;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-2xl;
+    font-weight: $font-bold;
+    line-height: $leading-tight;
+  }
+
+  &.warning strong {
+    color: $warning;
+  }
+}
+
+.listings-panel {
+  padding: $space-5;
+}
+
+.panel-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  gap: $space-4;
+  align-items: start;
+  margin-bottom: $space-5;
+
+  @include respond-to(lg) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tabs-row {
+  @include flex(row, flex-start, center, $space-2);
+  flex-wrap: wrap;
+}
+
+.tab-button {
+  @include flex(row, center, center, $space-2);
+  min-height: 42px;
+  padding: 0 $space-3;
+  border: 1px solid $divider;
+  border-radius: $radius-md;
+  background: $surface;
+  color: $text-secondary;
+  cursor: pointer;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  font-weight: $font-semibold;
+  transition: $transition-fast;
+
+  mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+  }
+
+  strong {
+    min-width: 24px;
+    padding: 2px $space-2;
+    border-radius: $radius-full;
+    background: $surface-alt;
+    color: $text-secondary;
+    font-size: $text-xs;
+  }
+
+  &:hover,
+  &.active {
+    border-color: rgba($primary, 0.35);
+    background: $primary-tint;
+    color: $primary;
+  }
+}
+
+.search-box {
+  @include flex(row, flex-start, center, $space-2);
+  width: 100%;
+  min-height: 42px;
+  padding: 0 $space-3;
+  border: 1px solid $divider;
+  border-radius: $radius-md;
+  background: $surface;
+
+  mat-icon {
+    width: 18px;
+    height: 18px;
+    color: $text-disabled;
+    font-size: 18px;
+  }
+
+  input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: $text-primary;
+    font-family: $font-primary;
+    font-size: $text-sm;
+  }
+
+  button {
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: $radius-full;
+    background: transparent;
+    color: $text-secondary;
+    cursor: pointer;
+    @include flex(row, center, center);
+  }
+}
+
+.listing-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $space-4;
+  align-items: stretch;
+
+  @include respond-to(lg) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.listing-card {
+  display: grid;
+  grid-template-columns: 232px minmax(0, 1fr);
+  height: 288px;
+  overflow: hidden;
+  transition: $transition-fast;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: rgba($primary, 0.3);
+  }
+
+  @include respond-to(sm) {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+}
+
+.listing-media {
+  position: relative;
+  height: 100%;
+  min-height: 288px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @include respond-to(sm) {
+    height: 220px;
+    min-height: 220px;
+  }
+}
+
+.listing-mode,
+.featured-badge {
+  position: absolute;
+  left: $space-3;
+  border-radius: $radius-full;
+  color: $surface;
+  font-family: $font-primary;
+  font-size: $text-xs;
+  font-weight: $font-bold;
+  text-transform: uppercase;
+}
+
+.listing-mode {
+  top: $space-3;
+  padding: $space-1 $space-3;
+  background: rgba($primary-darker, 0.86);
+}
+
+.featured-badge {
+  @include flex(row, center, center, $space-1);
+  bottom: $space-3;
+  padding: $space-1 $space-2;
+  background: rgba($accent-dark, 0.9);
+
+  mat-icon {
+    width: 14px;
+    height: 14px;
+    font-size: 14px;
+  }
+}
+
+.listing-body {
+  display: grid;
+  grid-template-rows: 36px 68px 54px 1fr;
+  min-width: 0;
+  padding: $space-4 $space-4 $space-3;
+}
+
+.listing-topline {
+  @include flex(row, space-between, center, $space-3);
+  min-height: 32px;
+  margin-bottom: $space-2;
+
+  > span {
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-xs;
+    font-weight: $font-semibold;
+    text-transform: uppercase;
+  }
+}
+
+.listing-body h2 {
+  @include truncate(2);
+  margin: 0;
+  min-height: 60px;
+  color: $text-primary;
+  font-family: $font-heading;
+  font-size: $text-lg;
+  font-weight: $font-bold;
+  line-height: $leading-snug;
+}
+
+.listing-meta {
+  @include flex(row, flex-start, center, $space-3);
+  flex-wrap: wrap;
+  align-content: flex-start;
+  min-height: 48px;
+  margin: 0;
+
+  span {
+    @include flex(row, flex-start, center, $space-1);
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-xs;
+  }
+
+  mat-icon {
+    width: 15px;
+    height: 15px;
+    color: $primary;
+    font-size: 15px;
+  }
+}
+
+.listing-footer {
+  align-self: end;
+  @include flex(row, space-between, center, $space-3);
+  border-top: 1px solid $divider;
+  padding-top: $space-3;
+  min-height: 58px;
+
+  @include respond-to(sm) {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  strong {
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-base;
+    font-weight: $font-bold;
+  }
+}
+
+.listing-actions {
+  @include flex(row, flex-end, center, $space-1);
+
+  button:not(.view-action) {
+    color: $text-secondary;
+
+    &:hover {
+      color: $primary;
+      background: $primary-tint;
+    }
+
+    &.featured {
+      color: $accent;
+    }
+
+    &.danger {
+      color: $error;
+
+      &:hover {
+        background: $error-light;
+      }
+    }
+  }
+}
+
+.view-action {
+  @include flex(row, center, center, $space-2);
+  min-height: 38px;
+  padding: 0 $space-3;
+  border: 1px solid rgba($primary, 0.24);
+  border-radius: $radius-md;
+  background: $primary-tint;
+  color: $primary !important;
+  cursor: pointer;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  font-weight: $font-semibold;
+  transition: $transition-fast;
+
+  mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    color: $primary;
+    transition: $transition-fast;
+  }
+
+  span {
+    color: $primary;
+    transition: $transition-fast;
+  }
+
+  &:hover {
+    border-color: rgba($primary, 0.5);
+    background: $primary;
+    color: $surface !important;
+    box-shadow: 0 8px 18px rgba($primary, 0.16);
+
+    mat-icon,
+    span {
+      color: $surface;
+    }
+  }
+}
+
+.more-action {
+  border: 1px solid transparent;
+
+  &:hover {
+    border-color: rgba($primary, 0.28);
+  }
+}
+
+:host ::ng-deep {
+  .danger-menu-item,
+  .danger-menu-item mat-icon {
+    color: $error;
+  }
+}
+
+.status-chip {
+  min-height: 26px;
+  border-radius: $radius-full !important;
+  font-family: $font-primary;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+
+  &.status-approved {
+    background: $success-light !important;
+    color: $success !important;
+  }
+
+  &.status-pending {
+    background: $warning-light !important;
+    color: $warning !important;
+  }
+
+  &.status-rejected {
+    background: $error-light !important;
+    color: $error !important;
+  }
+}
+
+.state-panel {
+  @include flex(column, center, center, $space-3);
+  min-height: 280px;
+  padding: $space-8;
+  text-align: center;
+
+  mat-icon {
+    width: 42px;
+    height: 42px;
+    color: $primary;
+    font-size: 42px;
+  }
+
+  h2,
+  p {
+    margin: 0;
+  }
+
+  h2 {
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-lg;
+  }
+
+  p {
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-sm;
+  }
+}
