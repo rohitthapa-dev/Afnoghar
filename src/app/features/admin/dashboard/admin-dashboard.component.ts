@@ -9,6 +9,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Property, PropertyStatus } from '../../../core/models/property.model';
 import { User } from '../../../core/models/user.model';
 import { AdminService } from '../../../core/services/admin.service';
+import { NotificationService } from '../../../core/services/notification.service';
+import { Notification } from '../../../core/services/notification.service';
 import { PriceFormatPipe } from '../../../shared/pipes/price-format.pipe';
 import { PropertyTypePipe } from '../../../shared/pipes/property-type.pipe';
 
@@ -29,9 +31,11 @@ import { PropertyTypePipe } from '../../../shared/pipes/property-type.pipe';
 })
 export class AdminDashboardComponent implements OnInit {
   private adminService = inject(AdminService);
+  private notificationService = inject(NotificationService);
 
   readonly users = signal<User[]>([]);
   readonly properties = signal<Property[]>([]);
+  readonly notifications = signal<Notification[]>([]);
   readonly loading = signal(true);
   readonly error = signal('');
 
@@ -72,6 +76,7 @@ export class AdminDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadDashboard();
+    this.loadNotifications();
   }
 
   loadDashboard(): void {
@@ -92,6 +97,37 @@ export class AdminDashboardComponent implements OnInit {
         this.loading.set(false);
       },
     });
+  }
+
+  loadNotifications(): void {
+    this.notificationService.getNotifications().subscribe({
+      next: (notifications) =>
+        this.notifications.set(
+          notifications.filter((n) => !n.read && n.type === 'property_submitted'),
+        ),
+      error: () => {},
+    });
+  }
+
+  dismissNotification(id: number): void {
+    this.notificationService.markRead(id).subscribe({
+      next: () => {
+        this.notifications.set(this.notifications().filter((n) => n.id !== id));
+      },
+    });
+  }
+
+  getNotificationIcon(type: Notification['type']): string {
+    switch (type) {
+      case 'property_submitted':
+        return 'campaign';
+      case 'property_approved':
+        return 'check_circle';
+      case 'property_rejected':
+        return 'cancel';
+      default:
+        return 'notifications';
+    }
   }
 
   getStatusClass(status: PropertyStatus): string {

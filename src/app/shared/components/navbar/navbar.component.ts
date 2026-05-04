@@ -83,6 +83,7 @@ export class NavbarComponent implements OnInit {
   }
 
   get notificationsRoute(): string {
+    if (this.userRole === 'admin') return '/admin/dashboard';
     if (this.userRole === 'seller') return '/seller/appointments';
     if (this.userRole === 'buyer') return '/buyer/appointments';
     return '/';

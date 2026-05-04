@@ -177,6 +177,12 @@ export class SellerAppointmentsComponent implements OnInit {
         return 'cancel';
       case 'booked':
         return 'event_available';
+      case 'property_approved':
+        return 'check_circle';
+      case 'property_rejected':
+        return 'cancel';
+      case 'property_submitted':
+        return 'campaign';
       default:
         return 'edit_calendar';
     }
@@ -389,6 +395,19 @@ export class SellerAppointmentsComponent implements OnInit {
     return this.normalizeStatus(a.status) === 'confirmed';
   }
 
+  getSlotConflictCount(appointment: EnrichedAppointment): number {
+    if (!this.isSlotHeld(appointment)) return 0;
+
+    return this.appointments.filter(
+      (item) =>
+        item.id !== appointment.id &&
+        item.propertyId === appointment.propertyId &&
+        item.date === appointment.date &&
+        item.time === appointment.time &&
+        this.isSlotHeld(item),
+    ).length;
+  }
+
   getMonth(date: string): string {
     return this.formatPart(date, { month: 'short' });
   }
@@ -476,6 +495,10 @@ export class SellerAppointmentsComponent implements OnInit {
       default:
         return 'pending';
     }
+  }
+
+  private isSlotHeld(appointment: EnrichedAppointment): boolean {
+    return !['cancelled', 'declined', 'completed'].includes(appointment.status);
   }
 
   private sortAppointments(list: EnrichedAppointment[]): EnrichedAppointment[] {

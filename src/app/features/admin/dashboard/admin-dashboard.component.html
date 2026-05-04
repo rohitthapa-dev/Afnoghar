@@ -11,6 +11,31 @@
       <button mat-stroked-button (click)="loadDashboard()">Try Again</button>
     </div>
   } @else {
+    @if (notifications().length > 0) {
+      <div class="notifications-banner">
+        @for (n of notifications(); track n.id) {
+          <div class="notification-item" [ngClass]="'notif-' + n.type">
+            <div class="notif-body">
+              <mat-icon>{{ getNotificationIcon(n.type) }}</mat-icon>
+              <div>
+                <strong>{{ n.title }}</strong>
+                <p>{{ n.message }}</p>
+              </div>
+            </div>
+            <div class="notif-actions">
+              <a mat-stroked-button class="view-btn" routerLink="/admin/listings">
+                <mat-icon>visibility</mat-icon>
+                View Listings
+              </a>
+              <button mat-icon-button (click)="dismissNotification(n.id)">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
     <section class="page-header">
       <div>
         <span class="section-kicker">Command Center</span>

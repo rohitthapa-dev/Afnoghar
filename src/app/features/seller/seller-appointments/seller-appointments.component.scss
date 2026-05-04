@@ -507,7 +507,8 @@
   }
 }
 
-.seller-waiting-note {
+.seller-waiting-note,
+.slot-conflict-note {
   @include flex(row, flex-start, center, $space-2);
   width: fit-content;
   max-width: 100%;
@@ -528,6 +529,16 @@
     color: $primary;
     font-size: 17px;
     flex-shrink: 0;
+  }
+}
+
+.slot-conflict-note {
+  border-color: rgba($warning, 0.24);
+  background: $warning-light;
+  color: $warning;
+
+  mat-icon {
+    color: $warning;
   }
 }
 
