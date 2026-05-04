@@ -74,6 +74,27 @@ const deletePropertyAssetFolder = (propertyId) => {
   }
 };
 
+const holdsAppointmentSlot = (status) =>
+  !["cancelled", "declined", "completed"].includes(status);
+
+const findAppointmentSlotConflict = (
+  appointments,
+  { propertyId, sellerId, date, time, excludeId },
+) =>
+  appointments.find((appointment) => {
+    const sameProperty = Number(appointment.propertyId) === Number(propertyId);
+    const sameSeller =
+      sellerId != null && Number(appointment.sellerId) === Number(sellerId);
+
+    return (
+      (sameProperty || sameSeller) &&
+      appointment.date === date &&
+      appointment.time === time &&
+      holdsAppointmentSlot(appointment.status) &&
+      Number(appointment.id) !== Number(excludeId)
+    );
+  });
+
 const requirePropertyAccess = (req, res, next) => {
   const db = getDB();
   const index = db.properties.findIndex((p) => p.id === Number(req.params.id));
@@ -354,6 +375,25 @@ app.post("/properties", verifyToken, (req, res) => {
     };
 
     db.properties.push(newProperty);
+
+    const nextNotificationId =
+      db.notifications.reduce((max, n) => Math.max(max, n.id || 0), 0) + 1;
+
+    const admins = db.users.filter((u) => u.role === "admin");
+    admins.forEach((admin, index) => {
+      db.notifications.push({
+        id: nextNotificationId + index,
+        userId: admin.id,
+        type: "property_submitted",
+        title: "New Property Submission",
+        message: `A new property "${newProperty.title}" has been submitted for review.`,
+        propertyId: newProperty.id,
+        propertyTitle: newProperty.title,
+        read: false,
+        createdAt: new Date().toISOString(),
+      });
+    });
+
     saveDB(db);
 
     res.status(201).json(newProperty);
@@ -409,12 +449,45 @@ app.patch("/properties/:id", verifyToken, (req, res) => {
         .json({ message: "Not allowed to update this property." });
     }
 
+    const oldStatus = db.properties[index].status;
+    const newStatus = req.body.status;
+
     if (Array.isArray(req.body.images)) {
       deleteRemovedManagedImages(db.properties[index].images, req.body.images);
     }
 
     db.properties[index] = { ...db.properties[index], ...req.body };
-    saveDB(db);
+
+    if (
+      req.user.role === "admin" &&
+      newStatus &&
+      newStatus !== oldStatus &&
+      (newStatus === "approved" || newStatus === "rejected")
+    ) {
+      const sellerId = db.properties[index].sellerId;
+      const propertyTitle = db.properties[index].title;
+      const nextNotificationId =
+        db.notifications.reduce((max, n) => Math.max(max, n.id || 0), 0) + 1;
+
+      db.notifications.push({
+        id: nextNotificationId,
+        userId: sellerId,
+        type: newStatus === "approved" ? "property_approved" : "property_rejected",
+        title: newStatus === "approved" ? "Property Approved" : "Property Rejected",
+        message:
+          newStatus === "approved"
+            ? `Your property "${propertyTitle}" has been approved and is now live.`
+            : `Your property "${propertyTitle}" has been rejected. Please review and resubmit.`,
+        propertyId: db.properties[index].id,
+        propertyTitle: propertyTitle,
+        read: false,
+        createdAt: new Date().toISOString(),
+      });
+
+      saveDB(db);
+    } else {
+      saveDB(db);
+    }
 
     res.json(db.properties[index]);
   } catch (error) {
@@ -466,11 +539,33 @@ app.get("/appointments", verifyToken, (req, res) => {
 app.post("/appointments", verifyToken, (req, res) => {
   try {
     const db = getDB();
+    const property = db.properties.find(
+      (item) => item.id === Number(req.body.propertyId),
+    );
+
+    if (!property) {
+      return res.status(404).json({ message: "Property not found." });
+    }
+
+    const sellerId = Number(req.body.sellerId || property.sellerId);
+    const conflict = findAppointmentSlotConflict(db.appointments, {
+      propertyId: req.body.propertyId,
+      sellerId,
+      date: req.body.date,
+      time: req.body.time,
+    });
+
+    if (conflict) {
+      return res.status(409).json({
+        message: "This time slot is already full. Please choose another time.",
+      });
+    }
 
     const newAppointment = {
       id: db.appointments.length + 1,
       ...req.body,
       buyerId: req.user.id,
+      sellerId,
       status: "pending",
       createdAt: new Date().toISOString(),
     };
@@ -496,6 +591,7 @@ app.patch("/appointments/:id", verifyToken, (req, res) => {
     }
 
     const appointment = db.appointments[index];
+    const nextAppointment = { ...appointment, ...req.body };
     const sellerApprovingOwnReschedule =
       req.user.role !== "admin" &&
       appointment.rescheduledBy === "seller" &&
@@ -509,7 +605,22 @@ app.patch("/appointments/:id", verifyToken, (req, res) => {
       });
     }
 
-    db.appointments[index] = { ...db.appointments[index], ...req.body };
+    if (
+      holdsAppointmentSlot(nextAppointment.status) &&
+      findAppointmentSlotConflict(db.appointments, {
+        propertyId: nextAppointment.propertyId,
+        sellerId: nextAppointment.sellerId,
+        date: nextAppointment.date,
+        time: nextAppointment.time,
+        excludeId: nextAppointment.id,
+      })
+    ) {
+      return res.status(409).json({
+        message: "This time slot is already full. Please choose another time.",
+      });
+    }
+
+    db.appointments[index] = nextAppointment;
     saveDB(db);
 
     res.json(db.appointments[index]);
