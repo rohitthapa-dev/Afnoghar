@@ -1,1 +1,168 @@
-<p>admin-manage-users works!</p>
+<div class="admin-page">
+  <section class="page-header">
+    <div>
+      <span class="section-kicker">People Operations</span>
+      <h1>Manage Users</h1>
+      <p>
+        Keep buyers, sellers, and administrators organized with fast filtering
+        and precise account controls.
+      </p>
+    </div>
+  </section>
+
+  <section class="summary-grid">
+    <div class="summary-card">
+      <span>Total Users</span>
+      <strong>{{ users().length }}</strong>
+    </div>
+    <div class="summary-card">
+      <span>Active</span>
+      <strong>{{ activeCount() }}</strong>
+    </div>
+    <div class="summary-card">
+      <span>Sellers</span>
+      <strong>{{ sellerCount() }}</strong>
+    </div>
+    <div class="summary-card">
+      <span>Buyers</span>
+      <strong>{{ buyerCount() }}</strong>
+    </div>
+  </section>
+
+  <section class="users-panel">
+    <div class="panel-toolbar">
+      <div class="tabs-row" role="tablist" aria-label="User role filters">
+        @for (tab of tabs; track tab.value) {
+          <button
+            type="button"
+            class="tab-button"
+            [class.active]="selectedRole() === tab.value"
+            [matTooltip]="'Show ' + tab.label.toLowerCase()"
+            (click)="selectRole(tab.value)"
+          >
+            <mat-icon>{{ tab.icon }}</mat-icon>
+            <span>{{ tab.label }}</span>
+            <strong>{{ getTabCount(tab.value) }}</strong>
+          </button>
+        }
+      </div>
+
+      <div class="toolbar-controls">
+        <div class="segmented-control" aria-label="Account status filter">
+          <button
+            type="button"
+            [class.active]="selectedStatus() === 'all'"
+            matTooltip="Show all accounts"
+            (click)="selectStatus('all')"
+          >
+            All
+          </button>
+          <button
+            type="button"
+            [class.active]="selectedStatus() === 'active'"
+            matTooltip="Show active accounts"
+            (click)="selectStatus('active')"
+          >
+            Active
+          </button>
+          <button
+            type="button"
+            [class.active]="selectedStatus() === 'inactive'"
+            matTooltip="Show paused accounts"
+            (click)="selectStatus('inactive')"
+          >
+            Paused
+          </button>
+        </div>
+
+        <div class="search-box">
+          <mat-icon>search</mat-icon>
+          <input
+            type="search"
+            placeholder="Search users"
+            [ngModel]="searchTerm()"
+            (ngModelChange)="updateSearch($event)"
+          />
+          @if (searchTerm()) {
+            <button
+              type="button"
+              aria-label="Clear search"
+              matTooltip="Clear search"
+              (click)="clearSearch()"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="state-panel">
+        <mat-spinner diameter="44"></mat-spinner>
+        <p>Loading users...</p>
+      </div>
+    } @else if (error()) {
+      <div class="state-panel">
+        <mat-icon>error_outline</mat-icon>
+        <p>{{ error() }}</p>
+        <button mat-stroked-button (click)="loadUsers()">Try Again</button>
+      </div>
+    } @else if (filteredUsers().length === 0) {
+      <div class="state-panel">
+        <mat-icon>person_search</mat-icon>
+        <h2>No users found</h2>
+        <p>Adjust the filters or search query.</p>
+      </div>
+    } @else {
+      <div class="user-list">
+        @for (user of filteredUsers(); track user.id) {
+          <article class="user-card" [class.inactive]="!user.isActive">
+            <div class="user-identity">
+              <div class="user-avatar">{{ getInitials(user) }}</div>
+              <div>
+                <h2>{{ user.name }}</h2>
+                <p>{{ user.email }}</p>
+                <span>{{ user.phone }} · Joined {{ formatDate(user.createdAt) }}</span>
+              </div>
+            </div>
+
+            <div class="user-controls">
+              <label>
+                <span class="visually-hidden">Role</span>
+                <select
+                  [value]="user.role"
+                  [disabled]="isUpdating(user) || isCurrentAdmin(user)"
+                  matTooltip="Change this user's access role"
+                  (change)="onRoleChange(user, $event)"
+                >
+                  <option value="buyer">Buyer</option>
+                  <option value="seller">Seller</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </label>
+
+              <button
+                type="button"
+                class="status-toggle"
+                [class.active]="user.isActive"
+                [disabled]="isUpdating(user) || (isCurrentAdmin(user) && user.isActive)"
+                [matTooltip]="
+                  isCurrentAdmin(user) && user.isActive
+                    ? 'Current admin account cannot be paused'
+                    : user.isActive
+                      ? 'Pause this account'
+                      : 'Reactivate this account'
+                "
+                (click)="toggleUserStatus(user)"
+              >
+                <span></span>
+                {{ user.isActive ? "Active" : "Paused" }}
+              </button>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </section>
+</div>
