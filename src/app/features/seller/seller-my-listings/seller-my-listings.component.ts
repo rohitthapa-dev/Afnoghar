@@ -6,12 +6,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import {
-  Property,
-  PropertyStatus,
-} from '../../../core/models/property.model';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Property, PropertyStatus } from '../../../core/models/property.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { PropertyService } from '../../../core/services/property.service';
 import { PriceFormatPipe } from '../../../shared/pipes/price-format.pipe';
@@ -36,8 +35,10 @@ interface ListingTab {
     MatChipsModule,
     MatIconModule,
     MatInputModule,
+    MatMenuModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
+    MatTooltipModule,
     PriceFormatPipe,
     PropertyTypePipe,
   ],
@@ -65,6 +66,7 @@ export class SellerMyListingsComponent implements OnInit {
   readonly error = signal('');
   readonly selectedFilter = signal<ListingFilter>('all');
   readonly searchTerm = signal('');
+  readonly updatingIds = signal<Set<number>>(new Set());
 
   readonly filteredListings = computed(() => {
     const term = this.searchTerm().trim().toLowerCase();
@@ -159,6 +161,10 @@ export class SellerMyListingsComponent implements OnInit {
     return `${listing.location.city}, ${listing.location.district}`;
   }
 
+  isUpdating(listing: Property): boolean {
+    return this.updatingIds().has(listing.id);
+  }
+
   editListing(listing: Property): void {
     this.router.navigate(['/seller/properties', listing.id, 'edit']);
   }
@@ -173,21 +179,19 @@ export class SellerMyListingsComponent implements OnInit {
     );
     if (!confirmed) return;
 
+    this.setUpdating(listing.id, true);
+
     this.propertyService.deleteProperty(listing.id).subscribe({
       next: () => {
         this.listings.update((items) =>
           items.filter((item) => item.id !== listing.id),
         );
-        this.snackBar.open('Listing deleted', 'Close', {
-          duration: 3000,
-          horizontalPosition: 'start',
-          verticalPosition: 'bottom',
-        });
+        this.setUpdating(listing.id, false);
+        this.showMessage('Listing deleted');
       },
       error: () => {
-        this.snackBar.open('Failed to delete listing', 'Close', {
-          duration: 3000,
-        });
+        this.setUpdating(listing.id, false);
+        this.showMessage('Failed to delete listing');
       },
     });
   }
@@ -195,5 +199,25 @@ export class SellerMyListingsComponent implements OnInit {
   private getStatusCount(status: PropertyStatus): number {
     return this.listings().filter((listing) => listing.status === status)
       .length;
+  }
+
+  private setUpdating(id: number, updating: boolean): void {
+    this.updatingIds.update((current) => {
+      const next = new Set(current);
+      if (updating) {
+        next.add(id);
+      } else {
+        next.delete(id);
+      }
+      return next;
+    });
+  }
+
+  private showMessage(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 3000,
+      horizontalPosition: 'start',
+      verticalPosition: 'bottom',
+    });
   }
 }

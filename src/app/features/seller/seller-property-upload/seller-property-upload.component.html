@@ -89,27 +89,59 @@
           <div class="field-grid compact">
             <mat-form-field appearance="outline">
               <mat-label>Price</mat-label>
-              <input matInput type="number" formControlName="price" />
+              <span matTextPrefix>Rs.&nbsp;</span>
+              <input
+                matInput
+                type="number"
+                formControlName="price"
+                placeholder="e.g. 18500000"
+              />
             </mat-form-field>
             <mat-form-field appearance="outline">
               <mat-label>Area</mat-label>
-              <input matInput type="number" formControlName="area" />
+              <input
+                matInput
+                type="number"
+                formControlName="area"
+                placeholder="e.g. 2400"
+              />
+              <span matTextSuffix>&nbsp;sq.ft</span>
             </mat-form-field>
             <mat-form-field appearance="outline">
               <mat-label>Aana</mat-label>
-              <input matInput type="number" formControlName="aana" />
+              <input
+                matInput
+                type="number"
+                formControlName="aana"
+                placeholder="Optional"
+              />
             </mat-form-field>
             <mat-form-field appearance="outline">
               <mat-label>Bedrooms</mat-label>
-              <input matInput type="number" formControlName="bedrooms" />
+              <input
+                matInput
+                type="number"
+                formControlName="bedrooms"
+                placeholder="Optional"
+              />
             </mat-form-field>
             <mat-form-field appearance="outline">
               <mat-label>Bathrooms</mat-label>
-              <input matInput type="number" formControlName="bathrooms" />
+              <input
+                matInput
+                type="number"
+                formControlName="bathrooms"
+                placeholder="Optional"
+              />
             </mat-form-field>
             <mat-form-field appearance="outline">
               <mat-label>Floors</mat-label>
-              <input matInput type="number" formControlName="floors" />
+              <input
+                matInput
+                type="number"
+                formControlName="floors"
+                placeholder="Optional"
+              />
             </mat-form-field>
           </div>
         </section>

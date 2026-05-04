@@ -371,11 +371,40 @@
     font-family: $font-primary;
   }
 
+  .mat-mdc-text-field-wrapper {
+    background: rgba($surface, 0.72);
+  }
+
+  .mat-mdc-form-field-focus-overlay {
+    background: transparent;
+  }
+
+  .mat-mdc-form-field-icon-prefix,
+  .mat-mdc-form-field-text-prefix,
+  .mat-mdc-form-field-text-suffix {
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-sm;
+    font-weight: $font-semibold;
+  }
+
+  input[type="number"] {
+    appearance: textfield;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      margin: 0;
+      appearance: none;
+    }
+  }
+
   .mdc-text-field--outlined {
     --mdc-outlined-text-field-outline-color: #{$border};
-    --mdc-outlined-text-field-hover-outline-color: #{$primary};
+    --mdc-outlined-text-field-hover-outline-color: #{rgba($primary, 0.5)};
     --mdc-outlined-text-field-focus-outline-color: #{$primary};
     --mdc-outlined-text-field-container-shape: #{$radius-md};
+    --mdc-outlined-text-field-label-text-color: #{$text-secondary};
+    --mdc-outlined-text-field-input-text-color: #{$text-primary};
   }
 
   .map-picker {
