@@ -76,9 +76,7 @@ const deletePropertyAssetFolder = (propertyId) => {
 
 const requirePropertyAccess = (req, res, next) => {
   const db = getDB();
-  const index = db.properties.findIndex(
-    (p) => p.id === Number(req.params.id),
-  );
+  const index = db.properties.findIndex((p) => p.id === Number(req.params.id));
 
   if (index === -1) {
     return res.status(404).json({ message: "Property not found." });
@@ -154,6 +152,14 @@ const verifyToken = (req, res, next) => {
   }
 };
 
+const requireAdmin = (req, res, next) => {
+  if (req.user?.role !== "admin") {
+    return res.status(403).json({ message: "Admin access required." });
+  }
+
+  next();
+};
+
 app.post("/login", (req, res) => {
   try {
     const { email, password } = req.body;
@@ -200,9 +206,14 @@ app.post("/login", (req, res) => {
 app.post("/register", (req, res) => {
   try {
     const { name, email, password, phone, role } = req.body;
+    const requestedRole = role || "buyer";
 
     if (!name || !email || !password || !phone) {
       return res.status(400).json({ message: "All fields are required." });
+    }
+
+    if (!["buyer", "seller"].includes(requestedRole)) {
+      return res.status(400).json({ message: "Invalid registration role." });
     }
 
     const db = getDB();
@@ -217,7 +228,7 @@ app.post("/register", (req, res) => {
       name,
       email,
       password,
-      role: role || "buyer",
+      role: requestedRole,
       phone,
       avatar: "",
       createdAt: new Date().toISOString(),
@@ -257,7 +268,7 @@ app.get("/agents", (req, res) => {
   }
 });
 
-app.get("/users", verifyToken, (req, res) => {
+app.get("/users", verifyToken, requireAdmin, (req, res) => {
   try {
     const db = getDB();
     const users = db.users.map(({ password, ...u }) => u);
@@ -267,7 +278,7 @@ app.get("/users", verifyToken, (req, res) => {
   }
 });
 
-app.patch("/users/:id", verifyToken, (req, res) => {
+app.patch("/users/:id", verifyToken, requireAdmin, (req, res) => {
   try {
     const db = getDB();
     const index = db.users.findIndex((u) => u.id === Number(req.params.id));
@@ -276,7 +287,26 @@ app.patch("/users/:id", verifyToken, (req, res) => {
       return res.status(404).json({ message: "User not found." });
     }
 
-    db.users[index] = { ...db.users[index], ...req.body };
+    const user = db.users[index];
+    const nextRole = req.body.role ?? user.role;
+    const nextIsActive = req.body.isActive ?? user.isActive;
+
+    if (!["buyer", "seller", "admin"].includes(nextRole)) {
+      return res.status(400).json({ message: "Invalid user role." });
+    }
+
+    if (user.id === req.user.id && nextIsActive === false) {
+      return res
+        .status(400)
+        .json({ message: "You cannot deactivate your own admin account." });
+    }
+
+    db.users[index] = {
+      ...user,
+      ...req.body,
+      role: nextRole,
+      isActive: nextIsActive,
+    };
     saveDB(db);
 
     const { password: _, ...userWithoutPassword } = db.users[index];
@@ -672,6 +702,10 @@ app.use((error, req, res, next) => {
   next(error);
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Afnoghar Server running at http://localhost:${PORT}`);
+});
+
+server.on("error", (error) => {
+  console.error("Unable to start Afnoghar server:", error.message);
 });

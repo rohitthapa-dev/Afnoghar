@@ -591,9 +591,39 @@
         "Road Access"
       ],
       "sellerId": 2,
-      "status": "pending",
+      "status": "approved",
       "isFeatured": false,
       "createdAt": "2025-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 16,
+      "title": "Test  Apartment",
+      "description": "This is a house in the hills for testing",
+      "type": "apartment",
+      "listingType": "sale",
+      "price": 250000,
+      "area": 1200,
+      "aana": 3,
+      "bedrooms": 4,
+      "bathrooms": 3,
+      "floors": 2,
+      "location": {
+        "district": "Kathmandu",
+        "city": "dillibazar",
+        "address": "Agaman Road",
+        "lat": 27.707068,
+        "lng": 85.333166
+      },
+      "images": [
+        "http://localhost:3000/assets/properties/16/1777872513502-f5abhmucsnakuup-pevtya-2k.webp"
+      ],
+      "features": [
+        "This is a test apartment"
+      ],
+      "sellerId": 2,
+      "status": "approved",
+      "isFeatured": false,
+      "createdAt": "2026-05-04T05:28:33.485Z"
     }
   ],
   "appointments": [
