@@ -79,6 +79,23 @@ const deletePropertyAssetFolder = (propertyId) => {
 const holdsAppointmentSlot = (status) =>
   !["cancelled", "declined", "completed"].includes(status);
 
+const isAppointmentParticipant = (appointment, user) =>
+  appointment &&
+  user &&
+  (Number(appointment.buyerId || appointment.userId) === Number(user.id) ||
+    Number(appointment.sellerId) === Number(user.id));
+
+const canAccessAppointment = (appointment, user) =>
+  user?.role === "admin" || isAppointmentParticipant(appointment, user);
+
+const getVisibleAppointments = (appointments, user) => {
+  if (user?.role === "admin") return appointments;
+
+  return appointments.filter((appointment) =>
+    isAppointmentParticipant(appointment, user),
+  );
+};
+
 const findAppointmentSlotConflict = (
   appointments,
   { propertyId, sellerId, date, time, excludeId },
@@ -96,6 +113,26 @@ const findAppointmentSlotConflict = (
       Number(appointment.id) !== Number(excludeId)
     );
   });
+
+const notifyAdminsOfPropertySubmission = (db, property, messagePrefix) => {
+  const nextNotificationId =
+    db.notifications.reduce((max, n) => Math.max(max, n.id || 0), 0) + 1;
+  const admins = db.users.filter((u) => u.role === "admin");
+
+  admins.forEach((admin, index) => {
+    db.notifications.push({
+      id: nextNotificationId + index,
+      userId: admin.id,
+      type: "property_submitted",
+      title: messagePrefix,
+      message: `${messagePrefix}: "${property.title}" is ready for review.`,
+      propertyId: property.id,
+      propertyTitle: property.title,
+      read: false,
+      createdAt: new Date().toISOString(),
+    });
+  });
+};
 
 const requirePropertyAccess = (req, res, next) => {
   const db = getDB();
@@ -453,6 +490,7 @@ app.patch("/users/:id", verifyToken, requireAdmin, (req, res) => {
     const user = db.users[index];
     const nextRole = req.body.role ?? user.role;
     const nextIsActive = req.body.isActive ?? user.isActive;
+    const { password, ...safeUpdates } = req.body;
 
     if (!["buyer", "seller", "admin"].includes(nextRole)) {
       return res.status(400).json({ message: "Invalid user role." });
@@ -466,7 +504,7 @@ app.patch("/users/:id", verifyToken, requireAdmin, (req, res) => {
 
     db.users[index] = {
       ...user,
-      ...req.body,
+      ...safeUpdates,
       role: nextRole,
       isActive: nextIsActive,
     };
@@ -565,24 +603,7 @@ app.post("/properties", verifyToken, (req, res) => {
     };
 
     db.properties.push(newProperty);
-
-    const nextNotificationId =
-      db.notifications.reduce((max, n) => Math.max(max, n.id || 0), 0) + 1;
-
-    const admins = db.users.filter((u) => u.role === "admin");
-    admins.forEach((admin, index) => {
-      db.notifications.push({
-        id: nextNotificationId + index,
-        userId: admin.id,
-        type: "property_submitted",
-        title: "New Property Submission",
-        message: `A new property "${newProperty.title}" has been submitted for review.`,
-        propertyId: newProperty.id,
-        propertyTitle: newProperty.title,
-        read: false,
-        createdAt: new Date().toISOString(),
-      });
-    });
+    notifyAdminsOfPropertySubmission(db, newProperty, "New Property Submission");
 
     saveDB(db);
 
@@ -639,14 +660,24 @@ app.patch("/properties/:id", verifyToken, (req, res) => {
         .json({ message: "Not allowed to update this property." });
     }
 
-    const oldStatus = db.properties[index].status;
+    const oldProperty = db.properties[index];
+    const oldStatus = oldProperty.status;
     const newStatus = req.body.status;
+    const isSellerResubmission =
+      req.user.role === "seller" && oldStatus === "rejected";
 
     if (Array.isArray(req.body.images)) {
       deleteRemovedManagedImages(db.properties[index].images, req.body.images);
     }
 
-    db.properties[index] = { ...db.properties[index], ...req.body };
+    db.properties[index] = {
+      ...db.properties[index],
+      ...req.body,
+      ...(isSellerResubmission && {
+        status: "pending",
+        resubmittedAt: new Date().toISOString(),
+      }),
+    };
 
     if (
       req.user.role === "admin" &&
@@ -674,6 +705,13 @@ app.patch("/properties/:id", verifyToken, (req, res) => {
         createdAt: new Date().toISOString(),
       });
 
+      saveDB(db);
+    } else if (isSellerResubmission) {
+      notifyAdminsOfPropertySubmission(
+        db,
+        db.properties[index],
+        "Property Resubmitted",
+      );
       saveDB(db);
     } else {
       saveDB(db);
@@ -720,9 +758,60 @@ app.delete("/properties/:id", verifyToken, (req, res) => {
 app.get("/appointments", verifyToken, (req, res) => {
   try {
     const db = getDB();
-    res.json(db.appointments);
+    const { propertyId, date } = req.query;
+
+    if (propertyId && date) {
+      const requestedPropertyId = Number(propertyId);
+
+      if (Number.isNaN(requestedPropertyId)) {
+        return res.status(400).json({ message: "Invalid property id." });
+      }
+
+      const unavailableSlots = db.appointments
+        .filter(
+          (appointment) =>
+            Number(appointment.propertyId) === requestedPropertyId &&
+            appointment.date === date &&
+            holdsAppointmentSlot(appointment.status),
+        )
+        .map(({ id, propertyId, sellerId, date, time, status }) => ({
+          id,
+          propertyId,
+          sellerId,
+          date,
+          time,
+          status,
+        }));
+
+      return res.json(unavailableSlots);
+    }
+
+    res.json(getVisibleAppointments(db.appointments, req.user));
   } catch (error) {
     res.status(500).json({ message: "Error fetching appointments." });
+  }
+});
+
+app.get("/appointments/:id", verifyToken, (req, res) => {
+  try {
+    const db = getDB();
+    const appointment = db.appointments.find(
+      (a) => a.id === Number(req.params.id),
+    );
+
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found." });
+    }
+
+    if (!canAccessAppointment(appointment, req.user)) {
+      return res
+        .status(403)
+        .json({ message: "Not allowed to access this appointment." });
+    }
+
+    res.json(appointment);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching appointment." });
   }
 });
 
@@ -737,7 +826,13 @@ app.post("/appointments", verifyToken, (req, res) => {
       return res.status(404).json({ message: "Property not found." });
     }
 
-    const sellerId = Number(req.body.sellerId || property.sellerId);
+    if (req.user.role !== "buyer" && req.user.role !== "admin") {
+      return res
+        .status(403)
+        .json({ message: "Only buyers can book appointments." });
+    }
+
+    const sellerId = Number(property.sellerId);
     const conflict = findAppointmentSlotConflict(db.appointments, {
       propertyId: req.body.propertyId,
       sellerId,
@@ -754,6 +849,7 @@ app.post("/appointments", verifyToken, (req, res) => {
     const newAppointment = {
       id: db.appointments.length + 1,
       ...req.body,
+      userId: req.user.id,
       buyerId: req.user.id,
       sellerId,
       status: "pending",
@@ -781,7 +877,22 @@ app.patch("/appointments/:id", verifyToken, (req, res) => {
     }
 
     const appointment = db.appointments[index];
-    const nextAppointment = { ...appointment, ...req.body };
+    if (!canAccessAppointment(appointment, req.user)) {
+      return res
+        .status(403)
+        .json({ message: "Not allowed to update this appointment." });
+    }
+
+    const {
+      id,
+      propertyId,
+      buyerId,
+      userId,
+      sellerId,
+      createdAt,
+      ...allowedUpdates
+    } = req.body;
+    const nextAppointment = { ...appointment, ...allowedUpdates };
     const sellerApprovingOwnReschedule =
       req.user.role !== "admin" &&
       appointment.rescheduledBy === "seller" &&
@@ -810,7 +921,10 @@ app.patch("/appointments/:id", verifyToken, (req, res) => {
       });
     }
 
-    db.appointments[index] = nextAppointment;
+    db.appointments[index] = {
+      ...appointment,
+      ...allowedUpdates,
+    };
     saveDB(db);
 
     res.json(db.appointments[index]);
@@ -838,6 +952,42 @@ app.get("/notifications", verifyToken, (req, res) => {
 app.post("/notifications", verifyToken, (req, res) => {
   try {
     const db = getDB();
+    let targetUserId = Number(req.body.userId);
+
+    if (!targetUserId || Number.isNaN(targetUserId)) {
+      return res.status(400).json({ message: "Notification user id is required." });
+    }
+
+    if (req.user.role !== "admin") {
+      const appointment = db.appointments.find(
+        (a) => a.id === Number(req.body.appointmentId),
+      );
+
+      if (!appointment || !isAppointmentParticipant(appointment, req.user)) {
+        return res
+          .status(403)
+          .json({ message: "Not allowed to create this notification." });
+      }
+
+      const buyerId = Number(appointment.buyerId || appointment.userId);
+      const sellerId = Number(appointment.sellerId);
+      const senderId = Number(req.user.id);
+      const expectedTargetId =
+        senderId === buyerId ? sellerId : senderId === sellerId ? buyerId : null;
+
+      if (!expectedTargetId || targetUserId !== expectedTargetId) {
+        return res
+          .status(403)
+          .json({ message: "Notifications can only be sent to the other appointment participant." });
+      }
+
+      targetUserId = expectedTargetId;
+    }
+
+    const targetUser = db.users.find((u) => u.id === targetUserId);
+    if (!targetUser) {
+      return res.status(404).json({ message: "Notification user not found." });
+    }
 
     const nextId =
       db.notifications.reduce((max, n) => Math.max(max, n.id || 0), 0) + 1;
@@ -845,6 +995,7 @@ app.post("/notifications", verifyToken, (req, res) => {
     const notification = {
       id: nextId,
       ...req.body,
+      userId: targetUserId,
       createdAt: new Date().toISOString(),
       read: false,
     };

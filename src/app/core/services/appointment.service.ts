@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 
 export interface Appointment {
@@ -34,8 +34,23 @@ export interface Appointment {
 export class AppointmentService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:3000';
-  getAppointments(): Observable<Appointment[]> {
-    return this.http.get<Appointment[]>(`${this.apiUrl}/appointments`);
+  getAppointments(filters?: {
+    propertyId?: number;
+    date?: string;
+  }): Observable<Appointment[]> {
+    let params = new HttpParams();
+
+    if (filters?.propertyId) {
+      params = params.set('propertyId', filters.propertyId);
+    }
+
+    if (filters?.date) {
+      params = params.set('date', filters.date);
+    }
+
+    return this.http.get<Appointment[]>(`${this.apiUrl}/appointments`, {
+      params,
+    });
   }
 
   getAppointmentById(id: number): Observable<Appointment> {
@@ -71,7 +86,7 @@ export class AppointmentService {
     time: string,
     excludeId?: number,
   ): Observable<boolean> {
-    return this.getAppointments().pipe(
+    return this.getAppointments({ propertyId, date }).pipe(
       map((appointments) =>
         appointments.some(
           (a) =>

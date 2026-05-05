@@ -64,7 +64,7 @@
       "phone": "9800000000",
       "avatar": "",
       "createdAt": "2026-04-27T11:00:17.721Z",
-      "isActive": false
+      "isActive": true
     },
     {
       "id": 7,
@@ -75,7 +75,7 @@
       "phone": "9800000001",
       "avatar": "",
       "createdAt": "2026-04-27T12:15:11.989Z",
-      "isActive": false
+      "isActive": true
     }
   ],
   "properties": [
@@ -1125,7 +1125,7 @@
       "message": "Your visit request for Modern Villa in Bansbari has been declined by the seller.",
       "appointmentId": 9,
       "propertyTitle": "Modern Villa in Bansbari",
-      "read": false,
+      "read": true,
       "createdAt": "2026-05-04T12:14:46.091Z"
     },
     {
@@ -1158,7 +1158,7 @@
       "message": "Your property \"House at mangalbazar\" has been approved and is now live.",
       "propertyId": 17,
       "propertyTitle": "House at mangalbazar",
-      "read": false,
+      "read": true,
       "createdAt": "2026-05-04T12:21:55.430Z"
     },
     {
@@ -1169,7 +1169,7 @@
       "message": "The buyer confirmed the rescheduled tour for Modern Villa in Bansbari on Tue, May 5, 2026 at 10:00 AM.",
       "appointmentId": 8,
       "propertyTitle": "Modern Villa in Bansbari",
-      "read": false,
+      "read": true,
       "createdAt": "2026-05-04T12:29:08.956Z"
     }
   ]
