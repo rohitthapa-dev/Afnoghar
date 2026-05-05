@@ -418,3 +418,35 @@
     font-size: $text-sm;
   }
 }
+
+.delete-user-btn {
+  height: 36px;
+  border: 1px solid $divider;
+  background: transparent;
+  color: $text-secondary;
+  border-radius: $radius-md;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  font-weight: $font-medium;
+  padding: 0 $space-3;
+  cursor: pointer;
+  transition: $transition-fast;
+  @include flex(row, center, center, $space-1);
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover:not(:disabled) {
+    border-color: $error;
+    color: $error;
+    background: $error-light;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

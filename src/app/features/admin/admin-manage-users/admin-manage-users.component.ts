@@ -7,9 +7,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { User } from '../../../core/models/user.model';
 import { AdminService } from '../../../core/services/admin.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { DeleteUserDialogComponent } from '../delete-user-dialog.component';
 
 type UserRoleFilter = 'all' | User['role'];
 type UserStatusFilter = 'all' | 'active' | 'inactive';
@@ -31,6 +33,7 @@ interface UserTab {
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatTooltipModule,
+    MatDialogModule,
   ],
   templateUrl: './admin-manage-users.component.html',
   styleUrl: './admin-manage-users.component.scss',
@@ -39,6 +42,7 @@ export class AdminManageUsersComponent implements OnInit {
   private adminService = inject(AdminService);
   private authService = inject(AuthService);
   private snackBar = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
 
   readonly tabs: UserTab[] = [
     { label: 'All', value: 'all', icon: 'groups' },
@@ -82,7 +86,9 @@ export class AdminManageUsersComponent implements OnInit {
   readonly activeCount = computed(
     () => this.users().filter((user) => user.isActive).length,
   );
-  readonly inactiveCount = computed(() => this.users().length - this.activeCount());
+  readonly inactiveCount = computed(
+    () => this.users().length - this.activeCount(),
+  );
   readonly sellerCount = computed(() => this.getRoleCount('seller'));
   readonly buyerCount = computed(() => this.getRoleCount('buyer'));
 
@@ -188,7 +194,9 @@ export class AdminManageUsersComponent implements OnInit {
     this.adminService.updateUser(user.id, payload).subscribe({
       next: (updatedUser) => {
         this.users.update((items) =>
-          items.map((item) => (item.id === updatedUser.id ? updatedUser : item)),
+          items.map((item) =>
+            item.id === updatedUser.id ? updatedUser : item,
+          ),
         );
         this.setUpdating(user.id, false);
         this.showMessage(successMessage);
@@ -214,6 +222,36 @@ export class AdminManageUsersComponent implements OnInit {
 
   private getRoleCount(role: User['role']): number {
     return this.users().filter((user) => user.role === role).length;
+  }
+
+  openDeleteDialog(user: User): void {
+    const dialogRef = this.dialog.open(DeleteUserDialogComponent, {
+      width: '460px',
+      data: { userName: user.name, userRole: user.role },
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+        this.deleteUser(user);
+      }
+    });
+  }
+
+  private deleteUser(user: User): void {
+    this.setUpdating(user.id, true);
+
+    this.adminService.deleteUser(user.id).subscribe({
+      next: () => {
+        this.users.update((items) => items.filter((item) => item.id !== user.id));
+        this.setUpdating(user.id, false);
+        this.showMessage('User deleted');
+      },
+      error: () => {
+        this.setUpdating(user.id, false);
+        this.showMessage('Failed to delete user');
+      },
+    });
   }
 
   private showMessage(message: string): void {

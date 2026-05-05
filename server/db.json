@@ -18,7 +18,7 @@
       "password": "seller123",
       "role": "seller",
       "phone": "9800000002",
-      "avatar": "",
+      "avatar": "http://localhost:3000/assets/avatars/user-2-1777919302265-test-avatar.jpg",
       "createdAt": "2025-01-02T00:00:00.000Z",
       "isActive": true
     },
@@ -51,7 +51,7 @@
       "password": "anita123",
       "role": "buyer",
       "phone": "9800000005",
-      "avatar": "",
+      "avatar": "http://localhost:3000/assets/avatars/user-5-1777918275251-horizontal-portrait-smiling-happy-young-.avif",
       "createdAt": "2025-01-05T00:00:00.000Z",
       "isActive": true
     },
@@ -833,12 +833,6 @@
     }
   ],
   "favorites": [
-    {
-      "id": 4,
-      "buyerId": 5,
-      "propertyId": 2,
-      "createdAt": "2025-03-23T00:00:00.000Z"
-    },
     {
       "id": 5,
       "buyerId": 5,

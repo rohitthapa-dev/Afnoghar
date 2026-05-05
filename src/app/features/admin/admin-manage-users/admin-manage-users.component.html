@@ -159,6 +159,19 @@
                 <span></span>
                 {{ user.isActive ? "Active" : "Paused" }}
               </button>
+
+              @if (user.role !== 'admin') {
+                <button
+                  type="button"
+                  class="delete-user-btn"
+                  [disabled]="isUpdating(user)"
+                  matTooltip="Permanently delete this account"
+                  (click)="openDeleteDialog(user)"
+                >
+                  <mat-icon>delete_outline</mat-icon>
+                  Delete
+                </button>
+              }
             </div>
           </article>
         }

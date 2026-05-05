@@ -284,21 +284,27 @@
                   <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Preferred Time</mat-label>
                     <mat-select formControlName="time">
-                      <mat-option value="09:00 AM">09:00 AM</mat-option>
-                      <mat-option value="10:00 AM">10:00 AM</mat-option>
-                      <mat-option value="11:00 AM">11:00 AM</mat-option>
-                      <mat-option value="12:00 PM">12:00 PM</mat-option>
-                      <mat-option value="01:00 PM">01:00 PM</mat-option>
-                      <mat-option value="02:00 PM">02:00 PM</mat-option>
-                      <mat-option value="03:00 PM">03:00 PM</mat-option>
-                      <mat-option value="04:00 PM">04:00 PM</mat-option>
-                      <mat-option value="05:00 PM">05:00 PM</mat-option>
+                      @for (time of timeSlots; track time) {
+                        <mat-option
+                          [value]="time"
+                          [disabled]="isTimeSlotUnavailable(time)"
+                        >
+                          {{ time }}
+                          @if (isTimeSlotUnavailable(time)) {
+                            <span class="slot-full-label">Slot full</span>
+                          }
+                        </mat-option>
+                      }
                     </mat-select>
                     @if (
                       appointmentForm.get("time")?.invalid &&
                       appointmentForm.get("time")?.touched
                     ) {
-                      <mat-error>Time is required</mat-error>
+                      @if (appointmentForm.get("time")?.hasError("slotTaken")) {
+                        <mat-error>This slot is already full.</mat-error>
+                      } @else {
+                        <mat-error>Time is required</mat-error>
+                      }
                     }
                   </mat-form-field>
 

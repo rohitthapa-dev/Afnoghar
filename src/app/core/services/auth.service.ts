@@ -104,4 +104,26 @@ export class AuthService {
     const userRole = this.getRole();
     return userRole ? roles.includes(userRole) : false;
   }
+
+  updateCurrentUser(user: any): void {
+    localStorage.setItem('afnoghar_user', JSON.stringify(user));
+    this.currentUserSubject.next(user);
+  }
+
+  updateProfile(payload: {
+    name?: string;
+    phone?: string;
+    password?: string;
+    currentPassword?: string;
+  }): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/users/me`, payload);
+  }
+
+  uploadAvatar(formData: FormData): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/users/me/avatar`, formData);
+  }
+
+  deleteAccount(): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/users/me`);
+  }
 }

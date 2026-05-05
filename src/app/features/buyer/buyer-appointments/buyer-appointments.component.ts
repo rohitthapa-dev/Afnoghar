@@ -137,7 +137,8 @@ export class BuyerAppointmentsComponent implements OnInit {
         this.sellerRescheduledAppointmentIds = new Set(
           notifications
             .filter((notification) => notification.type === 'rescheduled')
-            .map((notification) => notification.appointmentId),
+            .map((notification) => notification.appointmentId)
+            .filter((id): id is number => id !== undefined),
         );
         this.applyRescheduleHints();
         this.notifications = notifications.filter(

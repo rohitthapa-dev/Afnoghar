@@ -9,13 +9,15 @@ const multer = require("multer");
 const app = express();
 const PORT = 3000;
 const JWT_SECRET = "afnoghar-secret-key-2025";
-const DB_PATH = "./server/db.json";
+const DB_PATH = path.join(__dirname, "db.json");
 const PUBLIC_DIR = path.join(__dirname, "public");
 const ASSETS_DIR = path.join(PUBLIC_DIR, "assets");
 const PROPERTY_ASSETS_DIR = path.join(ASSETS_DIR, "properties");
+const AVATAR_ASSETS_DIR = path.join(ASSETS_DIR, "avatars");
 const PUBLIC_ASSET_BASE_URL = "http://localhost:3000";
 
 fs.mkdirSync(PROPERTY_ASSETS_DIR, { recursive: true });
+fs.mkdirSync(AVATAR_ASSETS_DIR, { recursive: true });
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -154,6 +156,36 @@ const uploadPropertyImages = multer({
   },
 });
 
+const avatarStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, AVATAR_ASSETS_DIR);
+  },
+  filename: (req, file, cb) => {
+    const extension = path.extname(file.originalname).toLowerCase() || ".jpg";
+    const safeName = path
+      .basename(file.originalname, extension)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 40);
+    cb(null, `user-${req.user.id}-${Date.now()}-${safeName || "avatar"}${extension}`);
+  },
+});
+
+const uploadAvatar = multer({
+  storage: avatarStorage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB
+  },
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.startsWith("image/")) {
+      cb(new Error("Only image files are allowed."));
+      return;
+    }
+    cb(null, true);
+  },
+});
+
 const verifyToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
@@ -220,6 +252,7 @@ app.post("/login", (req, res) => {
       user: userWithoutPassword,
     });
   } catch (error) {
+    console.error('Login error:', error);
     res.status(500).json({ message: "Server error during login." });
   }
 });
@@ -299,6 +332,115 @@ app.get("/users", verifyToken, requireAdmin, (req, res) => {
   }
 });
 
+app.patch("/users/me", verifyToken, (req, res) => {
+  try {
+    const db = getDB();
+    const index = db.users.findIndex((u) => u.id === req.user.id);
+
+    if (index === -1) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    const user = db.users[index];
+    const { name, phone, password, currentPassword } = req.body;
+
+    if (password) {
+      if (!currentPassword) {
+        return res.status(400).json({ message: "Current password is required to change password." });
+      }
+      if (currentPassword !== user.password) {
+        return res.status(401).json({ message: "Current password is incorrect." });
+      }
+    }
+
+    const updatedUser = {
+      ...user,
+      ...(name && { name: name.trim() }),
+      ...(phone && { phone: phone.trim() }),
+      ...(password && { password }),
+    };
+
+    db.users[index] = updatedUser;
+    saveDB(db);
+
+    const { password: _, ...userWithoutPassword } = updatedUser;
+    res.json(userWithoutPassword);
+  } catch (error) {
+    res.status(500).json({ message: "Error updating profile." });
+  }
+});
+
+app.post(
+  "/users/me/avatar",
+  verifyToken,
+  uploadAvatar.single("avatar"),
+  (req, res) => {
+    try {
+      const db = getDB();
+      const index = db.users.findIndex((u) => u.id === req.user.id);
+
+      if (index === -1) {
+        return res.status(404).json({ message: "User not found." });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({ message: "No avatar file uploaded." });
+      }
+
+      const avatarUrl = toPublicAssetUrl(`/assets/avatars/${req.file.filename}`);
+
+      db.users[index].avatar = avatarUrl;
+      saveDB(db);
+
+      const { password: _, ...userWithoutPassword } = db.users[index];
+      res.json(userWithoutPassword);
+    } catch (error) {
+      res.status(500).json({ message: "Error uploading avatar." });
+    }
+  },
+);
+
+app.delete("/users/me", verifyToken, (req, res) => {
+  try {
+    const db = getDB();
+    const index = db.users.findIndex((u) => u.id === req.user.id);
+
+    if (index === -1) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    const user = db.users[index];
+
+    if (user.role === "admin") {
+      const otherAdmins = db.users.filter(
+        (u) => u.role === "admin" && u.id !== user.id,
+      );
+      if (otherAdmins.length === 0) {
+        return res.status(400).json({
+          message: "Cannot delete the last admin account.",
+        });
+      }
+    }
+
+    db.users.splice(index, 1);
+
+    db.favorites = db.favorites.filter((f) => f.buyerId !== req.user.id);
+
+    db.properties = db.properties.map((p) => {
+      if (p.sellerId === req.user.id) {
+        return { ...p, isActive: false };
+      }
+      return p;
+    });
+
+    saveDB(db);
+
+    res.json({ message: "Account deleted successfully." });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting account." });
+  }
+});
+
 app.patch("/users/:id", verifyToken, requireAdmin, (req, res) => {
   try {
     const db = getDB();
@@ -334,6 +476,54 @@ app.patch("/users/:id", verifyToken, requireAdmin, (req, res) => {
     res.json(userWithoutPassword);
   } catch (error) {
     res.status(500).json({ message: "Error updating user." });
+  }
+});
+
+app.delete("/users/:id", verifyToken, requireAdmin, (req, res) => {
+  try {
+    const db = getDB();
+    const id = Number(req.params.id);
+    const index = db.users.findIndex((u) => u.id === id);
+
+    if (index === -1) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    const user = db.users[index];
+
+    if (user.id === req.user.id) {
+      return res
+        .status(400)
+        .json({ message: "You cannot delete your own account." });
+    }
+
+    if (user.role === "admin") {
+      const otherAdmins = db.users.filter(
+        (u) => u.role === "admin" && u.id !== user.id,
+      );
+      if (otherAdmins.length === 0) {
+        return res
+          .status(400)
+          .json({ message: "Cannot delete the last admin account." });
+      }
+    }
+
+    db.users.splice(index, 1);
+
+    db.favorites = db.favorites.filter((f) => f.buyerId !== user.id);
+
+    db.properties = db.properties.map((p) => {
+      if (p.sellerId === user.id) {
+        return { ...p, isActive: false };
+      }
+      return p;
+    });
+
+    saveDB(db);
+
+    res.json({ message: "User deleted successfully." });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting user." });
   }
 });
 

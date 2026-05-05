@@ -37,4 +37,8 @@ export class AdminService {
   deleteProperty(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/properties/${id}`);
   }
+
+  deleteUser(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/users/${id}`);
+  }
 }

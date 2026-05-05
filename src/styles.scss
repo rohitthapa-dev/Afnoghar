@@ -50,3 +50,24 @@ app-buyer-map-search {
   --pulse-primary: #{rgba($primary, 0.5)};
   --pulse-info: #{rgba($info, 0.5)};
 }
+
+:focus-visible {
+  outline: 3px solid rgba($primary, 0.28);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: rgba($primary, 0.18);
+  color: $text-primary;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

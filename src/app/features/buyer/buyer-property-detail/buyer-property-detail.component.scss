@@ -739,6 +739,15 @@
   }
 }
 
+:host ::ng-deep .slot-full-label {
+  float: right;
+  margin-left: $space-3;
+  color: $text-disabled;
+  font-family: $font-primary;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+}
+
 .appointment-success,
 .login-prompt {
   @include flex(column, center, center, $space-3);

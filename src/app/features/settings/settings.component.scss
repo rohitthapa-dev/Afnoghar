@@ -1,0 +1,424 @@
+@use "../../../styles/variables" as *;
+@use "../../../styles/mixins" as *;
+
+:host {
+  display: block;
+  background: $background;
+  min-height: calc(100vh - #{$navbar-height});
+}
+
+.settings-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: $space-8 $space-8 $space-20;
+
+  @include respond-to(md) {
+    padding: $space-5 $space-4 $space-12;
+  }
+}
+
+.settings-hero {
+  margin-bottom: $space-8;
+
+  .section-kicker {
+    font-family: $font-primary;
+    font-size: $text-xs;
+    font-weight: $font-semibold;
+    color: $primary;
+    text-transform: uppercase;
+    letter-spacing: $tracking-widest;
+  }
+
+  h1 {
+    margin: $space-2 0 $space-3;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-2xl;
+    font-weight: $font-bold;
+    line-height: $leading-tight;
+  }
+
+  .hero-subtitle {
+    margin: 0;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-base;
+  }
+}
+
+.settings-grid {
+  @include flex(column, flex-start, stretch, $space-4);
+}
+
+.settings-card {
+  padding: $space-6 $space-8;
+  background: $surface;
+  border: 1px solid $divider;
+  border-radius: $radius-xl;
+  box-shadow: $shadow-card;
+  transition: $transition-base;
+
+  @include respond-to(sm) {
+    padding: $space-5;
+  }
+}
+
+.card-header {
+  @include flex(row, space-between, flex-start, $space-4);
+  margin-bottom: $space-6;
+}
+
+.card-title {
+  @include flex(column, flex-start, flex-start, $space-1);
+
+  h2 {
+    margin: 0;
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-lg;
+    font-weight: $font-bold;
+    letter-spacing: $tracking-tight;
+  }
+}
+
+.edit-btn {
+  height: 36px;
+  border-color: $border !important;
+  color: $text-secondary !important;
+  border-radius: $radius-md !important;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  font-weight: $font-medium;
+  transition: $transition-fast !important;
+  flex-shrink: 0;
+  cursor: default;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    margin-right: $space-1;
+  }
+}
+
+.info-grid {
+  @include flex(column, flex-start, stretch, 0);
+  border: 1px solid $divider;
+  border-radius: $radius-lg;
+  overflow: hidden;
+}
+
+.info-row {
+  @include flex(row, flex-start, center, $space-4);
+  padding: $space-4 $space-5;
+  border-bottom: 1px solid $divider;
+  transition: $transition-fast;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: $background;
+  }
+}
+
+.info-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-md;
+  background: $primary-tint;
+  @include flex(row, center, center);
+  flex-shrink: 0;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: $primary;
+  }
+}
+
+.info-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.info-label {
+  display: block;
+  font-family: $font-primary;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+  color: $text-disabled;
+  text-transform: uppercase;
+  letter-spacing: $tracking-wider;
+  margin-bottom: $space-1;
+}
+
+.info-value {
+  display: block;
+  font-family: $font-primary;
+  font-size: $text-base;
+  font-weight: $font-medium;
+  color: $text-primary;
+}
+
+.settings-list {
+  @include flex(column, flex-start, stretch, 0);
+}
+
+.setting-row {
+  @include flex(row, space-between, center, $space-4);
+  padding: $space-4 $space-5;
+  border-bottom: 1px solid $divider;
+  transition: $transition-fast;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: $background;
+  }
+}
+
+.setting-row-vertical {
+  @include flex(column, flex-start, flex-start, $space-2);
+  padding: $space-4 $space-5;
+
+  .setting-field {
+    width: 100%;
+    max-width: 320px;
+    --mdc-outlined-text-field-outline-color: #{$border};
+    --mdc-outlined-text-field-label-text-color: #{$text-secondary};
+    font-family: $font-primary;
+  }
+}
+
+.setting-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.setting-label {
+  display: block;
+  font-family: $font-primary;
+  font-size: $text-base;
+  font-weight: $font-medium;
+  color: $text-primary;
+}
+
+.setting-desc {
+  display: block;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  color: $text-disabled;
+  margin-top: $space-1;
+}
+
+.setting-divider {
+  height: 1px;
+  background: $divider;
+  margin: $space-2 0;
+}
+
+// ── Delete Card ──────────────────────────────────────
+
+.delete-card {
+  // no red border — let content convey the context
+}
+
+.delete-idle {
+  @include flex(row, space-between, center, $space-4);
+
+  @include respond-to(sm) {
+    @include flex(column, flex-start, flex-start, $space-3);
+  }
+}
+
+.delete-idle-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.delete-idle-text {
+  margin: 0;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  color: $text-secondary;
+  line-height: $leading-relaxed;
+}
+
+.delete-trigger-btn {
+  height: 36px;
+  border-color: $divider !important;
+  color: $text-secondary !important;
+  border-radius: $radius-md !important;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  font-weight: $font-medium;
+  transition: $transition-fast !important;
+  flex-shrink: 0;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    margin-right: $space-1;
+  }
+
+  &:hover {
+    border-color: $error !important;
+    color: $error !important;
+    background: $error-light !important;
+  }
+
+  @include respond-to(sm) {
+    align-self: flex-start;
+  }
+}
+
+// ── Delete Confirmation (expanded) ──────────────────
+
+.delete-confirm {
+  margin-top: $space-5;
+  padding: $space-5;
+  background: $error-light;
+  border: 1px solid rgba($error, 0.15);
+  border-radius: $radius-lg;
+  animation: slideDown 0.25s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.confirm-header {
+  @include flex(row, flex-start, flex-start, $space-4);
+  margin-bottom: $space-5;
+}
+
+.warning-icon-wrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-full;
+  background: rgba($error, 0.12);
+  @include flex(row, center, center);
+  flex-shrink: 0;
+
+  mat-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+    color: $error;
+  }
+}
+
+.confirm-header-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.confirm-message {
+  margin: 0;
+  font-family: $font-primary;
+  font-size: $text-base;
+  color: $text-primary;
+  line-height: $leading-relaxed;
+
+  strong {
+    color: $error;
+  }
+}
+
+.confirmation-block {
+  margin-bottom: $space-5;
+}
+
+.confirmation-label {
+  margin: 0 0 $space-3;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  color: $text-primary;
+
+  strong {
+    color: $error;
+    font-family: $font-mono;
+    letter-spacing: $tracking-wider;
+  }
+}
+
+.confirmation-field {
+  width: 100%;
+  max-width: 360px;
+  --mdc-outlined-text-field-outline-color: #{rgba($error, 0.3)};
+  --mdc-outlined-text-field-focus-outline-color: #{$error};
+  --mdc-outlined-text-field-caret-color: #{$error};
+  --mdc-outlined-text-field-input-text-color: #{$text-primary};
+  --mdc-outlined-text-field-label-text-color: #{$text-secondary};
+  font-family: $font-primary;
+}
+
+.confirm-actions {
+  @include flex(row, flex-end, center, $space-3);
+
+  @include respond-to(sm) {
+    @include flex(column-reverse, flex-end, stretch, $space-2);
+  }
+}
+
+.cancel-confirm-btn {
+  height: 44px;
+  padding: 0 $space-6;
+  border-radius: $radius-md !important;
+  border-color: $border !important;
+  color: $text-secondary !important;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  font-weight: $font-medium;
+  transition: $transition-fast !important;
+
+  &:hover {
+    border-color: $primary !important;
+    color: $primary !important;
+    background: $primary-tint !important;
+  }
+}
+
+.delete-confirm-btn {
+  height: 44px;
+  padding: 0 $space-8;
+  border-radius: $radius-md !important;
+  background: $error !important;
+  color: $surface !important;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  font-weight: $font-semibold;
+  box-shadow: 0 4px 16px rgba($error, 0.25) !important;
+  transition: $transition-base !important;
+  @include flex(row, center, center, $space-2);
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover:not(:disabled) {
+    background: #931818 !important;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    background: $text-disabled !important;
+    box-shadow: none !important;
+    color: $surface !important;
+  }
+}

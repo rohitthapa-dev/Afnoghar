@@ -1,0 +1,52 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <div class="warning-icon-wrapper">
+      <mat-icon>warning</mat-icon>
+    </div>
+    <h2>Delete User</h2>
+    <button class="close-btn" (click)="cancel()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="dialog-body">
+    <p class="dialog-message">
+      Permanently delete <strong>{{ data.userName }}</strong> ({{ data.userRole }}).
+      This action cannot be undone. All their data, including favorites and
+      property listings, will be removed.
+    </p>
+
+    <div class="confirmation-block">
+      <p class="confirmation-label">
+        Type <strong>DELETE</strong> to confirm:
+      </p>
+      <mat-form-field appearance="outline" class="confirmation-field">
+        <input
+          matInput
+          [(ngModel)]="confirmationText"
+          placeholder="Type DELETE here"
+          autocomplete="off"
+        />
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="dialog-actions">
+    <button
+      mat-stroked-button
+      class="cancel-btn"
+      (click)="cancel()"
+    >
+      Cancel
+    </button>
+    <button
+      mat-flat-button
+      class="delete-btn"
+      [disabled]="!isConfirmed"
+      (click)="confirm()"
+    >
+      <mat-icon>delete_forever</mat-icon>
+      Delete User
+    </button>
+  </div>
+</div>
