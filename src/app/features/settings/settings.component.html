@@ -204,78 +204,33 @@
       </div>
     </div>
 
-    <div class="settings-card delete-card">
+    <div class="settings-card danger-card">
       <div class="card-header">
         <div class="card-title">
-          <span class="section-kicker">Account</span>
+          <span class="section-kicker danger-kicker">Danger Zone</span>
           <h2>Delete Account</h2>
         </div>
       </div>
 
-      @if (!showDeleteConfirm()) {
-        <div class="delete-idle">
-          <div class="delete-idle-info">
-            <p class="delete-idle-text">
-              Permanently delete your account. This action cannot be undone.
-            </p>
-          </div>
-          <button
-            mat-stroked-button
-            class="delete-trigger-btn"
-            (click)="toggleDeleteConfirm()"
-          >
-            <mat-icon>delete_outline</mat-icon>
-            Delete Account
-          </button>
+      <div class="danger-content">
+        <mat-icon class="danger-icon">warning</mat-icon>
+        <div class="danger-info">
+          <p class="danger-title">Permanently delete your account</p>
+          <p class="danger-desc">
+            Once you delete your account, there is no going back.
+            All your data including favorites and property listings will be removed.
+            This action cannot be undone.
+          </p>
         </div>
-      } @else {
-        <div class="delete-confirm">
-          <div class="confirm-header">
-            <div class="warning-icon-wrapper">
-              <mat-icon>warning</mat-icon>
-            </div>
-            <div class="confirm-header-text">
-              <p class="confirm-message">
-                This action is <strong>permanent</strong> and cannot be undone.
-                All your data, including favorites and property listings, will be removed.
-              </p>
-            </div>
-          </div>
-
-          <div class="confirmation-block">
-            <p class="confirmation-label">
-              Type <strong>DELETE</strong> to confirm:
-            </p>
-            <mat-form-field appearance="outline" class="confirmation-field">
-              <input
-                matInput
-                [(ngModel)]="confirmationText"
-                placeholder="Type DELETE here"
-                autocomplete="off"
-              />
-            </mat-form-field>
-          </div>
-
-          <div class="confirm-actions">
-            <button
-              mat-stroked-button
-              class="cancel-confirm-btn"
-              (click)="cancelDelete()"
-            >
-              Cancel
-            </button>
-            <button
-              mat-flat-button
-              class="delete-confirm-btn"
-              [disabled]="!isConfirmed()"
-              (click)="deleteAccount()"
-            >
-              <mat-icon>delete_forever</mat-icon>
-              Delete Account
-            </button>
-          </div>
-        </div>
-      }
+        <button
+          mat-flat-button
+          class="delete-btn"
+          (click)="openDeleteDialog()"
+        >
+          <mat-icon>delete_forever</mat-icon>
+          Delete Account
+        </button>
+      </div>
     </div>
   </div>
 </div>
