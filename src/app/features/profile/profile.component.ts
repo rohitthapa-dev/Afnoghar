@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormsModule,
@@ -34,6 +34,8 @@ import { AuthService } from '../../core/services/auth.service';
   styleUrl: './profile.component.scss',
 })
 export class ProfileComponent implements OnInit {
+  @ViewChild('avatarInput') avatarInput?: ElementRef<HTMLInputElement>;
+
   private fb = inject(FormBuilder);
     private authService = inject(AuthService);
     private snackBar = inject(MatSnackBar);
@@ -41,6 +43,7 @@ export class ProfileComponent implements OnInit {
 
     readonly user = signal(this.authService.getCurrentUser());
   readonly loading = signal(false);
+  readonly avatarLoading = signal(false);
   readonly editingProfile = signal(false);
   readonly changingPassword = signal(false);
 
@@ -81,6 +84,44 @@ export class ProfileComponent implements OnInit {
       return;
     }
     this.profileForm.patchValue({ name: user.name, phone: user.phone });
+  }
+
+  onAvatarSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      this.snackBar.open('Please select an image file', 'Close', {
+        duration: 3000,
+      });
+      input.value = '';
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    this.avatarLoading.set(true);
+    this.authService.uploadAvatar(formData).subscribe({
+      next: (updatedUser) => {
+        this.authService.updateCurrentUser(updatedUser);
+        this.user.set(updatedUser);
+        this.avatarLoading.set(false);
+        this.snackBar.open('Avatar updated successfully', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'start',
+          verticalPosition: 'bottom',
+        });
+      },
+      error: () => {
+        this.avatarLoading.set(false);
+        this.snackBar.open('Failed to upload avatar', 'Close', {
+          duration: 3000,
+        });
+      },
+    });
+    input.value = '';
   }
 
   toggleEditProfile(): void {

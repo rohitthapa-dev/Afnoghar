@@ -8,19 +8,33 @@
 
   <div class="profile-shell">
     <aside class="profile-sidebar">
-      <div class="avatar-card">
-        <div class="avatar-block">
-          @if (user()?.avatar) {
-            <img
-              [src]="user()?.avatar"
-              [alt]="user()?.name"
-              class="avatar-img"
-            />
-          } @else {
-            <div class="avatar-initials">{{ userInitials }}</div>
-          }
-        </div>
-        <h2 class="sidebar-name">{{ user()?.name }}</h2>
+        <div class="avatar-card">
+          <div class="avatar-block" (click)="avatarInput.click()">
+            @if (avatarLoading()) {
+              <div class="avatar-loading">
+                <mat-spinner diameter="36"></mat-spinner>
+              </div>
+            } @else if (user()?.avatar) {
+              <img
+                [src]="user()?.avatar"
+                [alt]="user()?.name"
+                class="avatar-img"
+              />
+            } @else {
+              <div class="avatar-initials">{{ userInitials }}</div>
+            }
+            <div class="avatar-overlay">
+              <mat-icon>camera_alt</mat-icon>
+            </div>
+          </div>
+          <input
+            #avatarInput
+            type="file"
+            accept="image/*"
+            style="display: none"
+            (change)="onAvatarSelected($event)"
+          />
+          <h2 class="sidebar-name">{{ user()?.name }}</h2>
         <p class="sidebar-email">{{ user()?.email }}</p>
         <span class="role-badge" [ngClass]="userRoleColor">
           {{ user()?.role | titlecase }}
