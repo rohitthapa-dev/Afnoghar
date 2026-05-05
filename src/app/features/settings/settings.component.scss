@@ -3,12 +3,12 @@
 
 :host {
   display: block;
-  background: $background;
   min-height: calc(100vh - #{$navbar-height});
+  background: $background;
 }
 
 .settings-page {
-  max-width: 760px;
+  max-width: $container-lg;
   margin: 0 auto;
   padding: $space-8 $space-8 $space-20;
 
@@ -17,408 +17,310 @@
   }
 }
 
-.settings-hero {
-  margin-bottom: $space-8;
+.settings-header {
+  margin-bottom: $space-6;
 
-  .section-kicker {
-    font-family: $font-primary;
-    font-size: $text-xs;
-    font-weight: $font-semibold;
-    color: $primary;
-    text-transform: uppercase;
-    letter-spacing: $tracking-widest;
+  h1,
+  p {
+    margin: 0;
   }
 
   h1 {
-    margin: $space-2 0 $space-3;
+    margin-top: $space-2;
     color: $text-primary;
     font-family: $font-heading;
-    font-size: $text-2xl;
+    font-size: $text-3xl;
     font-weight: $font-bold;
     line-height: $leading-tight;
   }
 
-  .hero-subtitle {
-    margin: 0;
+  p {
+    margin-top: $space-2;
     color: $text-secondary;
     font-family: $font-primary;
     font-size: $text-base;
   }
 }
 
-.settings-grid {
-  @include flex(column, flex-start, stretch, $space-4);
+.section-kicker {
+  color: $primary;
+  font-family: $font-primary;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+  letter-spacing: $tracking-wider;
+  text-transform: uppercase;
 }
 
-.settings-card {
-  padding: $space-6 $space-8;
-  background: $surface;
-  border: 1px solid $divider;
-  border-radius: $radius-xl;
-  box-shadow: $shadow-card;
-  transition: $transition-base;
+.settings-layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: $space-5;
+  align-items: flex-start;
 
-  @include respond-to(sm) {
-    padding: $space-5;
+  @include respond-to(lg) {
+    grid-template-columns: 1fr;
   }
 }
 
-.card-header {
-  @include flex(row, space-between, flex-start, $space-4);
-  margin-bottom: $space-6;
+.account-panel,
+.settings-section {
+  border: 1px solid rgba($border, 0.74);
+  border-radius: $radius-md;
+  background: $surface;
+  box-shadow: 0 2px 10px rgba(28, 28, 28, 0.045);
 }
 
-.card-title {
-  @include flex(column, flex-start, flex-start, $space-1);
+.account-panel {
+  position: relative;
+  top: 0;
+  padding: $space-5;
+
+  @include respond-to(lg) {
+    position: static;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: $space-4;
+    align-items: center;
+  }
+
+  @include respond-to(sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.avatar {
+  @include flex(row, center, center);
+  width: 64px;
+  height: 64px;
+  border-radius: $radius-full;
+  background: $primary;
+  color: $surface;
+  font-family: $font-heading;
+  font-size: $text-base;
+  font-weight: $font-bold;
+}
+
+.account-copy {
+  margin-top: $space-4;
+
+  @include respond-to(lg) {
+    margin-top: 0;
+  }
+
+  h2,
+  p {
+    margin: 0;
+  }
 
   h2 {
-    margin: 0;
     color: $text-primary;
     font-family: $font-heading;
     font-size: $text-lg;
     font-weight: $font-bold;
-    letter-spacing: $tracking-tight;
+  }
+
+  p {
+    @include truncate(1);
+    margin-top: $space-1;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-sm;
+  }
+
+  span {
+    display: inline-flex;
+    margin-top: $space-3;
+    padding: 3px $space-2;
+    border-radius: $radius-sm;
+    background: $surface-alt;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-xs;
+    font-weight: $font-semibold;
   }
 }
 
-.edit-btn {
-  height: 36px;
+.profile-btn {
+  width: 100%;
+  height: 38px;
+  margin-top: $space-5;
   border-color: $border !important;
-  color: $text-secondary !important;
-  border-radius: $radius-md !important;
+  border-radius: $radius-sm !important;
+  color: $text-primary !important;
   font-family: $font-primary;
   font-size: $text-sm;
   font-weight: $font-medium;
-  transition: $transition-fast !important;
-  flex-shrink: 0;
-  cursor: default;
 
   mat-icon {
-    font-size: 16px;
     width: 16px;
     height: 16px;
     margin-right: $space-1;
+    font-size: 16px;
+  }
+
+  @include respond-to(lg) {
+    width: auto;
+    margin-top: 0;
+  }
+
+  @include respond-to(sm) {
+    width: 100%;
   }
 }
 
-.info-grid {
-  @include flex(column, flex-start, stretch, 0);
-  border: 1px solid $divider;
-  border-radius: $radius-lg;
-  overflow: hidden;
+.settings-content {
+  @include flex(column, flex-start, stretch, $space-4);
 }
 
-.info-row {
-  @include flex(row, flex-start, center, $space-4);
-  padding: $space-4 $space-5;
+.settings-section {
+  padding: $space-5;
+}
+
+.section-header {
+  @include flex(row, space-between, flex-start, $space-4);
+  margin-bottom: $space-4;
+
+  &.compact {
+    margin-bottom: 0;
+    align-items: center;
+
+    @include respond-to(sm) {
+      @include flex(column, flex-start, stretch, $space-3);
+    }
+  }
+
+  h2,
+  p {
+    margin: 0;
+  }
+
+  h2 {
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-lg;
+    font-weight: $font-bold;
+  }
+
+  p {
+    margin-top: $space-1;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-sm;
+    line-height: $leading-normal;
+  }
+}
+
+.detail-list,
+.settings-list {
+  border-top: 1px solid $divider;
+}
+
+.detail-row,
+.setting-row {
+  min-height: 58px;
   border-bottom: 1px solid $divider;
-  transition: $transition-fast;
 
   &:last-child {
-    border-bottom: none;
-  }
-
-  &:hover {
-    background: $background;
+    border-bottom: 0;
   }
 }
 
-.info-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: $radius-md;
-  background: $primary-tint;
-  @include flex(row, center, center);
-  flex-shrink: 0;
+.detail-row {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: $space-4;
+  align-items: center;
+  padding: $space-3 0;
 
-  mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-    color: $primary;
+  @include respond-to(sm) {
+    grid-template-columns: 1fr;
+    gap: $space-1;
   }
-}
 
-.info-content {
-  flex: 1;
-  min-width: 0;
-}
+  span {
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-sm;
+  }
 
-.info-label {
-  display: block;
-  font-family: $font-primary;
-  font-size: $text-xs;
-  font-weight: $font-semibold;
-  color: $text-disabled;
-  text-transform: uppercase;
-  letter-spacing: $tracking-wider;
-  margin-bottom: $space-1;
-}
-
-.info-value {
-  display: block;
-  font-family: $font-primary;
-  font-size: $text-base;
-  font-weight: $font-medium;
-  color: $text-primary;
-}
-
-.settings-list {
-  @include flex(column, flex-start, stretch, 0);
+  strong {
+    @include truncate(1);
+    color: $text-primary;
+    font-family: $font-primary;
+    font-size: $text-sm;
+    font-weight: $font-semibold;
+  }
 }
 
 .setting-row {
   @include flex(row, space-between, center, $space-4);
-  padding: $space-4 $space-5;
-  border-bottom: 1px solid $divider;
-  transition: $transition-fast;
-
-  &:last-child {
-    border-bottom: none;
-  }
-
-  &:hover {
-    background: $background;
-  }
-}
-
-.setting-row-vertical {
-  @include flex(column, flex-start, flex-start, $space-2);
-  padding: $space-4 $space-5;
-
-  .setting-field {
-    width: 100%;
-    max-width: 320px;
-    --mdc-outlined-text-field-outline-color: #{$border};
-    --mdc-outlined-text-field-label-text-color: #{$text-secondary};
-    font-family: $font-primary;
-  }
+  padding: $space-3 0;
 }
 
 .setting-info {
-  flex: 1;
   min-width: 0;
-}
 
-.setting-label {
-  display: block;
-  font-family: $font-primary;
-  font-size: $text-base;
-  font-weight: $font-medium;
-  color: $text-primary;
-}
+  span {
+    display: block;
+    color: $text-primary;
+    font-family: $font-primary;
+    font-size: $text-sm;
+    font-weight: $font-semibold;
+  }
 
-.setting-desc {
-  display: block;
-  font-family: $font-primary;
-  font-size: $text-sm;
-  color: $text-disabled;
-  margin-top: $space-1;
-}
-
-.setting-divider {
-  height: 1px;
-  background: $divider;
-  margin: $space-2 0;
-}
-
-// ── Delete Card ──────────────────────────────────────
-
-.delete-card {
-  // no red border — let content convey the context
-}
-
-.delete-idle {
-  @include flex(row, space-between, center, $space-4);
-
-  @include respond-to(sm) {
-    @include flex(column, flex-start, flex-start, $space-3);
+  p {
+    margin: $space-1 0 0;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-xs;
+    line-height: $leading-normal;
   }
 }
 
-.delete-idle-info {
-  flex: 1;
-  min-width: 0;
+.preference-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: $space-3;
+  padding-top: $space-1;
+
+  @include respond-to(md) {
+    grid-template-columns: 1fr;
+  }
+
+  mat-form-field {
+    width: 100%;
+    --mdc-outlined-text-field-outline-color: #{$border};
+    --mdc-outlined-text-field-focus-outline-color: #{$primary};
+    --mdc-outlined-text-field-label-text-color: #{$text-secondary};
+    --mdc-outlined-text-field-input-text-color: #{$text-primary};
+    --mat-select-disabled-trigger-text-color: #{$text-secondary};
+  }
 }
 
-.delete-idle-text {
-  margin: 0;
-  font-family: $font-primary;
-  font-size: $text-sm;
-  color: $text-secondary;
-  line-height: $leading-relaxed;
+.remove-section {
+  border-color: rgba($border, 0.9);
 }
 
-.delete-trigger-btn {
-  height: 36px;
-  border-color: $divider !important;
-  color: $text-secondary !important;
-  border-radius: $radius-md !important;
+.remove-btn {
+  min-width: 150px;
+  height: 38px;
+  border-color: $border !important;
+  border-radius: $radius-sm !important;
+  color: $text-primary !important;
   font-family: $font-primary;
   font-size: $text-sm;
   font-weight: $font-medium;
-  transition: $transition-fast !important;
-  flex-shrink: 0;
 
   mat-icon {
-    font-size: 16px;
     width: 16px;
     height: 16px;
     margin-right: $space-1;
+    font-size: 16px;
   }
 
   &:hover {
     border-color: $error !important;
     color: $error !important;
     background: $error-light !important;
-  }
-
-  @include respond-to(sm) {
-    align-self: flex-start;
-  }
-}
-
-// ── Delete Confirmation (expanded) ──────────────────
-
-.delete-confirm {
-  margin-top: $space-5;
-  padding: $space-5;
-  background: $error-light;
-  border: 1px solid rgba($error, 0.15);
-  border-radius: $radius-lg;
-  animation: slideDown 0.25s ease;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.confirm-header {
-  @include flex(row, flex-start, flex-start, $space-4);
-  margin-bottom: $space-5;
-}
-
-.warning-icon-wrapper {
-  width: 40px;
-  height: 40px;
-  border-radius: $radius-full;
-  background: rgba($error, 0.12);
-  @include flex(row, center, center);
-  flex-shrink: 0;
-
-  mat-icon {
-    font-size: 22px;
-    width: 22px;
-    height: 22px;
-    color: $error;
-  }
-}
-
-.confirm-header-text {
-  flex: 1;
-  min-width: 0;
-}
-
-.confirm-message {
-  margin: 0;
-  font-family: $font-primary;
-  font-size: $text-base;
-  color: $text-primary;
-  line-height: $leading-relaxed;
-
-  strong {
-    color: $error;
-  }
-}
-
-.confirmation-block {
-  margin-bottom: $space-5;
-}
-
-.confirmation-label {
-  margin: 0 0 $space-3;
-  font-family: $font-primary;
-  font-size: $text-sm;
-  color: $text-primary;
-
-  strong {
-    color: $error;
-    font-family: $font-mono;
-    letter-spacing: $tracking-wider;
-  }
-}
-
-.confirmation-field {
-  width: 100%;
-  max-width: 360px;
-  --mdc-outlined-text-field-outline-color: #{rgba($error, 0.3)};
-  --mdc-outlined-text-field-focus-outline-color: #{$error};
-  --mdc-outlined-text-field-caret-color: #{$error};
-  --mdc-outlined-text-field-input-text-color: #{$text-primary};
-  --mdc-outlined-text-field-label-text-color: #{$text-secondary};
-  font-family: $font-primary;
-}
-
-.confirm-actions {
-  @include flex(row, flex-end, center, $space-3);
-
-  @include respond-to(sm) {
-    @include flex(column-reverse, flex-end, stretch, $space-2);
-  }
-}
-
-.cancel-confirm-btn {
-  height: 44px;
-  padding: 0 $space-6;
-  border-radius: $radius-md !important;
-  border-color: $border !important;
-  color: $text-secondary !important;
-  font-family: $font-primary;
-  font-size: $text-sm;
-  font-weight: $font-medium;
-  transition: $transition-fast !important;
-
-  &:hover {
-    border-color: $primary !important;
-    color: $primary !important;
-    background: $primary-tint !important;
-  }
-}
-
-.delete-confirm-btn {
-  height: 44px;
-  padding: 0 $space-8;
-  border-radius: $radius-md !important;
-  background: $error !important;
-  color: $surface !important;
-  font-family: $font-primary;
-  font-size: $text-sm;
-  font-weight: $font-semibold;
-  box-shadow: 0 4px 16px rgba($error, 0.25) !important;
-  transition: $transition-base !important;
-  @include flex(row, center, center, $space-2);
-
-  mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-  }
-
-  &:hover:not(:disabled) {
-    background: #931818 !important;
-    transform: translateY(-1px);
-  }
-
-  &:disabled {
-    background: $text-disabled !important;
-    box-shadow: none !important;
-    color: $surface !important;
   }
 }

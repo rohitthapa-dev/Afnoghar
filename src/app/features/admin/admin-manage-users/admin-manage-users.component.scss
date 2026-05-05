@@ -10,7 +10,7 @@
 .admin-page {
   max-width: $container-xl;
   margin: 0 auto;
-  padding: $space-8 $space-8 $space-20;
+  padding: $space-6 $space-8 $space-20;
 
   @include respond-to(md) {
     padding: $space-5 $space-4 $space-12;
@@ -21,10 +21,10 @@
 .users-panel,
 .state-panel,
 .user-card {
-  border: 1px solid rgba($border, 0.72);
+  border: 1px solid rgba($border, 0.74);
   border-radius: $radius-md;
   background: $surface;
-  box-shadow: 0 14px 36px rgba(28, 28, 28, 0.055);
+  box-shadow: 0 2px 10px rgba(28, 28, 28, 0.045);
 }
 
 .section-kicker {
@@ -65,7 +65,7 @@
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: $space-4;
+  gap: $space-3;
   margin-bottom: $space-6;
 
   @include respond-to(lg) {
@@ -78,8 +78,8 @@
 }
 
 .summary-card {
-  min-height: 112px;
-  padding: $space-5;
+  min-height: 88px;
+  padding: $space-4 $space-5;
 
   span {
     display: block;
@@ -93,7 +93,7 @@
 
   strong {
     display: block;
-    margin-top: $space-3;
+    margin-top: $space-2;
     color: $text-primary;
     font-family: $font-heading;
     font-size: $text-2xl;
@@ -106,12 +106,38 @@
   padding: $space-5;
 }
 
+.panel-heading {
+  @include flex(row, space-between, flex-start, $space-4);
+  margin-bottom: $space-4;
+
+  h2,
+  p {
+    margin: 0;
+  }
+
+  h2 {
+    color: $text-primary;
+    font-family: $font-heading;
+    font-size: $text-lg;
+    font-weight: $font-bold;
+  }
+
+  p {
+    margin-top: $space-1;
+    color: $text-secondary;
+    font-family: $font-primary;
+    font-size: $text-sm;
+  }
+}
+
 .panel-toolbar {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: $space-4;
   align-items: center;
-  margin-bottom: $space-5;
+  margin-bottom: $space-4;
+  padding-bottom: $space-4;
+  border-bottom: 1px solid rgba($divider, 0.76);
 
   @include respond-to(lg) {
     grid-template-columns: 1fr;
@@ -126,8 +152,8 @@
 
 .toolbar-controls {
   display: grid;
-  grid-template-columns: auto minmax(260px, 340px);
-  gap: $space-3;
+  grid-template-columns: auto minmax(280px, 380px);
+  gap: $space-2;
   align-items: center;
 
   @include respond-to(lg) {
@@ -143,7 +169,7 @@
 .segmented-control button,
 .status-toggle {
   border: 1px solid $divider;
-  border-radius: $radius-md;
+  border-radius: $radius-sm;
   background: $surface;
   color: $text-secondary;
   cursor: pointer;
@@ -155,7 +181,7 @@
 
 .tab-button {
   @include flex(row, center, center, $space-2);
-  min-height: 42px;
+  min-height: 38px;
   padding: 0 $space-3;
 
   mat-icon {
@@ -165,8 +191,8 @@
   }
 
   strong {
-    min-width: 24px;
-    padding: 2px $space-2;
+    min-width: 22px;
+    padding: 1px $space-2;
     border-radius: $radius-full;
     background: $surface-alt;
     color: $text-secondary;
@@ -175,8 +201,13 @@
 
   &:hover,
   &.active {
-    border-color: rgba($primary, 0.35);
+    border-color: rgba($primary, 0.3);
     background: $primary-tint;
+    color: $primary;
+  }
+
+  &.active strong {
+    background: $surface;
     color: $primary;
   }
 }
@@ -184,12 +215,12 @@
 .segmented-control {
   @include flex(row, flex-start, center, 0);
   border: 1px solid $divider;
-  border-radius: $radius-md;
+  border-radius: $radius-sm;
   overflow: hidden;
   width: fit-content;
 
   button {
-    min-height: 40px;
+    min-height: 38px;
     border: 0;
     border-radius: 0;
     padding: 0 $space-4;
@@ -209,11 +240,17 @@
 .search-box {
   @include flex(row, flex-start, center, $space-2);
   width: 100%;
-  min-height: 42px;
+  min-height: 38px;
   padding: 0 $space-3;
   border: 1px solid $divider;
-  border-radius: $radius-md;
+  border-radius: $radius-sm;
   background: $surface;
+  transition: $transition-fast;
+
+  &:focus-within {
+    border-color: rgba($primary, 0.45);
+    box-shadow: 0 0 0 3px rgba($primary, 0.08);
+  }
 
   mat-icon {
     width: 18px;
@@ -246,15 +283,21 @@
 }
 
 .user-list {
-  @include flex(column, flex-start, stretch, $space-3);
+  @include flex(column, flex-start, stretch, $space-2);
 }
 
 .user-card {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(340px, 376px);
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: $space-4;
   align-items: center;
-  padding: $space-4;
+  padding: $space-4 $space-4;
+  transition: $transition-fast;
+
+  &:hover {
+    border-color: rgba($border, 0.95);
+    background: rgba($surface-alt, 0.24);
+  }
 
   &.inactive {
     background: rgba($surface-alt, 0.7);
@@ -268,6 +311,10 @@
 .user-identity {
   @include flex(row, flex-start, center, $space-3);
   min-width: 0;
+}
+
+.user-copy {
+  min-width: 0;
 
   h2 {
     @include truncate(1);
@@ -277,7 +324,9 @@
     font-size: $text-base;
     font-weight: $font-bold;
   }
+}
 
+.user-identity {
   p,
   span {
     display: block;
@@ -299,7 +348,7 @@
   height: 48px;
   flex: 0 0 auto;
   border-radius: $radius-full;
-  background: linear-gradient(135deg, $primary, $primary-dark);
+  background: $primary;
   color: $surface;
   font-family: $font-primary;
   font-size: $text-xs;
@@ -308,8 +357,8 @@
 
 .user-controls {
   display: grid;
-  grid-template-columns: minmax(156px, 1fr) 140px;
-  gap: $space-3;
+  grid-template-columns: 152px 118px 112px;
+  gap: $space-2;
   align-items: center;
 
   @include respond-to(md) {
@@ -327,16 +376,17 @@
   select {
     width: 100%;
     min-width: 0;
-    height: 40px;
+    height: 38px;
     padding: 0 $space-3;
     border: 1px solid $divider;
-    border-radius: $radius-md;
+    border-radius: $radius-sm;
     background: $surface;
     color: $text-primary;
     font-family: $font-primary;
     font-size: $text-sm;
     font-weight: $font-semibold;
     transition: $transition-fast;
+    outline: none;
 
     &:hover:not(:disabled),
     &:focus {
@@ -362,7 +412,7 @@
   @include flex(row, center, center, $space-2);
   width: 100%;
   min-width: 0;
-  min-height: 40px;
+  min-height: 38px;
   padding: 0 $space-3;
 
   span {
@@ -374,6 +424,12 @@
 
   &.active span {
     background: $success;
+  }
+
+  &.active {
+    border-color: rgba($success, 0.28);
+    background: $surface;
+    color: $success;
   }
 
   &:hover:not(:disabled) {
@@ -420,11 +476,11 @@
 }
 
 .delete-user-btn {
-  height: 36px;
+  height: 38px;
   border: 1px solid $divider;
   background: transparent;
   color: $text-secondary;
-  border-radius: $radius-md;
+  border-radius: $radius-sm;
   font-family: $font-primary;
   font-size: $text-sm;
   font-weight: $font-medium;

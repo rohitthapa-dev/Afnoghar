@@ -30,6 +30,13 @@
   </section>
 
   <section class="users-panel">
+    <div class="panel-heading">
+      <div>
+        <h2>User Directory</h2>
+        <p>{{ filteredUsers().length }} accounts match the current view</p>
+      </div>
+    </div>
+
     <div class="panel-toolbar">
       <div class="tabs-row" role="tablist" aria-label="User role filters">
         @for (tab of tabs; track tab.value) {
@@ -120,7 +127,7 @@
           <article class="user-card" [class.inactive]="!user.isActive">
             <div class="user-identity">
               <div class="user-avatar">{{ getInitials(user) }}</div>
-              <div>
+              <div class="user-copy">
                 <h2>{{ user.name }}</h2>
                 <p>{{ user.email }}</p>
                 <span>{{ user.phone }} · Joined {{ formatDate(user.createdAt) }}</span>

@@ -11,13 +11,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
-export interface DeleteUserDialogData {
-  userName: string;
-  userRole: string;
+export interface ConfirmDeleteDialogData {
+  title: string;
+  message: string;
+  itemName?: string;
+  itemRole?: string;
 }
 
 @Component({
-  selector: 'app-delete-user-dialog',
+  selector: 'app-confirm-delete-dialog',
   imports: [
     CommonModule,
     FormsModule,
@@ -27,12 +29,12 @@ export interface DeleteUserDialogData {
     MatFormFieldModule,
     MatInputModule,
   ],
-  templateUrl: './delete-user-dialog.component.html',
-  styleUrl: './delete-user-dialog.component.scss',
+  templateUrl: './confirm-delete-dialog.component.html',
+  styleUrl: './confirm-delete-dialog.component.scss',
 })
-export class DeleteUserDialogComponent {
-  private dialogRef = inject(MatDialogRef<DeleteUserDialogComponent>);
-  data = inject<DeleteUserDialogData>(MAT_DIALOG_DATA);
+export class ConfirmDeleteDialogComponent {
+  private dialogRef = inject(MatDialogRef<ConfirmDeleteDialogComponent>);
+  data = inject<ConfirmDeleteDialogData>(MAT_DIALOG_DATA);
 
   confirmationText = '';
   readonly expectedText = 'DELETE';

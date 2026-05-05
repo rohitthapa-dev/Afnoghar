@@ -1,198 +1,145 @@
 <div class="settings-page">
-  <div class="settings-hero">
-    <div class="hero-meta">
-      <span class="section-kicker">Account</span>
-    </div>
+  <header class="settings-header">
+    <span class="section-kicker">Account</span>
     <h1>Settings</h1>
-    <p class="hero-subtitle">
-      Manage your account preferences and security settings.
-    </p>
-  </div>
+    <p>Manage your profile, notification preferences, and app defaults.</p>
+  </header>
 
-  <div class="settings-grid">
-    <div class="settings-card">
-      <div class="card-header">
-        <div class="card-title">
-          <span class="section-kicker">Personal</span>
-          <h2>Profile Information</h2>
-        </div>
-        <button
-          mat-stroked-button
-          class="edit-btn"
-          (click)="null"
-        >
-          <mat-icon>edit</mat-icon>
-          Edit
-        </button>
+  <div class="settings-layout">
+    <aside class="account-panel">
+      <div class="avatar">{{ userInitials() }}</div>
+      <div class="account-copy">
+        <h2>{{ user()?.name }}</h2>
+        <p>{{ user()?.email }}</p>
+        <span>{{ user()?.role | titlecase }}</span>
       </div>
+      <button mat-stroked-button class="profile-btn" (click)="editProfile()">
+        <mat-icon>edit</mat-icon>
+        Edit profile
+      </button>
+    </aside>
 
-      @if (user()?.name) {
-        <div class="info-grid">
-          <div class="info-row">
-            <div class="info-icon">
-              <mat-icon>person_outline</mat-icon>
+    <main class="settings-content">
+      <section class="settings-section">
+        <div class="section-header">
+          <div>
+            <h2>Profile details</h2>
+            <p>Basic contact information for your account.</p>
+          </div>
+        </div>
+
+        <div class="detail-list">
+          <div class="detail-row">
+            <span>Full name</span>
+            <strong>{{ user()?.name }}</strong>
+          </div>
+          <div class="detail-row">
+            <span>Email</span>
+            <strong>{{ user()?.email }}</strong>
+          </div>
+          <div class="detail-row">
+            <span>Phone</span>
+            <strong>{{ user()?.phone || "—" }}</strong>
+          </div>
+          <div class="detail-row">
+            <span>Role</span>
+            <strong>{{ user()?.role | titlecase }}</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="settings-section">
+        <div class="section-header">
+          <div>
+            <h2>Notifications</h2>
+            <p>Choose which updates should reach you.</p>
+          </div>
+        </div>
+
+        <div class="settings-list">
+          <div class="setting-row">
+            <div class="setting-info">
+              <span>Email alerts</span>
+              <p>Important account and property updates.</p>
             </div>
-            <div class="info-content">
-              <span class="info-label">Full Name</span>
-              <strong class="info-value">{{ user()?.name }}</strong>
+            <mat-slide-toggle
+              [(ngModel)]="notificationSettings.emailAlerts"
+              disabled
+            ></mat-slide-toggle>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <span>Push notifications</span>
+              <p>Browser notifications for timely activity.</p>
             </div>
+            <mat-slide-toggle
+              [(ngModel)]="notificationSettings.pushNotifications"
+              disabled
+            ></mat-slide-toggle>
           </div>
 
-          <div class="info-row">
-            <div class="info-icon">
-              <mat-icon>mail_outline</mat-icon>
+          <div class="setting-row">
+            <div class="setting-info">
+              <span>SMS alerts</span>
+              <p>Text messages for account updates.</p>
             </div>
-            <div class="info-content">
-              <span class="info-label">Email Address</span>
-              <strong class="info-value">{{ user()?.email }}</strong>
+            <mat-slide-toggle
+              [(ngModel)]="notificationSettings.smsAlerts"
+              disabled
+            ></mat-slide-toggle>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <span>Listing alerts</span>
+              <p>New listings and price changes.</p>
             </div>
+            <mat-slide-toggle
+              [(ngModel)]="notificationSettings.newListings"
+              disabled
+            ></mat-slide-toggle>
           </div>
 
-          <div class="info-row">
-            <div class="info-icon">
-              <mat-icon>phone_outlined</mat-icon>
+          <div class="setting-row">
+            <div class="setting-info">
+              <span>Appointment updates</span>
+              <p>Changes to viewing requests and schedules.</p>
             </div>
-            <div class="info-content">
-              <span class="info-label">Phone Number</span>
-              <strong class="info-value">{{ user()?.phone || "—" }}</strong>
-            </div>
-          </div>
-
-          <div class="info-row">
-            <div class="info-icon">
-              <mat-icon>badge</mat-icon>
-            </div>
-            <div class="info-content">
-              <span class="info-label">Account Role</span>
-              <strong class="info-value">{{ user()?.role | titlecase }}</strong>
-            </div>
+            <mat-slide-toggle
+              [(ngModel)]="notificationSettings.appointmentUpdates"
+              disabled
+            ></mat-slide-toggle>
           </div>
         </div>
-      }
-    </div>
+      </section>
 
-    <div class="settings-card">
-      <div class="card-header">
-        <div class="card-title">
-          <span class="section-kicker">Notifications</span>
-          <h2>Notification Preferences</h2>
-        </div>
-      </div>
-
-      <div class="settings-list">
-        <div class="setting-row">
-          <div class="setting-info">
-            <span class="setting-label">Email Alerts</span>
-            <span class="setting-desc">Receive updates via email</span>
+      <section class="settings-section">
+        <div class="section-header">
+          <div>
+            <h2>Preferences</h2>
+            <p>Default display options for the app.</p>
           </div>
-          <mat-slide-toggle
-            [(ngModel)]="notificationSettings.emailAlerts"
-            disabled
-          ></mat-slide-toggle>
         </div>
 
-        <div class="setting-row">
-          <div class="setting-info">
-            <span class="setting-label">Push Notifications</span>
-            <span class="setting-desc">Browser push notifications</span>
-          </div>
-          <mat-slide-toggle
-            [(ngModel)]="notificationSettings.pushNotifications"
-            disabled
-          ></mat-slide-toggle>
-        </div>
-
-        <div class="setting-row">
-          <div class="setting-info">
-            <span class="setting-label">SMS Alerts</span>
-            <span class="setting-desc">Text message notifications</span>
-          </div>
-          <mat-slide-toggle
-            [(ngModel)]="notificationSettings.smsAlerts"
-            disabled
-          ></mat-slide-toggle>
-        </div>
-
-        <div class="setting-divider"></div>
-
-        <div class="setting-row">
-          <div class="setting-info">
-            <span class="setting-label">New Listing Alerts</span>
-            <span class="setting-desc">When new properties match your criteria</span>
-          </div>
-          <mat-slide-toggle
-            [(ngModel)]="notificationSettings.newListings"
-            disabled
-          ></mat-slide-toggle>
-        </div>
-
-        <div class="setting-row">
-          <div class="setting-info">
-            <span class="setting-label">Price Change Alerts</span>
-            <span class="setting-desc">When saved properties change price</span>
-          </div>
-          <mat-slide-toggle
-            [(ngModel)]="notificationSettings.priceChanges"
-            disabled
-          ></mat-slide-toggle>
-        </div>
-
-        <div class="setting-row">
-          <div class="setting-info">
-            <span class="setting-label">Appointment Updates</span>
-            <span class="setting-desc">Status changes to your appointments</span>
-          </div>
-          <mat-slide-toggle
-            [(ngModel)]="notificationSettings.appointmentUpdates"
-            disabled
-          ></mat-slide-toggle>
-        </div>
-      </div>
-    </div>
-
-    <div class="settings-card">
-      <div class="card-header">
-        <div class="card-title">
-          <span class="section-kicker">Preferences</span>
-          <h2>App Preferences</h2>
-        </div>
-      </div>
-
-      <div class="settings-list">
-        <div class="setting-row setting-row-vertical">
-          <div class="setting-info">
-            <span class="setting-label">Language</span>
-            <span class="setting-desc">Choose your preferred language</span>
-          </div>
-          <mat-form-field appearance="outline" class="setting-field">
+        <div class="preference-grid">
+          <mat-form-field appearance="outline">
             <mat-label>Language</mat-label>
             <mat-select [(ngModel)]="preferences.language" disabled>
               <mat-option value="en">English</mat-option>
               <mat-option value="ne">नेपाली (Nepali)</mat-option>
             </mat-select>
           </mat-form-field>
-        </div>
 
-        <div class="setting-row setting-row-vertical">
-          <div class="setting-info">
-            <span class="setting-label">Currency Display</span>
-            <span class="setting-desc">Default currency for property prices</span>
-          </div>
-          <mat-form-field appearance="outline" class="setting-field">
+          <mat-form-field appearance="outline">
             <mat-label>Currency</mat-label>
             <mat-select [(ngModel)]="preferences.currency" disabled>
               <mat-option value="NPR">NPR (रू)</mat-option>
               <mat-option value="USD">USD ($)</mat-option>
             </mat-select>
           </mat-form-field>
-        </div>
 
-        <div class="setting-row setting-row-vertical">
-          <div class="setting-info">
-            <span class="setting-label">Theme</span>
-            <span class="setting-desc">Light, dark, or system default</span>
-          </div>
-          <mat-form-field appearance="outline" class="setting-field">
+          <mat-form-field appearance="outline">
             <mat-label>Theme</mat-label>
             <mat-select [(ngModel)]="preferences.theme" disabled>
               <mat-option value="light">Light</mat-option>
@@ -201,81 +148,26 @@
             </mat-select>
           </mat-form-field>
         </div>
-      </div>
-    </div>
+      </section>
 
-    <div class="settings-card delete-card">
-      <div class="card-header">
-        <div class="card-title">
-          <span class="section-kicker">Account</span>
-          <h2>Delete Account</h2>
-        </div>
-      </div>
-
-      @if (!showDeleteConfirm()) {
-        <div class="delete-idle">
-          <div class="delete-idle-info">
-            <p class="delete-idle-text">
-              Permanently delete your account. This action cannot be undone.
-            </p>
-          </div>
-          <button
-            mat-stroked-button
-            class="delete-trigger-btn"
-            (click)="toggleDeleteConfirm()"
-          >
-            <mat-icon>delete_outline</mat-icon>
-            Delete Account
-          </button>
-        </div>
-      } @else {
-        <div class="delete-confirm">
-          <div class="confirm-header">
-            <div class="warning-icon-wrapper">
-              <mat-icon>warning</mat-icon>
+      @if (!isAdmin()) {
+        <section class="settings-section remove-section">
+          <div class="section-header compact">
+            <div>
+              <h2>Account removal</h2>
+              <p>Delete this account and remove saved account data.</p>
             </div>
-            <div class="confirm-header-text">
-              <p class="confirm-message">
-                This action is <strong>permanent</strong> and cannot be undone.
-                All your data, including favorites and property listings, will be removed.
-              </p>
-            </div>
-          </div>
-
-          <div class="confirmation-block">
-            <p class="confirmation-label">
-              Type <strong>DELETE</strong> to confirm:
-            </p>
-            <mat-form-field appearance="outline" class="confirmation-field">
-              <input
-                matInput
-                [(ngModel)]="confirmationText"
-                placeholder="Type DELETE here"
-                autocomplete="off"
-              />
-            </mat-form-field>
-          </div>
-
-          <div class="confirm-actions">
             <button
               mat-stroked-button
-              class="cancel-confirm-btn"
-              (click)="cancelDelete()"
+              class="remove-btn"
+              (click)="openDeleteDialog()"
             >
-              Cancel
-            </button>
-            <button
-              mat-flat-button
-              class="delete-confirm-btn"
-              [disabled]="!isConfirmed()"
-              (click)="deleteAccount()"
-            >
-              <mat-icon>delete_forever</mat-icon>
-              Delete Account
+              <mat-icon>delete_outline</mat-icon>
+              Delete account
             </button>
           </div>
-        </div>
+        </section>
       }
-    </div>
+    </main>
   </div>
 </div>

@@ -368,15 +368,11 @@ export class SellerPropertyUploadComponent
           this.revokeSelectedPreviews();
           this.selectedFiles.set([]);
           this.selectedFilePreviews.set([]);
-          this.snackBar.open(
-            wasEditing ? 'Listing updated' : 'Listing submitted for review',
-            'Close',
-            {
-              duration: 3000,
-              horizontalPosition: 'start',
-              verticalPosition: 'bottom',
-            },
-          );
+          this.snackBar.open(this.getSuccessMessage(property, wasEditing), 'Close', {
+            duration: 3000,
+            horizontalPosition: 'start',
+            verticalPosition: 'bottom',
+          });
           this.router.navigate(['/seller/properties']);
         },
         error: () => {
@@ -392,6 +388,12 @@ export class SellerPropertyUploadComponent
 
   private revokeSelectedPreviews(): void {
     this.selectedFilePreviews().forEach((url) => URL.revokeObjectURL(url));
+  }
+
+  private getSuccessMessage(property: Property, wasEditing: boolean): string {
+    if (!wasEditing) return 'Listing submitted for review';
+    if (property.status === 'pending') return 'Listing resubmitted for review';
+    return 'Listing updated';
   }
 
   private initLocationMap(): void {

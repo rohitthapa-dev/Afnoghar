@@ -11,7 +11,8 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { User } from '../../../core/models/user.model';
 import { AdminService } from '../../../core/services/admin.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { DeleteUserDialogComponent } from '../delete-user-dialog.component';
+import { ConfirmDeleteDialogComponent } from '../../../shared/components/confirm-delete-dialog.component';
+import { ConfirmDeleteDialogData } from '../../../shared/components/confirm-delete-dialog.component';
 
 type UserRoleFilter = 'all' | User['role'];
 type UserStatusFilter = 'all' | 'active' | 'inactive';
@@ -225,9 +226,14 @@ export class AdminManageUsersComponent implements OnInit {
   }
 
   openDeleteDialog(user: User): void {
-    const dialogRef = this.dialog.open(DeleteUserDialogComponent, {
+    const dialogRef = this.dialog.open(ConfirmDeleteDialogComponent, {
       width: '460px',
-      data: { userName: user.name, userRole: user.role },
+      data: {
+        title: 'Delete User',
+        message: 'Permanently delete',
+        itemName: user.name,
+        itemRole: user.role,
+      } as ConfirmDeleteDialogData,
       disableClose: true,
     });
 

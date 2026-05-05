@@ -341,7 +341,10 @@ export class BuyerPropertyDetailComponent implements OnInit {
       return;
     }
 
-    this.appointmentService.getAppointments().subscribe({
+    this.appointmentService.getAppointments({
+      propertyId: this.property.id,
+      date,
+    }).subscribe({
       next: (appointments) => {
         const unavailable = appointments
           .filter(

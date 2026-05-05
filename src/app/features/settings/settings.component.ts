@@ -8,8 +8,11 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { ConfirmDeleteDialogComponent } from '../../shared/components/confirm-delete-dialog.component';
+import { ConfirmDeleteDialogData } from '../../shared/components/confirm-delete-dialog.component';
 
 @Component({
   selector: 'app-settings',
@@ -31,6 +34,7 @@ export class SettingsComponent {
   private authService = inject(AuthService);
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
+  private dialog = inject(MatDialog);
 
   readonly user = signal(this.authService.getCurrentUser());
 
@@ -44,11 +48,7 @@ export class SettingsComponent {
       .toUpperCase();
   });
 
-  showDeleteConfirm = signal(false);
-  confirmationText = '';
-  readonly expectedText = 'DELETE';
-
-  readonly isConfirmed = computed(() => this.confirmationText === this.expectedText);
+  readonly isAdmin = computed(() => this.user()?.role === 'admin');
 
   notificationSettings = {
     emailAlerts: true,
@@ -65,21 +65,31 @@ export class SettingsComponent {
     theme: 'system',
   };
 
-  toggleDeleteConfirm(): void {
-    this.showDeleteConfirm.update((v) => !v);
-    this.confirmationText = '';
+  openDeleteDialog(): void {
+    const dialogRef = this.dialog.open(ConfirmDeleteDialogComponent, {
+      width: '460px',
+      disableClose: true,
+      data: {
+        title: 'Delete Account',
+        message: 'All your data, including favorites and property listings, will be removed.',
+      } as ConfirmDeleteDialogData,
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+        this.deleteAccount();
+      }
+    });
   }
 
-  cancelDelete(): void {
-    this.showDeleteConfirm.set(false);
-    this.confirmationText = '';
+  editProfile(): void {
+    this.router.navigate(['/profile']);
   }
 
-  deleteAccount(): void {
-    if (!this.isConfirmed()) return;
+  private deleteAccount(): void {
     this.authService.deleteAccount().subscribe({
       next: () => {
-        this.snackBar.open('Account deleted', 'Close', {
+        this.snackBar.open('Account deleted successfully', 'Close', {
           duration: 4000,
           horizontalPosition: 'start',
           verticalPosition: 'bottom',

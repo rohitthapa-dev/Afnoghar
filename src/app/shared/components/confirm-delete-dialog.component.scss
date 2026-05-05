@@ -6,92 +6,84 @@
 }
 
 .dialog-container {
-  padding: $space-6 $space-8;
+  padding: $space-6;
   min-width: 400px;
-
-  @include respond-to(sm) {
-    min-width: unset;
-    padding: $space-5 $space-6;
-  }
+  max-width: 460px;
 }
 
 .dialog-header {
-  @include flex(row, flex-start, center, $space-4);
-  margin-bottom: $space-6;
+  @include flex(row, flex-start, center, $space-3);
+  margin-bottom: $space-5;
   position: relative;
 
   h2 {
     margin: 0;
-    font-family: $font-heading;
-    font-size: $text-xl;
-    font-weight: $font-bold;
-    color: $error;
     flex: 1;
-  }
-
-  .close-btn {
-    position: absolute;
-    right: -$space-4;
-    top: -$space-4;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: $text-disabled;
-    padding: $space-2;
-    border-radius: $radius-full;
-    transition: $transition-fast;
-    @include flex(row, center, center);
-
-    mat-icon {
-      font-size: 20px;
-      width: 20px;
-      height: 20px;
-    }
-
-    &:hover {
-      background: $error-light;
-      color: $error;
-    }
+    color: $error;
+    font-family: $font-heading;
+    font-size: $text-lg;
+    font-weight: $font-bold;
   }
 }
 
 .warning-icon-wrapper {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   border-radius: $radius-full;
-  background: $error-light;
+  background: rgba($error, 0.12);
   @include flex(row, center, center);
   flex-shrink: 0;
 
   mat-icon {
-    font-size: 28px;
-    width: 28px;
-    height: 28px;
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
     color: $error;
   }
 }
 
+.close-btn {
+  position: absolute;
+  top: -$space-2;
+  right: -$space-2;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: $text-disabled;
+  padding: $space-1;
+  border-radius: $radius-full;
+  transition: $transition-fast;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    background: $background;
+    color: $text-secondary;
+  }
+}
+
 .dialog-body {
-  margin-bottom: $space-8;
+  margin-bottom: $space-5;
 }
 
 .dialog-message {
-  margin: 0 0 $space-6;
+  margin: 0 0 $space-4;
   font-family: $font-primary;
   font-size: $text-base;
-  color: $text-secondary;
+  color: $text-primary;
   line-height: $leading-relaxed;
 
   strong {
-    color: $text-primary;
+    color: $error;
   }
 }
 
 .confirmation-block {
-  background: $error-light;
-  border: 1px solid rgba($error, 0.2);
-  border-radius: $radius-lg;
-  padding: $space-4 $space-5;
+  margin-top: $space-4;
 }
 
 .confirmation-label {
@@ -115,10 +107,6 @@
   --mdc-outlined-text-field-input-text-color: #{$text-primary};
   --mdc-outlined-text-field-label-text-color: #{$text-secondary};
   font-family: $font-primary;
-
-  @include respond-to(sm) {
-    width: 100%;
-  }
 }
 
 .dialog-actions {
@@ -129,7 +117,7 @@
   }
 }
 
-.cancel-btn {
+.cancel-dialog-btn {
   height: 44px;
   padding: 0 $space-6;
   border-radius: $radius-md !important;
@@ -147,7 +135,7 @@
   }
 }
 
-.delete-btn {
+.delete-dialog-btn {
   height: 44px;
   padding: 0 $space-8;
   border-radius: $radius-md !important;
@@ -174,6 +162,5 @@
   &:disabled {
     background: $text-disabled !important;
     box-shadow: none !important;
-    color: $surface !important;
   }
 }

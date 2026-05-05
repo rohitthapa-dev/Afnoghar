@@ -3,7 +3,7 @@
     <div class="warning-icon-wrapper">
       <mat-icon>warning</mat-icon>
     </div>
-    <h2>Delete User</h2>
+    <h2>{{ data.title }}</h2>
     <button class="close-btn" (click)="cancel()">
       <mat-icon>close</mat-icon>
     </button>
@@ -11,9 +11,16 @@
 
   <div class="dialog-body">
     <p class="dialog-message">
-      Permanently delete <strong>{{ data.userName }}</strong> ({{ data.userRole }}).
-      This action cannot be undone. All their data, including favorites and
-      property listings, will be removed.
+      @if (data.itemName) {
+        {{ data.message }}
+        <strong>{{ data.itemName }}</strong>
+        @if (data.itemRole) {
+          ({{ data.itemRole }})
+        }.
+      } @else {
+        This action is <strong>permanent</strong> and cannot be undone.
+        {{ data.message }}
+      }
     </p>
 
     <div class="confirmation-block">
@@ -34,19 +41,19 @@
   <div class="dialog-actions">
     <button
       mat-stroked-button
-      class="cancel-btn"
+      class="cancel-dialog-btn"
       (click)="cancel()"
     >
       Cancel
     </button>
     <button
       mat-flat-button
-      class="delete-btn"
-      [disabled]="!isConfirmed"
+      class="delete-dialog-btn"
+        [disabled]="!isConfirmed"
       (click)="confirm()"
     >
       <mat-icon>delete_forever</mat-icon>
-      Delete User
+      {{ data.title }}
     </button>
   </div>
 </div>
