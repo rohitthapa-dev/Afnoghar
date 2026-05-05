@@ -1,203 +1,205 @@
 <div class="profile-page">
   @if (loading()) {
     <div class="loading-state">
-      <mat-spinner diameter="36"></mat-spinner>
-      <p>Saving changes...</p>
+      <mat-spinner diameter="18"></mat-spinner>
+      <p>Saving...</p>
     </div>
   }
 
-  <div class="profile-hero">
-    <div class="avatar-block">
-      @if (user()?.avatar) {
-        <img [src]="user()?.avatar" [alt]="user()?.name" class="avatar-img" />
-      } @else {
-        <div class="avatar-initials">{{ userInitials }}</div>
-      }
-    </div>
-
-    <div class="hero-info">
-      <div class="hero-meta">
-        <span class="section-kicker">My Account</span>
+  <div class="profile-shell">
+    <aside class="profile-sidebar">
+      <div class="avatar-card">
+        <div class="avatar-block">
+          @if (user()?.avatar) {
+            <img
+              [src]="user()?.avatar"
+              [alt]="user()?.name"
+              class="avatar-img"
+            />
+          } @else {
+            <div class="avatar-initials">{{ userInitials }}</div>
+          }
+        </div>
+        <h2 class="sidebar-name">{{ user()?.name }}</h2>
+        <p class="sidebar-email">{{ user()?.email }}</p>
         <span class="role-badge" [ngClass]="userRoleColor">
           {{ user()?.role | titlecase }}
         </span>
-      </div>
-      <h1>{{ user()?.name }}</h1>
-      <p class="user-email">
-        <mat-icon>mail_outline</mat-icon>
-        {{ user()?.email }}
-      </p>
-      @if (user()?.phone) {
-        <p class="user-phone">
-          <mat-icon>phone</mat-icon>
-          {{ user()?.phone }}
-        </p>
-      }
-    </div>
-  </div>
 
-  <div class="profile-grid">
-    <div class="profile-card">
-      <div class="card-header">
-        <div class="card-title">
-          <span class="section-kicker">Personal</span>
-          <h2>Profile Information</h2>
-        </div>
-        @if (!editingProfile()) {
-          <button
-            mat-stroked-button
-            class="edit-btn"
-            (click)="toggleEditProfile()"
-          >
-            <mat-icon>edit</mat-icon>
-            Edit
-          </button>
-        }
-      </div>
-
-      @if (!editingProfile()) {
-        <div class="info-grid">
-          <div class="info-row">
-            <div class="info-icon">
-              <mat-icon>person_outline</mat-icon>
-            </div>
-            <div class="info-content">
-              <span class="info-label">Full Name</span>
-              <strong class="info-value">{{ user()?.name }}</strong>
-            </div>
-          </div>
-
-          <div class="info-row">
-            <div class="info-icon">
-              <mat-icon>mail_outline</mat-icon>
-            </div>
-            <div class="info-content">
-              <span class="info-label">Email Address</span>
-              <strong class="info-value">{{ user()?.email }}</strong>
-            </div>
-          </div>
-
-          <div class="info-row">
-            <div class="info-icon">
-              <mat-icon>phone_outlined</mat-icon>
-            </div>
-            <div class="info-content">
-              <span class="info-label">Phone Number</span>
-              <strong class="info-value">{{ user()?.phone || "—" }}</strong>
-            </div>
-          </div>
-
-          <div class="info-row">
-            <div class="info-icon">
-              <mat-icon>badge</mat-icon>
-            </div>
-            <div class="info-content">
-              <span class="info-label">Account Role</span>
-              <strong class="info-value">{{ user()?.role | titlecase }}</strong>
-            </div>
+        <div class="sidebar-stats">
+          <div class="sidebar-stat">
+            <mat-icon>phone_outlined</mat-icon>
+            <span>{{ user()?.phone || "—" }}</span>
           </div>
         </div>
-      } @else {
-        <form
-          [formGroup]="profileForm"
-          (ngSubmit)="saveProfile()"
-          class="edit-form"
-        >
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Full Name</mat-label>
-            <input
-              matInput
-              formControlName="name"
-              placeholder="Your full name"
-            />
-            <mat-icon matSuffix>person_outline</mat-icon>
-            @if (
-              profileForm.get("name")?.invalid &&
-              profileForm.get("name")?.touched
-            ) {
-              <mat-error>Name is required (min 2 characters)</mat-error>
-            }
-          </mat-form-field>
+      </div>
+    </aside>
 
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Phone Number</mat-label>
-            <input matInput formControlName="phone" placeholder="98XXXXXXXX" />
-            <mat-icon matSuffix>phone_outlined</mat-icon>
-            @if (
-              profileForm.get("phone")?.invalid &&
-              profileForm.get("phone")?.touched
-            ) {
-              <mat-error>Enter a valid phone number</mat-error>
-            }
-          </mat-form-field>
-
-          <div class="form-actions">
-            <button
-              mat-flat-button
-              class="save-btn"
-              type="submit"
-              [disabled]="profileForm.invalid || loading()"
-            >
-              @if (loading()) {
-                <mat-spinner diameter="18"></mat-spinner>
-              } @else {
-                Save Changes
-              }
-            </button>
+    <main class="profile-main">
+      <div class="profile-card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="section-kicker">Personal</span>
+            <h2>Profile Information</h2>
+          </div>
+          @if (!editingProfile()) {
             <button
               mat-stroked-button
-              type="button"
-              class="cancel-btn"
+              class="edit-btn"
               (click)="toggleEditProfile()"
             >
-              Cancel
+              <mat-icon>edit</mat-icon>
+              Edit
             </button>
-          </div>
-        </form>
-      }
-    </div>
-
-    <div class="profile-card">
-      <div class="card-header">
-        <div class="card-title">
-          <span class="section-kicker">Security</span>
-          <h2>Password</h2>
+          }
         </div>
-        @if (!changingPassword()) {
-          <button
-            mat-stroked-button
-            class="edit-btn"
-            (click)="toggleChangePassword()"
+
+        @if (!editingProfile()) {
+          <div class="info-grid">
+            <div class="info-row">
+              <div class="info-icon"><mat-icon>person_outline</mat-icon></div>
+              <div class="info-content">
+                <span class="info-label">Full Name</span>
+                <strong class="info-value">{{ user()?.name }}</strong>
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-icon"><mat-icon>mail_outline</mat-icon></div>
+              <div class="info-content">
+                <span class="info-label">Email Address</span>
+                <strong class="info-value">{{ user()?.email }}</strong>
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-icon"><mat-icon>phone_outlined</mat-icon></div>
+              <div class="info-content">
+                <span class="info-label">Phone Number</span>
+                <strong class="info-value">{{ user()?.phone || "—" }}</strong>
+              </div>
+            </div>
+            <div class="info-row last">
+              <div class="info-icon"><mat-icon>badge</mat-icon></div>
+              <div class="info-content">
+                <span class="info-label">Account Role</span>
+                <strong class="info-value">{{
+                  user()?.role | titlecase
+                }}</strong>
+              </div>
+            </div>
+          </div>
+        } @else {
+          <form
+            [formGroup]="profileForm"
+            (ngSubmit)="saveProfile()"
+            class="edit-form"
           >
-            <mat-icon>lock_reset</mat-icon>
-            Change
-          </button>
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>Full Name</mat-label>
+              <input
+                matInput
+                formControlName="name"
+                placeholder="Your full name"
+              />
+              <mat-icon matSuffix>person_outline</mat-icon>
+              @if (
+                profileForm.get("name")?.invalid &&
+                profileForm.get("name")?.touched
+              ) {
+                <mat-error>Name is required (min 2 characters)</mat-error>
+              }
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>Phone Number</mat-label>
+              <input
+                matInput
+                formControlName="phone"
+                placeholder="98XXXXXXXX"
+              />
+              <mat-icon matSuffix>phone_outlined</mat-icon>
+              @if (
+                profileForm.get("phone")?.invalid &&
+                profileForm.get("phone")?.touched
+              ) {
+                <mat-error>Enter a valid phone number</mat-error>
+              }
+            </mat-form-field>
+            <div class="form-actions">
+              <button
+                mat-flat-button
+                class="save-btn"
+                type="submit"
+                [disabled]="profileForm.invalid || loading()"
+              >
+                @if (loading()) {
+                  <mat-spinner diameter="16"></mat-spinner>
+                } @else {
+                  Save Changes
+                }
+              </button>
+              <button
+                mat-stroked-button
+                type="button"
+                class="cancel-btn"
+                (click)="toggleEditProfile()"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
         }
       </div>
 
-      @if (changingPassword()) {
-        <form
-          [formGroup]="passwordForm"
-          (ngSubmit)="changePassword()"
-          class="password-form"
-        >
-          <p class="password-hint">
-            Enter your current password and choose a new one.
-          </p>
+      <div class="profile-card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="section-kicker">Security</span>
+            <h2>Password</h2>
+          </div>
+          @if (!changingPassword()) {
+            <button
+              mat-stroked-button
+              class="edit-btn"
+              (click)="toggleChangePassword()"
+            >
+              <mat-icon>lock_outline</mat-icon>
+              Update
+            </button>
+          }
+        </div>
 
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Current Password</mat-label>
-            <input matInput type="password" formControlName="currentPassword" />
-            <mat-icon matSuffix>lock_outline</mat-icon>
-            @if (
-              passwordForm.get("currentPassword")?.invalid &&
-              passwordForm.get("currentPassword")?.touched
-            ) {
-              <mat-error>Current password is required</mat-error>
-            }
-          </mat-form-field>
-
+        @if (!changingPassword()) {
           <div class="password-row">
+            <div class="info-icon"><mat-icon>lock_outline</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Current Password</span>
+              <div class="password-mask">
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+              </div>
+            </div>
+            <span class="password-hint">Click Update to change</span>
+          </div>
+        } @else {
+          <form
+            [formGroup]="passwordForm"
+            (ngSubmit)="changePassword()"
+            class="edit-form"
+          >
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>Current Password</mat-label>
+              <input
+                matInput
+                type="password"
+                formControlName="currentPassword"
+              />
+              <mat-icon matSuffix>lock_outline</mat-icon>
+              @if (
+                passwordForm.get("currentPassword")?.invalid &&
+                passwordForm.get("currentPassword")?.touched
+              ) {
+                <mat-error>Current password is required</mat-error>
+              }
+            </mat-form-field>
             <mat-form-field appearance="outline" class="form-field">
               <mat-label>New Password</mat-label>
               <input matInput type="password" formControlName="newPassword" />
@@ -206,53 +208,49 @@
                 passwordForm.get("newPassword")?.invalid &&
                 passwordForm.get("newPassword")?.touched
               ) {
-                <mat-error>Min 6 characters</mat-error>
+                <mat-error>Minimum 6 characters</mat-error>
               }
             </mat-form-field>
-
             <mat-form-field appearance="outline" class="form-field">
-              <mat-label>Confirm Password</mat-label>
-              <input matInput type="password" formControlName="confirmPassword" />
+              <mat-label>Confirm New Password</mat-label>
+              <input
+                matInput
+                type="password"
+                formControlName="confirmPassword"
+              />
               <mat-icon matSuffix>lock_open</mat-icon>
               @if (
                 passwordForm.get("confirmPassword")?.invalid &&
                 passwordForm.get("confirmPassword")?.touched
               ) {
-                <mat-error>Please confirm</mat-error>
+                <mat-error>Please confirm your password</mat-error>
               }
             </mat-form-field>
-          </div>
-
-          <div class="form-actions">
-            <button
-              mat-flat-button
-              class="save-btn"
-              type="submit"
-              [disabled]="passwordForm.invalid || loading()"
-            >
-              @if (loading()) {
-                <mat-spinner diameter="18"></mat-spinner>
-              } @else {
-                Update Password
-              }
-            </button>
-            <button
-              mat-stroked-button
-              type="button"
-              class="cancel-btn"
-              (click)="toggleChangePassword()"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      } @else {
-        <div class="password-view">
-          <mat-icon>password</mat-icon>
-          <span>********</span>
-          <span class="password-hint">Click Change to update your password</span>
-        </div>
-      }
-    </div>
+            <div class="form-actions">
+              <button
+                mat-flat-button
+                class="save-btn"
+                type="submit"
+                [disabled]="passwordForm.invalid || loading()"
+              >
+                @if (loading()) {
+                  <mat-spinner diameter="16"></mat-spinner>
+                } @else {
+                  Change Password
+                }
+              </button>
+              <button
+                mat-stroked-button
+                type="button"
+                class="cancel-btn"
+                (click)="toggleChangePassword()"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        }
+      </div>
+    </main>
   </div>
 </div>

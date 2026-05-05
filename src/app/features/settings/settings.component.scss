@@ -56,8 +56,9 @@
   border: 1px solid $divider;
   border-radius: $radius-xl;
   box-shadow: $shadow-card;
-  box-shadow: $shadow-card;
+  transition: $transition-base;
 
+  @include respond-to(sm) {
     padding: $space-5;
   }
 }
@@ -221,47 +222,26 @@
   margin: $space-2 0;
 }
 
-.danger-card {
-  border-top: 3px solid $error;
+// ── Delete Card ──────────────────────────────────────
+
+.delete-card {
+  // no red border — let content convey the context
 }
 
-.danger-kicker {
-  color: $error !important;
-}
-
-.danger-content {
-  @include flex(row, flex-start, center, $space-5);
-  padding: $space-5;
-  background: $error-light;
-  border-radius: $radius-lg;
+.delete-idle {
+  @include flex(row, space-between, center, $space-4);
 
   @include respond-to(sm) {
-    @include flex(column, flex-start, flex-start, $space-4);
+    @include flex(column, flex-start, flex-start, $space-3);
   }
 }
 
-.danger-icon {
-  font-size: 36px;
-  width: 36px;
-  height: 36px;
-  color: $error;
-  flex-shrink: 0;
-}
-
-.danger-info {
+.delete-idle-info {
   flex: 1;
   min-width: 0;
 }
 
-.danger-title {
-  margin: 0 0 $space-2;
-  font-family: $font-primary;
-  font-size: $text-base;
-  font-weight: $font-semibold;
-  color: $error;
-}
-
-.danger-desc {
+.delete-idle-text {
   margin: 0;
   font-family: $font-primary;
   font-size: $text-sm;
@@ -269,9 +249,152 @@
   line-height: $leading-relaxed;
 }
 
-.delete-btn {
+.delete-trigger-btn {
+  height: 36px;
+  border-color: $divider !important;
+  color: $text-secondary !important;
+  border-radius: $radius-md !important;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  font-weight: $font-medium;
+  transition: $transition-fast !important;
+  flex-shrink: 0;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    margin-right: $space-1;
+  }
+
+  &:hover {
+    border-color: $error !important;
+    color: $error !important;
+    background: $error-light !important;
+  }
+
+  @include respond-to(sm) {
+    align-self: flex-start;
+  }
+}
+
+// ── Delete Confirmation (expanded) ──────────────────
+
+.delete-confirm {
+  margin-top: $space-5;
+  padding: $space-5;
+  background: $error-light;
+  border: 1px solid rgba($error, 0.15);
+  border-radius: $radius-lg;
+  animation: slideDown 0.25s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.confirm-header {
+  @include flex(row, flex-start, flex-start, $space-4);
+  margin-bottom: $space-5;
+}
+
+.warning-icon-wrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-full;
+  background: rgba($error, 0.12);
+  @include flex(row, center, center);
+  flex-shrink: 0;
+
+  mat-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+    color: $error;
+  }
+}
+
+.confirm-header-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.confirm-message {
+  margin: 0;
+  font-family: $font-primary;
+  font-size: $text-base;
+  color: $text-primary;
+  line-height: $leading-relaxed;
+
+  strong {
+    color: $error;
+  }
+}
+
+.confirmation-block {
+  margin-bottom: $space-5;
+}
+
+.confirmation-label {
+  margin: 0 0 $space-3;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  color: $text-primary;
+
+  strong {
+    color: $error;
+    font-family: $font-mono;
+    letter-spacing: $tracking-wider;
+  }
+}
+
+.confirmation-field {
+  width: 100%;
+  max-width: 360px;
+  --mdc-outlined-text-field-outline-color: #{rgba($error, 0.3)};
+  --mdc-outlined-text-field-focus-outline-color: #{$error};
+  --mdc-outlined-text-field-caret-color: #{$error};
+  --mdc-outlined-text-field-input-text-color: #{$text-primary};
+  --mdc-outlined-text-field-label-text-color: #{$text-secondary};
+  font-family: $font-primary;
+}
+
+.confirm-actions {
+  @include flex(row, flex-end, center, $space-3);
+
+  @include respond-to(sm) {
+    @include flex(column-reverse, flex-end, stretch, $space-2);
+  }
+}
+
+.cancel-confirm-btn {
   height: 44px;
   padding: 0 $space-6;
+  border-radius: $radius-md !important;
+  border-color: $border !important;
+  color: $text-secondary !important;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  font-weight: $font-medium;
+  transition: $transition-fast !important;
+
+  &:hover {
+    border-color: $primary !important;
+    color: $primary !important;
+    background: $primary-tint !important;
+  }
+}
+
+.delete-confirm-btn {
+  height: 44px;
+  padding: 0 $space-8;
   border-radius: $radius-md !important;
   background: $error !important;
   color: $surface !important;
@@ -281,7 +404,6 @@
   box-shadow: 0 4px 16px rgba($error, 0.25) !important;
   transition: $transition-base !important;
   @include flex(row, center, center, $space-2);
-  flex-shrink: 0;
 
   mat-icon {
     font-size: 18px;
