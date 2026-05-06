@@ -26,7 +26,7 @@
 
       <select
         [(ngModel)]="selectedListingType"
-        (change)="onFilterChange()"
+        (change)="onListingTypeChange()"
         class="filter-select"
       >
         <option value="">Sale & Rent</option>
@@ -46,22 +46,82 @@
         <option [ngValue]="4">4+ Beds</option>
       </select>
 
-      <div class="price-range">
-        <input
-          type="number"
-          placeholder="Min"
-          [(ngModel)]="minPrice"
-          (input)="onFilterChange()"
-          class="price-input"
-        />
-        <span class="price-sep">—</span>
-        <input
-          type="number"
-          placeholder="Max"
-          [(ngModel)]="maxPrice"
-          (input)="onFilterChange()"
-          class="price-input"
-        />
+      <div class="price-filter" [class.dropdown-open]="priceDropdownOpen">
+        <button
+          type="button"
+          class="price-dropdown-trigger"
+          [class.active]="priceDropdownOpen || minPrice != null || maxPrice != null"
+          (click)="togglePriceDropdown()"
+        >
+          <span>{{ priceRangeLabel }}</span>
+          <i
+            class="bi"
+            [class.bi-chevron-up]="priceDropdownOpen"
+            [class.bi-chevron-down]="!priceDropdownOpen"
+          ></i>
+        </button>
+
+        @if (priceDropdownOpen) {
+          <div class="price-dropdown-panel">
+            <div class="price-dropdown-header">
+              <div>
+                <span>List Price</span>
+                <strong>{{ tempPriceRangeLabel }}</strong>
+              </div>
+              @if (minPrice != null || maxPrice != null) {
+                <button type="button" (click)="clearPriceFilter()">Reset</button>
+              }
+            </div>
+
+            <div class="price-histogram" aria-hidden="true">
+              @for (bar of priceHistogram; track $index) {
+                <span
+                  class="price-bar"
+                  [class.active]="bar.active"
+                  [style.height.%]="bar.height"
+                ></span>
+              }
+            </div>
+
+            <div
+              class="price-slider-shell"
+              [style.--range-start]="tempPriceStartPercent + '%'"
+              [style.--range-end]="tempPriceEndPercent + '%'"
+            >
+              <input
+                class="price-range-input min-input"
+                type="range"
+                [min]="availableMinPrice"
+                [max]="availableMaxPrice"
+                [step]="priceStep"
+                [value]="tempPriceSliderMin"
+                aria-label="Minimum price"
+                (input)="onTempMinPriceInput($event)"
+              />
+              <input
+                class="price-range-input max-input"
+                type="range"
+                [min]="availableMinPrice"
+                [max]="availableMaxPrice"
+                [step]="priceStep"
+                [value]="tempPriceSliderMax"
+                aria-label="Maximum price"
+                (input)="onTempMaxPriceInput($event)"
+              />
+            </div>
+
+            <div class="price-limits">
+              <span>{{ formatPrice(availableMinPrice) }}</span>
+              <span>{{ formatPrice(availableMaxPrice) }}+</span>
+            </div>
+
+            <div class="price-actions">
+              <button type="button" class="done-btn" (click)="closePriceDropdown()">
+                Done
+              </button>
+            </div>
+          </div>
+        }
       </div>
 
       @if (hasActiveFilters) {

@@ -79,7 +79,7 @@ $leading-relaxed: 1.625;
 $leading-loose: 2;
 
 // TYPOGRAPHY – Letter Spacing
-$tracking-tight: -0.025em;
+$tracking-tight: 0em;
 $tracking-normal: 0em;
 $tracking-wide: 0.025em;
 $tracking-wider: 0.05em;
@@ -103,21 +103,21 @@ $space-32: 8rem;
 // BORDER RADIUS
 $radius-sm: 4px;
 $radius-md: 8px;
-$radius-lg: 12px;
-$radius-xl: 16px;
-$radius-2xl: 24px;
+$radius-lg: 8px;
+$radius-xl: 8px;
+$radius-2xl: 8px;
 $radius-full: 9999px;
 
 // SHADOWS
-$shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
-$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06);
-$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-$shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
-$shadow-xl: 0 16px 40px rgba(0, 0, 0, 0.12);
-$shadow-card: 0 2px 8px rgba(0, 0, 0, 0.07);
-$shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
-$shadow-navbar: 0 2px 12px rgba(0, 0, 0, 0.06);
-$shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.15);
+$shadow-xs: 0 1px 2px rgba(28, 28, 28, 0.04);
+$shadow-sm: 0 3px 8px rgba(28, 28, 28, 0.05);
+$shadow-md: 0 8px 20px rgba(28, 28, 28, 0.07);
+$shadow-lg: 0 14px 32px rgba(28, 28, 28, 0.09);
+$shadow-xl: 0 22px 52px rgba(28, 28, 28, 0.11);
+$shadow-card: 0 8px 24px rgba(28, 28, 28, 0.055);
+$shadow-card-hover: 0 16px 36px rgba(28, 28, 28, 0.1);
+$shadow-navbar: 0 8px 22px rgba(28, 28, 28, 0.06);
+$shadow-modal: 0 24px 70px rgba(28, 28, 28, 0.16);
 
 // TRANSITIONS
 $transition-fast: all 0.15s ease;

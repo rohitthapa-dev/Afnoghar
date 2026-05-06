@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap, map } from 'rxjs';
 import {
   User,
+  UserRole,
   AuthResponse,
   LoginPayload,
   RegisterPayload,
@@ -12,12 +13,12 @@ import {
   providedIn: 'root',
 })
 export class AuthService {
-  private http = inject(HttpClient);
+  private readonly http = inject(HttpClient);
 
-  private apiUrl = 'http://localhost:3000';
+  private readonly apiUrl = 'http://localhost:3000';
 
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
-  currentUser$ = this.currentUserSubject.asObservable();
+  private readonly currentUserSubject = new BehaviorSubject<User | null>(null);
+  readonly currentUser$ = this.currentUserSubject.asObservable();
 
   constructor() {
     this.loadUserFromStorage();
@@ -84,24 +85,50 @@ export class AuthService {
     return !!this.getToken() && !!this.currentUserSubject.value;
   }
 
-  getRole(): string | null {
+  getRole(): UserRole | null {
     return this.currentUserSubject.value?.role || null;
   }
 
   isBuyer(): boolean {
-    return this.getRole() === 'buyer';
+    return this.getRole() === UserRole.Buyer;
   }
 
   isSeller(): boolean {
-    return this.getRole() === 'seller';
+    return this.getRole() === UserRole.Seller;
   }
 
   isAdmin(): boolean {
-    return this.getRole() === 'admin';
+    return this.getRole() === UserRole.Admin;
   }
 
-  hasRole(roles: string[]): boolean {
+  hasRole(roles: UserRole[]): boolean {
     const userRole = this.getRole();
     return userRole ? roles.includes(userRole) : false;
+  }
+
+  updateCurrentUser(user: any): void {
+    localStorage.setItem('afnoghar_user', JSON.stringify(user));
+    this.currentUserSubject.next(user);
+  }
+
+  updateProfile(payload: {
+    name?: string;
+    phone?: string;
+    password?: string;
+    currentPassword?: string;
+  }): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/users/me`, payload);
+  }
+
+  uploadAvatar(formData: FormData): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/users/me/avatar`, formData);
+  }
+
+  removeAvatar(): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/users/me/avatar`);
+  }
+
+  deleteAccount(): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/users/me`);
   }
 }

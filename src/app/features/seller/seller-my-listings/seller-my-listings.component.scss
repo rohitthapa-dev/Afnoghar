@@ -418,9 +418,10 @@ h2 {
 }
 
 .listing-actions {
+  @include flex(row, flex-end, center, $space-1);
   margin-left: auto;
 
-  button {
+  button:not(.view-action) {
     @include flex(row, center, center);
     width: 38px !important;
     height: 38px !important;
@@ -458,14 +459,60 @@ h2 {
       border-radius: $radius-full;
       inset: 0;
     }
+  }
+}
 
-    &.danger {
-      color: $error;
+.view-action {
+  @include flex(row, center, center, $space-2);
+  min-height: 38px;
+  padding: 0 $space-3;
+  border: 1px solid rgba($primary, 0.24);
+  border-radius: $radius-md;
+  background: $primary-tint;
+  color: $primary !important;
+  cursor: pointer;
+  font-family: $font-primary;
+  font-size: $text-sm;
+  font-weight: $font-semibold;
+  transition: $transition-fast;
 
-      &:hover {
-        background: $error-light;
-        color: $error;
-      }
+  mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    color: $primary;
+    transition: $transition-fast;
+  }
+
+  span {
+    color: $primary;
+    transition: $transition-fast;
+  }
+
+  &:hover {
+    border-color: rgba($primary, 0.5);
+    background: $primary;
+    color: $surface !important;
+    box-shadow: 0 8px 18px rgba($primary, 0.16);
+
+    mat-icon,
+    span {
+      color: $surface;
     }
+  }
+}
+
+.more-action {
+  border: 1px solid transparent;
+
+  &:hover {
+    border-color: rgba($primary, 0.28);
+  }
+}
+
+:host ::ng-deep {
+  .danger-menu-item,
+  .danger-menu-item mat-icon {
+    color: $error;
   }
 }

@@ -47,10 +47,13 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     return {
       primary: s.getPropertyValue('--color-primary').trim(),
       primaryDark: s.getPropertyValue('--color-primary-dark').trim(),
+      accent: s.getPropertyValue('--color-accent').trim(),
+      accentDark: s.getPropertyValue('--color-accent-dark').trim(),
       info: s.getPropertyValue('--color-info').trim(),
       infoDark: s.getPropertyValue('--color-info-dark').trim(),
       surface: s.getPropertyValue('--color-surface').trim(),
       pulsePrimary: s.getPropertyValue('--pulse-primary').trim(),
+      pulseAccent: s.getPropertyValue('--pulse-accent').trim(),
       pulseInfo: s.getPropertyValue('--pulse-info').trim(),
     };
   }
@@ -64,6 +67,9 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
       this.initMap();
       this.isInitialized = true;
       this.addMarkers();
+      if (this.mode === 'search' && this.selectedPropertyId) {
+        this.highlightSelectedMarker(true);
+      }
     });
   }
 
@@ -72,9 +78,10 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     if (changes['properties']) {
       this.clearMarkers();
       this.addMarkers();
+      this.updateSelectedMarkerIcon();
     }
     if (changes['selectedPropertyId']) {
-      this.highlightSelectedMarker();
+      this.highlightSelectedMarker(true);
     }
   }
 
@@ -174,7 +181,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     this.markerMap.clear();
   }
 
-  private highlightSelectedMarker(): void {
+  private updateSelectedMarkerIcon(): void {
     this.markerMap.forEach((marker, id) => {
       const prop = this.properties.find((p) => p.id === id);
       marker.setIcon(
@@ -184,8 +191,13 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
         ),
       );
     });
+  }
+
+  private highlightSelectedMarker(shouldFlyToMarker = false): void {
+    this.updateSelectedMarkerIcon();
 
     if (
+      shouldFlyToMarker &&
       this.selectedPropertyId &&
       this.markerMap.has(this.selectedPropertyId)
     ) {
@@ -202,12 +214,12 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     const isRent = listingType === 'rent';
     const color = isRent
       ? isSelected
-        ? c.infoDark
-        : c.info
+        ? c.accentDark
+        : c.accent
       : isSelected
         ? c.primaryDark
         : c.primary;
-    const pulseColor = isRent ? c.pulseInfo : c.pulsePrimary;
+    const pulseColor = isRent ? c.pulseAccent : c.pulsePrimary;
 
     return L.divIcon({
       className: 'custom-map-pin',
@@ -233,7 +245,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
       );
     }).length;
 
-    const color = rentCount > markers.length / 2 ? c.info : c.primary;
+    const color = rentCount > markers.length / 2 ? c.accent : c.primary;
     const count = cluster.getChildCount();
 
     return L.divIcon({

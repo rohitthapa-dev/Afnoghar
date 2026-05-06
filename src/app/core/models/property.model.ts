@@ -27,11 +27,23 @@ export interface Property {
   createdAt: string;
 }
 
-export type PropertyType = 'house' | 'apartment' | 'land' | 'commercial';
+export enum PropertyType {
+  House = 'house',
+  Apartment = 'apartment',
+  Land = 'land',
+  Commercial = 'commercial',
+}
 
-export type ListingType = 'sale' | 'rent';
+export enum ListingType {
+  Sale = 'sale',
+  Rent = 'rent',
+}
 
-export type PropertyStatus = 'pending' | 'approved' | 'rejected';
+export enum PropertyStatus {
+  Pending = 'pending',
+  Approved = 'approved',
+  Rejected = 'rejected',
+}
 
 export interface PropertyFilter {
   search?: string;

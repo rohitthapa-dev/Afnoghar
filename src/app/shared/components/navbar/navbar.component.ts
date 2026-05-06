@@ -18,6 +18,7 @@ import {
   Notification,
   NotificationService,
 } from '../../../core/services/notification.service';
+import { UserRole } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-navbar',
@@ -33,10 +34,10 @@ import {
   styleUrl: './navbar.component.scss',
 })
 export class NavbarComponent implements OnInit {
-  authService = inject(AuthService);
-  private router = inject(Router);
-  private notificationService = inject(NotificationService);
-  private destroyRef = inject(DestroyRef);
+  readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly notificationService = inject(NotificationService);
+  private readonly destroyRef = inject(DestroyRef);
 
   isScrolled = signal(false);
   mobileMenuOpen = signal(false);
@@ -47,7 +48,7 @@ export class NavbarComponent implements OnInit {
     return this.authService.isLoggedIn();
   }
 
-  get userRole(): string | null {
+  get userRole(): UserRole | null {
     return this.authService.getRole();
   }
 
@@ -83,6 +84,7 @@ export class NavbarComponent implements OnInit {
   }
 
   get notificationsRoute(): string {
+    if (this.userRole === 'admin') return '/admin/dashboard';
     if (this.userRole === 'seller') return '/seller/appointments';
     if (this.userRole === 'buyer') return '/buyer/appointments';
     return '/';
@@ -194,7 +196,9 @@ export class NavbarComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
+    this.closeNotificationPanel();
     this.closeMobileMenu();
+    this.router.navigate(['/']);
   }
 
   goToProfile(): void {

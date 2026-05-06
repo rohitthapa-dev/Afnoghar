@@ -11,23 +11,26 @@
 
     <div class="nav-links desktop-nav">
       @if (!isLoggedIn) {
+        <a routerLink="/buyer/properties" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Properties</a>
         <a (click)="navigateToMapSearch('sale')">Buy</a>
         <a (click)="navigateToMapSearch('rent')">Rent</a>
-        <a routerLink="/about">About</a>
       } @else if (userRole === "buyer") {
-        <a routerLink="/buyer/favorites">Favorites</a>
-        <a routerLink="/buyer/appointments">Appointments</a>
+        <a routerLink="/buyer/properties" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Properties</a>
         <a (click)="navigateToMapSearch('sale')">Buy</a>
         <a (click)="navigateToMapSearch('rent')">Rent</a>
+        <a routerLink="/buyer/favorites" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Favorites</a>
+        <a routerLink="/buyer/appointments" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Appointments</a>
       } @else if (userRole === "seller") {
-        <a routerLink="/seller/dashboard">Dashboard</a>
-        <a routerLink="/seller/properties">My Listings</a>
-        <a routerLink="/seller/properties/new">Upload Property</a>
-        <a routerLink="/seller/appointments">Appointments</a>
+        <a routerLink="/buyer/properties" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Browse</a>
+        <a routerLink="/seller/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a>
+        <a routerLink="/seller/properties" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">My Listings</a>
+        <a routerLink="/seller/properties/new" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Upload Property</a>
+        <a routerLink="/seller/appointments" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Appointments</a>
       } @else if (userRole === "admin") {
-        <a routerLink="/admin/dashboard">Dashboard</a>
-        <a routerLink="/admin/listings">Manage Listings</a>
-        <a routerLink="/admin/users">Manage Users</a>
+        <a routerLink="/buyer/properties" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Browse</a>
+        <a routerLink="/admin/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a>
+        <a routerLink="/admin/listings" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Manage Listings</a>
+        <a routerLink="/admin/users" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Manage Users</a>
       }
     </div>
 
@@ -136,7 +139,11 @@
               [routerLink]="notificationsRoute"
               (click)="closeNotificationPanel()"
             >
-              View appointments
+              @if (userRole === 'admin') {
+                View Dashboard
+              } @else {
+                View Appointments
+              }
             </a>
           </div>
         }
@@ -203,9 +210,9 @@
   @if (mobileMenuOpen()) {
     <div class="mobile-nav">
       @if (!isLoggedIn) {
+        <a routerLink="/buyer/properties" (click)="closeMobileMenu()">Properties</a>
         <a (click)="navigateToMapSearch('sale'); closeMobileMenu()">Buy</a>
         <a (click)="navigateToMapSearch('rent'); closeMobileMenu()">Rent</a>
-        <a routerLink="/about" (click)="closeMobileMenu()">About</a>
         <div class="mobile-auth-buttons">
           <a
             routerLink="/login"
@@ -246,16 +253,19 @@
         <mat-divider></mat-divider>
         
         @if (userRole === "buyer") {
-          <a routerLink="/buyer/favorites" (click)="closeMobileMenu()">Favorites</a>
-          <a routerLink="/buyer/appointments" (click)="closeMobileMenu()">Appointments</a>
+          <a routerLink="/buyer/properties" (click)="closeMobileMenu()">Properties</a>
           <a (click)="navigateToMapSearch('sale'); closeMobileMenu()">Buy</a>
           <a (click)="navigateToMapSearch('rent'); closeMobileMenu()">Rent</a>
+          <a routerLink="/buyer/favorites" (click)="closeMobileMenu()">Favorites</a>
+          <a routerLink="/buyer/appointments" (click)="closeMobileMenu()">Appointments</a>
         } @else if (userRole === "seller") {
+          <a routerLink="/buyer/properties" (click)="closeMobileMenu()">Browse Properties</a>
           <a routerLink="/seller/dashboard" (click)="closeMobileMenu()">Dashboard</a>
           <a routerLink="/seller/properties" (click)="closeMobileMenu()">My Listings</a>
           <a routerLink="/seller/properties/new" (click)="closeMobileMenu()">Upload Property</a>
           <a routerLink="/seller/appointments" (click)="closeMobileMenu()">Appointments</a>
         } @else if (userRole === "admin") {
+          <a routerLink="/buyer/properties" (click)="closeMobileMenu()">Browse Properties</a>
           <a routerLink="/admin/dashboard" (click)="closeMobileMenu()">Dashboard</a>
           <a routerLink="/admin/listings" (click)="closeMobileMenu()">Manage Listings</a>
           <a routerLink="/admin/users" (click)="closeMobileMenu()">Manage Users</a>

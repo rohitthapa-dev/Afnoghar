@@ -129,30 +129,42 @@
                 <strong>{{ listing.price | priceFormat: listing.listingType }}</strong>
                 <div class="listing-actions">
                   <button
-                    mat-icon-button
                     type="button"
+                    class="view-action"
                     aria-label="View listing"
+                    matTooltip="Open public listing page"
                     (click)="viewListing(listing)"
                   >
                     <mat-icon>visibility</mat-icon>
+                    <span>View</span>
                   </button>
+
                   <button
                     mat-icon-button
                     type="button"
-                    aria-label="Edit listing"
-                    (click)="editListing(listing)"
+                    class="more-action"
+                    aria-label="More listing actions"
+                    matTooltip="Edit or delete listing"
+                    [matMenuTriggerFor]="listingActions"
+                    [disabled]="isUpdating(listing)"
                   >
-                    <mat-icon>edit</mat-icon>
+                    <mat-icon>more_horiz</mat-icon>
                   </button>
-                  <button
-                    mat-icon-button
-                    type="button"
-                    class="danger"
-                    aria-label="Delete listing"
-                    (click)="deleteListing(listing)"
-                  >
-                    <mat-icon>delete_outline</mat-icon>
-                  </button>
+
+                  <mat-menu #listingActions="matMenu" xPosition="before">
+                    <button mat-menu-item (click)="editListing(listing)">
+                      <mat-icon>edit</mat-icon>
+                      <span>Edit listing</span>
+                    </button>
+                    <button
+                      mat-menu-item
+                      class="danger-menu-item"
+                      (click)="deleteListing(listing)"
+                    >
+                      <mat-icon>delete_outline</mat-icon>
+                      <span>Delete listing</span>
+                    </button>
+                  </mat-menu>
                 </div>
               </div>
             </div>

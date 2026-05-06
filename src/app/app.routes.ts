@@ -14,6 +14,8 @@ import { SellerAppointmentsComponent } from './features/seller/seller-appointmen
 import { AdminDashboardComponent } from './features/admin/dashboard/admin-dashboard.component';
 import { AdminManageListingsComponent } from './features/admin/admin-manage-listings/admin-manage-listings.component';
 import { AdminManageUsersComponent } from './features/admin/admin-manage-users/admin-manage-users.component';
+import { ProfileComponent } from './features/profile/profile.component';
+import { SettingsComponent } from './features/settings/settings.component';
 import { PageNotFoundComponent } from './shared/components/page-not-found/page-not-found.component';
 import { buyerGuard } from './core/guards/buyer.guard';
 import { sellerGuard } from './core/guards/seller.guard';
@@ -23,6 +25,8 @@ export const routes: Routes = [
   { path: '', component: BuyerHomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'profile', component: ProfileComponent },
+  { path: 'settings', component: SettingsComponent },
 
   { path: 'buyer/properties', component: BuyerPropertyListComponent },
   { path: 'buyer/properties/:id', component: BuyerPropertyDetailComponent },

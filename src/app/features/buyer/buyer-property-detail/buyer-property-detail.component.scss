@@ -398,7 +398,7 @@
   color: $text-primary;
   font-family: $font-heading;
   font-size: $text-3xl;
-  font-weight: $font-bold;
+  font-weight: $font-extrabold;
   line-height: $leading-tight;
   letter-spacing: 0;
 
@@ -737,6 +737,15 @@
     background: $text-disabled !important;
     box-shadow: none !important;
   }
+}
+
+:host ::ng-deep .slot-full-label {
+  float: right;
+  margin-left: $space-3;
+  color: $text-disabled;
+  font-family: $font-primary;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
 }
 
 .appointment-success,

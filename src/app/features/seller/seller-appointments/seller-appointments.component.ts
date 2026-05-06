@@ -23,6 +23,8 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import {
   AppointmentService,
   Appointment,
+  AppointmentActor,
+  AppointmentStatus,
 } from '../../../core/services/appointment.service';
 import {
   Notification,
@@ -34,7 +36,11 @@ import { PropertyTypePipe } from '../../../shared/pipes/property-type.pipe';
 import { ListingType, PropertyType } from '../../../core/models/property.model';
 import { switchMap, of } from 'rxjs';
 
-type AppointmentFilter = 'all' | 'pending' | 'confirmed' | 'cancelled';
+type AppointmentFilter =
+  | 'all'
+  | AppointmentStatus.Pending
+  | AppointmentStatus.Confirmed
+  | AppointmentStatus.Cancelled;
 
 interface AppointmentTab {
   label: string;
@@ -84,20 +90,20 @@ interface UserSummary {
   styleUrl: './seller-appointments.component.scss',
 })
 export class SellerAppointmentsComponent implements OnInit {
-  private appointmentService = inject(AppointmentService);
-  private notificationService = inject(NotificationService);
-  private propertyService = inject(PropertyService);
-  private authService = inject(AuthService);
-  private snackBar = inject(MatSnackBar);
-  private fb = inject(FormBuilder);
-  private http = inject(HttpClient);
+  private readonly appointmentService = inject(AppointmentService);
+  private readonly notificationService = inject(NotificationService);
+  private readonly propertyService = inject(PropertyService);
+  private readonly authService = inject(AuthService);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly fb = inject(FormBuilder);
+  private readonly http = inject(HttpClient);
   private buyerNames = new Map<number, string>();
 
   readonly appointmentTabs: AppointmentTab[] = [
     { label: 'All', status: 'all', icon: 'event_note' },
-    { label: 'Pending', status: 'pending', icon: 'schedule' },
-    { label: 'Confirmed', status: 'confirmed', icon: 'verified' },
-    { label: 'Cancelled', status: 'cancelled', icon: 'block' },
+    { label: 'Pending', status: AppointmentStatus.Pending, icon: 'schedule' },
+    { label: 'Confirmed', status: AppointmentStatus.Confirmed, icon: 'verified' },
+    { label: 'Cancelled', status: AppointmentStatus.Cancelled, icon: 'block' },
   ];
 
   readonly fallbackImage =
@@ -132,15 +138,15 @@ export class SellerAppointmentsComponent implements OnInit {
   }
 
   get pendingCount(): number {
-    return this.getForStatus('pending').length;
+    return this.getForStatus(AppointmentStatus.Pending).length;
   }
   get confirmedCount(): number {
-    return this.getForStatus('confirmed').length;
+    return this.getForStatus(AppointmentStatus.Confirmed).length;
   }
 
   get nextTourLabel(): string {
     const next = this.appointments.find(
-      (a) => this.normalizeStatus(a.status) !== 'cancelled',
+      (a) => this.normalizeStatus(a.status) !== AppointmentStatus.Cancelled,
     );
     return next ? this.formatFullDate(next.date) : 'No tours scheduled';
   }
@@ -177,6 +183,12 @@ export class SellerAppointmentsComponent implements OnInit {
         return 'cancel';
       case 'booked':
         return 'event_available';
+      case 'property_approved':
+        return 'check_circle';
+      case 'property_rejected':
+        return 'cancel';
+      case 'property_submitted':
+        return 'campaign';
       default:
         return 'edit_calendar';
     }
@@ -235,14 +247,14 @@ export class SellerAppointmentsComponent implements OnInit {
             return of(null);
           }
           return this.appointmentService.updateAppointment(appointment.id!, {
-            status: 'accepted',
+            status: AppointmentStatus.Accepted,
           });
         }),
       )
       .subscribe({
         next: (result) => {
           if (!result) return;
-          appointment.status = 'accepted';
+          appointment.status = AppointmentStatus.Accepted;
           this.notify(
             appointment,
             'accepted',
@@ -258,10 +270,10 @@ export class SellerAppointmentsComponent implements OnInit {
 
   decline(appointment: EnrichedAppointment): void {
     this.appointmentService
-      .updateAppointment(appointment.id!, { status: 'declined' })
+      .updateAppointment(appointment.id!, { status: AppointmentStatus.Declined })
       .subscribe({
         next: () => {
-          appointment.status = 'declined';
+          appointment.status = AppointmentStatus.Declined;
           this.notify(
             appointment,
             'declined',
@@ -314,8 +326,8 @@ export class SellerAppointmentsComponent implements OnInit {
           return this.appointmentService.updateAppointment(appointment.id!, {
             date: formattedDate,
             time,
-            status: 'pending',
-            rescheduledBy: 'seller',
+            status: AppointmentStatus.Pending,
+            rescheduledBy: AppointmentActor.Seller,
           });
         }),
       )
@@ -324,8 +336,8 @@ export class SellerAppointmentsComponent implements OnInit {
           if (!result) return;
           appointment.date = formattedDate;
           appointment.time = time;
-          appointment.status = 'pending';
-          appointment.rescheduledBy = 'seller';
+          appointment.status = AppointmentStatus.Pending;
+          appointment.rescheduledBy = AppointmentActor.Seller;
           appointment.isRescheduling = false;
           appointment.rescheduleForm = undefined;
           this.notify(
@@ -356,17 +368,17 @@ export class SellerAppointmentsComponent implements OnInit {
     return this.getForStatus(status).length;
   }
 
-  getStatusClass(status: string): string {
-    return `status-${this.normalizeStatus(status as any)}`;
+  getStatusClass(status: AppointmentStatus): string {
+    return `status-${this.normalizeStatus(status)}`;
   }
 
-  getStatusLabel(status: string): string {
+  getStatusLabel(status: AppointmentStatus): string {
     switch (status) {
-      case 'accepted':
+      case AppointmentStatus.Accepted:
         return 'Confirmed';
-      case 'declined':
+      case AppointmentStatus.Declined:
         return 'Declined';
-      case 'completed':
+      case AppointmentStatus.Completed:
         return 'Completed';
       default:
         return status.charAt(0).toUpperCase() + status.slice(1);
@@ -374,11 +386,14 @@ export class SellerAppointmentsComponent implements OnInit {
   }
 
   isPending(a: EnrichedAppointment): boolean {
-    return this.normalizeStatus(a.status) === 'pending';
+    return this.normalizeStatus(a.status) === AppointmentStatus.Pending;
   }
 
   isAwaitingBuyerConfirmation(a: EnrichedAppointment): boolean {
-    return a.status === 'pending' && a.rescheduledBy === 'seller';
+    return (
+      a.status === AppointmentStatus.Pending &&
+      a.rescheduledBy === AppointmentActor.Seller
+    );
   }
 
   canSellerRespond(a: EnrichedAppointment): boolean {
@@ -386,7 +401,20 @@ export class SellerAppointmentsComponent implements OnInit {
   }
 
   isConfirmed(a: EnrichedAppointment): boolean {
-    return this.normalizeStatus(a.status) === 'confirmed';
+    return this.normalizeStatus(a.status) === AppointmentStatus.Confirmed;
+  }
+
+  getSlotConflictCount(appointment: EnrichedAppointment): number {
+    if (!this.isSlotHeld(appointment)) return 0;
+
+    return this.appointments.filter(
+      (item) =>
+        item.id !== appointment.id &&
+        item.propertyId === appointment.propertyId &&
+        item.date === appointment.date &&
+        item.time === appointment.time &&
+        this.isSlotHeld(item),
+    ).length;
   }
 
   getMonth(date: string): string {
@@ -464,18 +492,28 @@ export class SellerAppointmentsComponent implements OnInit {
     });
   }
 
-  private normalizeStatus(status: string): Exclude<AppointmentFilter, 'all'> {
+  private normalizeStatus(
+    status: AppointmentStatus,
+  ): Exclude<AppointmentFilter, 'all'> {
     switch (status) {
-      case 'accepted':
-      case 'confirmed':
-      case 'completed':
-        return 'confirmed';
-      case 'declined':
-      case 'cancelled':
-        return 'cancelled';
+      case AppointmentStatus.Accepted:
+      case AppointmentStatus.Confirmed:
+      case AppointmentStatus.Completed:
+        return AppointmentStatus.Confirmed;
+      case AppointmentStatus.Declined:
+      case AppointmentStatus.Cancelled:
+        return AppointmentStatus.Cancelled;
       default:
-        return 'pending';
+        return AppointmentStatus.Pending;
     }
+  }
+
+  private isSlotHeld(appointment: EnrichedAppointment): boolean {
+    return ![
+      AppointmentStatus.Cancelled,
+      AppointmentStatus.Declined,
+      AppointmentStatus.Completed,
+    ].includes(appointment.status);
   }
 
   private sortAppointments(list: EnrichedAppointment[]): EnrichedAppointment[] {

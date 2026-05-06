@@ -12,6 +12,8 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import {
   AppointmentService,
   Appointment,
+  AppointmentActor,
+  AppointmentStatus,
 } from '../../../core/services/appointment.service';
 import { PropertyService } from '../../../core/services/property.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -24,8 +26,11 @@ import { ListingType, PropertyType } from '../../../core/models/property.model';
 import { PriceFormatPipe } from '../../../shared/pipes/price-format.pipe';
 import { PropertyTypePipe } from '../../../shared/pipes/property-type.pipe';
 
-type AppointmentStatus = Appointment['status'] | 'accepted' | 'declined';
-type AppointmentFilter = 'all' | 'pending' | 'confirmed' | 'cancelled';
+type AppointmentFilter =
+  | 'all'
+  | AppointmentStatus.Pending
+  | AppointmentStatus.Confirmed
+  | AppointmentStatus.Cancelled;
 
 interface AppointmentWithProperty extends Omit<Appointment, 'status'> {
   status: AppointmentStatus;
@@ -71,19 +76,19 @@ interface UserSummary {
   styleUrl: './buyer-appointments.component.scss',
 })
 export class BuyerAppointmentsComponent implements OnInit {
-  private appointmentService = inject(AppointmentService);
-  private propertyService = inject(PropertyService);
-  private authService = inject(AuthService);
-  private notificationService = inject(NotificationService);
-  private snackBar = inject(MatSnackBar);
-  private http = inject(HttpClient);
+  private readonly appointmentService = inject(AppointmentService);
+  private readonly propertyService = inject(PropertyService);
+  private readonly authService = inject(AuthService);
+  private readonly notificationService = inject(NotificationService);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly http = inject(HttpClient);
   private sellerNames = new Map<number, string>();
   private sellerRescheduledAppointmentIds = new Set<number>();
   readonly appointmentTabs: AppointmentTab[] = [
     { label: 'All', status: 'all', icon: 'event_note' },
-    { label: 'Pending', status: 'pending', icon: 'schedule' },
-    { label: 'Confirmed', status: 'confirmed', icon: 'verified' },
-    { label: 'Cancelled', status: 'cancelled', icon: 'block' },
+    { label: 'Pending', status: AppointmentStatus.Pending, icon: 'schedule' },
+    { label: 'Confirmed', status: AppointmentStatus.Confirmed, icon: 'verified' },
+    { label: 'Cancelled', status: AppointmentStatus.Cancelled, icon: 'block' },
   ];
 
   readonly fallbackImage =
@@ -109,16 +114,16 @@ export class BuyerAppointmentsComponent implements OnInit {
   }
 
   get pendingCount(): number {
-    return this.getTabCount('pending');
+    return this.getTabCount(AppointmentStatus.Pending);
   }
 
   get confirmedCount(): number {
-    return this.getTabCount('confirmed');
+    return this.getTabCount(AppointmentStatus.Confirmed);
   }
 
   get nextAppointmentLabel(): string {
     const nextAppointment = this.appointments.find(
-      (a) => this.normalizeStatus(a.status) !== 'cancelled',
+      (a) => this.normalizeStatus(a.status) !== AppointmentStatus.Cancelled,
     );
 
     return nextAppointment
@@ -137,7 +142,8 @@ export class BuyerAppointmentsComponent implements OnInit {
         this.sellerRescheduledAppointmentIds = new Set(
           notifications
             .filter((notification) => notification.type === 'rescheduled')
-            .map((notification) => notification.appointmentId),
+            .map((notification) => notification.appointmentId)
+            .filter((id): id is number => id !== undefined),
         );
         this.applyRescheduleHints();
         this.notifications = notifications.filter(
@@ -203,12 +209,12 @@ export class BuyerAppointmentsComponent implements OnInit {
     if (!id) return;
 
     this.appointmentService
-      .updateAppointment(id, { status: 'cancelled' })
+      .updateAppointment(id, { status: AppointmentStatus.Cancelled })
       .subscribe({
         next: () => {
           const appointment = this.appointments.find((a) => a.id === id);
           if (appointment) {
-            appointment.status = 'cancelled';
+            appointment.status = AppointmentStatus.Cancelled;
             this.notifySeller(
               appointment,
               'cancelled',
@@ -236,13 +242,13 @@ export class BuyerAppointmentsComponent implements OnInit {
 
     this.appointmentService
       .updateAppointment(appointment.id, {
-        status: 'accepted',
-        rescheduledBy: 'buyer',
+        status: AppointmentStatus.Accepted,
+        rescheduledBy: AppointmentActor.Buyer,
       })
       .subscribe({
         next: () => {
-          appointment.status = 'accepted';
-          appointment.rescheduledBy = 'buyer';
+          appointment.status = AppointmentStatus.Accepted;
+          appointment.rescheduledBy = AppointmentActor.Buyer;
           this.notifySeller(
             appointment,
             'accepted',
@@ -288,14 +294,14 @@ export class BuyerAppointmentsComponent implements OnInit {
 
   getStatusLabel(status: AppointmentStatus): string {
     switch (status) {
-      case 'accepted':
-      case 'confirmed':
+      case AppointmentStatus.Accepted:
+      case AppointmentStatus.Confirmed:
         return 'Confirmed';
-      case 'declined':
+      case AppointmentStatus.Declined:
         return 'Declined';
-      case 'cancelled':
+      case AppointmentStatus.Cancelled:
         return 'Cancelled';
-      case 'completed':
+      case AppointmentStatus.Completed:
         return 'Completed';
       default:
         return 'Pending';
@@ -332,15 +338,16 @@ export class BuyerAppointmentsComponent implements OnInit {
 
   isCancelable(appointment: AppointmentWithProperty): boolean {
     return (
-      appointment.status === 'pending' ||
-      appointment.status === 'accepted' ||
-      appointment.status === 'confirmed'
+      appointment.status === AppointmentStatus.Pending ||
+      appointment.status === AppointmentStatus.Accepted ||
+      appointment.status === AppointmentStatus.Confirmed
     );
   }
 
   isConfirmable(appointment: AppointmentWithProperty): boolean {
     return (
-      appointment.status === 'pending' && appointment.rescheduledBy === 'seller'
+      appointment.status === AppointmentStatus.Pending &&
+      appointment.rescheduledBy === AppointmentActor.Seller
     );
   }
 
@@ -348,15 +355,15 @@ export class BuyerAppointmentsComponent implements OnInit {
     status: AppointmentStatus,
   ): Exclude<AppointmentFilter, 'all'> {
     switch (status) {
-      case 'accepted':
-      case 'confirmed':
-      case 'completed':
-        return 'confirmed';
-      case 'declined':
-      case 'cancelled':
-        return 'cancelled';
+      case AppointmentStatus.Accepted:
+      case AppointmentStatus.Confirmed:
+      case AppointmentStatus.Completed:
+        return AppointmentStatus.Confirmed;
+      case AppointmentStatus.Declined:
+      case AppointmentStatus.Cancelled:
+        return AppointmentStatus.Cancelled;
       default:
-        return 'pending';
+        return AppointmentStatus.Pending;
     }
   }
 
@@ -441,11 +448,11 @@ export class BuyerAppointmentsComponent implements OnInit {
     this.appointments.forEach((appointment) => {
       if (
         appointment.id &&
-        appointment.status === 'pending' &&
+        appointment.status === AppointmentStatus.Pending &&
         !appointment.rescheduledBy &&
         this.sellerRescheduledAppointmentIds.has(appointment.id)
       ) {
-        appointment.rescheduledBy = 'seller';
+        appointment.rescheduledBy = AppointmentActor.Seller;
       }
     });
   }

@@ -14,6 +14,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../../core/services/auth.service';
+import { UserRole } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-login',
@@ -33,9 +34,9 @@ import { AuthService } from '../../../core/services/auth.service';
   styleUrl: './login.component.scss',
 })
 export class LoginComponent {
-  private fb = inject(FormBuilder);
-  private authService = inject(AuthService);
-  private router = inject(Router);
+  private readonly fb = inject(FormBuilder);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -79,15 +80,15 @@ export class LoginComponent {
     });
   }
 
-  private redirectByRole(role: string): void {
+  private redirectByRole(role: UserRole): void {
     switch (role) {
-      case 'seller':
+      case UserRole.Seller:
         this.router.navigate(['/seller/dashboard']);
         break;
-      case 'admin':
+      case UserRole.Admin:
         this.router.navigate(['/admin/dashboard']);
         break;
-      case 'buyer':
+      case UserRole.Buyer:
       default:
         this.router.navigate(['/buyer/home']);
     }

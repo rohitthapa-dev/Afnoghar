@@ -5,10 +5,11 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 export interface Notification {
   id: number;
   userId: number;
-  type: 'accepted' | 'declined' | 'rescheduled' | 'booked' | 'cancelled';
+  type: 'accepted' | 'declined' | 'rescheduled' | 'booked' | 'cancelled' | 'property_submitted' | 'property_approved' | 'property_rejected';
   title: string;
   message: string;
-  appointmentId: number;
+  appointmentId?: number;
+  propertyId?: number;
   propertyTitle: string;
   read: boolean;
   createdAt: string;

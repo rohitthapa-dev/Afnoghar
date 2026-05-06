@@ -10,11 +10,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import {
-  NonNullableFormBuilder,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { of, switchMap } from 'rxjs';
 import * as L from 'leaflet';
@@ -62,12 +58,12 @@ export class SellerPropertyUploadComponent
 {
   @ViewChild('locationMap') locationMapContainer?: ElementRef<HTMLDivElement>;
 
-  private fb = inject(NonNullableFormBuilder);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  private authService = inject(AuthService);
-  private propertyService = inject(PropertyService);
-  private snackBar = inject(MatSnackBar);
+  private readonly fb = inject(FormBuilder);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
+  private readonly propertyService = inject(PropertyService);
+  private readonly snackBar = inject(MatSnackBar);
   private locationMap?: L.Map;
   private locationMarker?: L.Marker;
   private mapInitTimeout?: ReturnType<typeof setTimeout>;
@@ -77,15 +73,15 @@ export class SellerPropertyUploadComponent
   private readonly tileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 
   readonly propertyTypes: SelectOption<PropertyType>[] = [
-    { label: 'House', value: 'house' },
-    { label: 'Apartment', value: 'apartment' },
-    { label: 'Land', value: 'land' },
-    { label: 'Commercial', value: 'commercial' },
+    { label: 'House', value: PropertyType.House },
+    { label: 'Apartment', value: PropertyType.Apartment },
+    { label: 'Land', value: PropertyType.Land },
+    { label: 'Commercial', value: PropertyType.Commercial },
   ];
 
   readonly listingTypes: SelectOption<ListingType>[] = [
-    { label: 'For Sale', value: 'sale' },
-    { label: 'For Rent', value: 'rent' },
+    { label: 'For Sale', value: ListingType.Sale },
+    { label: 'For Rent', value: ListingType.Rent },
   ];
 
   readonly loading = signal(false);
@@ -100,23 +96,56 @@ export class SellerPropertyUploadComponent
     this.isEditMode() ? 'Edit Property' : 'Upload Property',
   );
   readonly form = this.fb.group({
-    title: ['', [Validators.required, Validators.minLength(6)]],
-    description: ['', [Validators.required, Validators.minLength(24)]],
-    type: this.fb.control<PropertyType>('house', Validators.required),
-    listingType: this.fb.control<ListingType>('sale', Validators.required),
-    price: [0, [Validators.required, Validators.min(1)]],
-    area: [0, [Validators.required, Validators.min(1)]],
-    aana: [0, [Validators.min(0)]],
-    bedrooms: [0, [Validators.min(0)]],
-    bathrooms: [0, [Validators.min(0)]],
-    floors: [0, [Validators.min(0)]],
-    district: ['', Validators.required],
-    city: ['', Validators.required],
-    address: ['', Validators.required],
-    lat: [27.7172, Validators.required],
-    lng: [85.324, Validators.required],
-    imagesRaw: [''],
-    featuresRaw: [''],
+    title: this.fb.control('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(6)],
+    }),
+    description: this.fb.control('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(24)],
+    }),
+    type: this.fb.control<PropertyType>(PropertyType.House, {
+      nonNullable: true,
+      validators: Validators.required,
+    }),
+    listingType: this.fb.control<ListingType>(ListingType.Sale, {
+      nonNullable: true,
+      validators: Validators.required,
+    }),
+    price: this.fb.control<number | null>(null, [
+      Validators.required,
+      Validators.min(1),
+    ]),
+    area: this.fb.control<number | null>(null, [
+      Validators.required,
+      Validators.min(1),
+    ]),
+    aana: this.fb.control<number | null>(null, [Validators.min(0)]),
+    bedrooms: this.fb.control<number | null>(null, [Validators.min(0)]),
+    bathrooms: this.fb.control<number | null>(null, [Validators.min(0)]),
+    floors: this.fb.control<number | null>(null, [Validators.min(0)]),
+    district: this.fb.control('', {
+      nonNullable: true,
+      validators: Validators.required,
+    }),
+    city: this.fb.control('', {
+      nonNullable: true,
+      validators: Validators.required,
+    }),
+    address: this.fb.control('', {
+      nonNullable: true,
+      validators: Validators.required,
+    }),
+    lat: this.fb.control(27.7172, {
+      nonNullable: true,
+      validators: Validators.required,
+    }),
+    lng: this.fb.control(85.324, {
+      nonNullable: true,
+      validators: Validators.required,
+    }),
+    imagesRaw: this.fb.control('', { nonNullable: true }),
+    featuresRaw: this.fb.control('', { nonNullable: true }),
   });
 
   get selectedLocationLabel(): string {
@@ -285,12 +314,12 @@ export class SellerPropertyUploadComponent
       description: value.description.trim(),
       type: value.type,
       listingType: value.listingType,
-      price: Number(value.price),
-      area: Number(value.area),
-      aana: Number(value.aana),
-      bedrooms: Number(value.bedrooms),
-      bathrooms: Number(value.bathrooms),
-      floors: Number(value.floors),
+      price: this.toNumber(value.price),
+      area: this.toNumber(value.area),
+      aana: this.toNumber(value.aana),
+      bedrooms: this.toNumber(value.bedrooms),
+      bathrooms: this.toNumber(value.bathrooms),
+      floors: this.toNumber(value.floors),
       location: {
         district: value.district.trim(),
         city: value.city.trim(),
@@ -308,6 +337,10 @@ export class SellerPropertyUploadComponent
       .split(/[\n,]/)
       .map((item) => item.trim())
       .filter(Boolean);
+  }
+
+  private toNumber(value: number | null | undefined): number {
+    return Number(value ?? 0);
   }
 
   private hasImages(): boolean {
@@ -335,15 +368,11 @@ export class SellerPropertyUploadComponent
           this.revokeSelectedPreviews();
           this.selectedFiles.set([]);
           this.selectedFilePreviews.set([]);
-          this.snackBar.open(
-            wasEditing ? 'Listing updated' : 'Listing submitted for review',
-            'Close',
-            {
-              duration: 3000,
-              horizontalPosition: 'start',
-              verticalPosition: 'bottom',
-            },
-          );
+          this.snackBar.open(this.getSuccessMessage(property, wasEditing), 'Close', {
+            duration: 3000,
+            horizontalPosition: 'start',
+            verticalPosition: 'bottom',
+          });
           this.router.navigate(['/seller/properties']);
         },
         error: () => {
@@ -359,6 +388,12 @@ export class SellerPropertyUploadComponent
 
   private revokeSelectedPreviews(): void {
     this.selectedFilePreviews().forEach((url) => URL.revokeObjectURL(url));
+  }
+
+  private getSuccessMessage(property: Property, wasEditing: boolean): string {
+    if (!wasEditing) return 'Listing submitted for review';
+    if (property.status === 'pending') return 'Listing resubmitted for review';
+    return 'Listing updated';
   }
 
   private initLocationMap(): void {

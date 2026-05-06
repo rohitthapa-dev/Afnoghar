@@ -222,10 +222,11 @@
 .section-title {
   font-family: $font-heading;
   font-size: $text-3xl;
-  font-weight: $font-bold;
+  font-weight: $font-extrabold;
   color: $text-primary;
   margin-bottom: $space-3;
-  letter-spacing: $tracking-tight;
+  line-height: $leading-tight;
+  letter-spacing: $tracking-normal;
 }
 
 .section-subtitle {

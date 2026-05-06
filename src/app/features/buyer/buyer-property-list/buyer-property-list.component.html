@@ -1,17 +1,28 @@
 <div class="property-list-page">
   <div class="page-header">
-    <h1 class="page-title">Properties</h1>
-    <p class="page-subtitle">Browse all available properties in Nepal</p>
+    <div>
+      <span class="section-kicker">Curated Residences</span>
+      <h1 class="page-title">Properties</h1>
+      <p class="page-subtitle">
+        Browse refined homes, land, and commercial spaces across Nepal.
+      </p>
+    </div>
+    <div class="results-pill">
+      <mat-icon>home_work</mat-icon>
+      <span>{{ filteredProperties.length }} available</span>
+    </div>
   </div>
 
   <div class="content-layout">
-    <!-- Filter Sidebar -->
-    <div class="filter-sidebar">
+    <div class="filter-sidebar" [class.dropdown-open]="priceDropdownOpen">
       <div class="filter-header">
-        <h3>Filters</h3>
+        <div>
+          <span>Refine Search</span>
+          <h3>Filters</h3>
+        </div>
         @if (hasActiveFilters) {
-          <button mat-button color="primary" (click)="clearFilters()">
-            Clear All
+          <button mat-button class="clear-button" (click)="clearFilters()">
+            Clear
           </button>
         }
       </div>
@@ -59,39 +70,124 @@
         </mat-form-field>
       </div>
 
-      <div class="filter-section">
+      <div class="filter-section price-filter">
         <label class="filter-label">Price Range</label>
-        <div class="price-range">
-          <mat-form-field appearance="outline" class="half-width">
-            <mat-label>Min</mat-label>
-            <input
-              matInput
-              type="number"
-              [(ngModel)]="minPrice"
-              (ngModelChange)="onFilterChange()"
-              placeholder="Min"
-            />
-          </mat-form-field>
-          <mat-form-field appearance="outline" class="half-width">
-            <mat-label>Max</mat-label>
-            <input
-              matInput
-              type="number"
-              [(ngModel)]="maxPrice"
-              (ngModelChange)="onFilterChange()"
-              placeholder="Max"
-            />
-          </mat-form-field>
-        </div>
+        <button
+          type="button"
+          class="price-dropdown-trigger"
+          [class.active]="
+            priceDropdownOpen || minPrice != null || maxPrice != null
+          "
+          (click)="togglePriceDropdown()"
+        >
+          <span>{{ priceRangeLabel }}</span>
+          <mat-icon>
+            {{ priceDropdownOpen ? "expand_less" : "expand_more" }}
+          </mat-icon>
+        </button>
+
+        @if (priceDropdownOpen) {
+          <div class="price-dropdown-panel">
+            <div class="price-dropdown-header">
+              <div>
+                <span>List Price</span>
+                <strong>{{ tempPriceRangeLabel }}</strong>
+              </div>
+              @if (minPrice != null || maxPrice != null) {
+                <button type="button" (click)="clearPriceFilter()">
+                  Reset
+                </button>
+              }
+            </div>
+
+            <div class="price-histogram" aria-hidden="true">
+              @for (bar of priceHistogram; track $index) {
+                <span
+                  class="price-bar"
+                  [class.active]="bar.active"
+                  [style.height.%]="bar.height"
+                ></span>
+              }
+            </div>
+
+            <div
+              class="price-slider-shell"
+              [style.--range-start]="tempPriceStartPercent + '%'"
+              [style.--range-end]="tempPriceEndPercent + '%'"
+            >
+              <input
+                class="price-range-input min-input"
+                type="range"
+                [min]="availableMinPrice"
+                [max]="availableMaxPrice"
+                [step]="priceStep"
+                [value]="tempPriceSliderMin"
+                aria-label="Minimum price"
+                (input)="onTempMinPriceInput($event)"
+              />
+              <input
+                class="price-range-input max-input"
+                type="range"
+                [min]="availableMinPrice"
+                [max]="availableMaxPrice"
+                [step]="priceStep"
+                [value]="tempPriceSliderMax"
+                aria-label="Maximum price"
+                (input)="onTempMaxPriceInput($event)"
+              />
+            </div>
+
+            <div class="price-limits">
+              <span>{{ formatPrice(availableMinPrice) }}</span>
+              <span>{{ formatPrice(availableMaxPrice) }}+</span>
+            </div>
+
+            <div class="price-range">
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Min</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  [ngModel]="tempMinPrice"
+                  (ngModelChange)="
+                    onTempMinPriceChange($event || availableMinPrice)
+                  "
+                  placeholder="No min"
+                />
+              </mat-form-field>
+
+              <span class="price-divider">-</span>
+
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Max</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  [ngModel]="tempMaxPrice"
+                  (ngModelChange)="
+                    onTempMaxPriceChange($event || availableMaxPrice)
+                  "
+                  placeholder="No max"
+                />
+              </mat-form-field>
+            </div>
+
+            <button
+              mat-flat-button
+              type="button"
+              class="price-apply-button"
+              (click)="applyPriceFilter()"
+            >
+              Done
+            </button>
+          </div>
+        }
       </div>
 
       <div class="filter-section">
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Bedrooms</mat-label>
-          <mat-select
-            [(value)]="bedrooms"
-            (selectionChange)="onFilterChange()"
-          >
+          <mat-select [(value)]="bedrooms" (selectionChange)="onFilterChange()">
             <mat-option [value]="null">Any</mat-option>
             <mat-option [value]="1">1+</mat-option>
             <mat-option [value]="2">2+</mat-option>
@@ -104,13 +200,28 @@
 
       @if (hasActiveFilters) {
         <div class="active-filters">
-          <span class="filter-count">{{ filteredProperties.length }} properties found</span>
+          <mat-icon>tune</mat-icon>
+          <span class="filter-count">
+            {{ filteredProperties.length }} properties found
+          </span>
         </div>
       }
     </div>
 
-    <!-- Properties Content -->
     <div class="properties-content">
+      <div class="content-toolbar">
+        <div>
+          <span>Showing</span>
+          <strong>{{ filteredProperties.length }} properties</strong>
+        </div>
+
+        @if (selectedListingType) {
+          <mat-chip class="listing-chip">
+            {{ selectedListingType === "sale" ? "For Sale" : "For Rent" }}
+          </mat-chip>
+        }
+      </div>
+
       @if (loading) {
         <div class="loading-container">
           <mat-spinner diameter="48"></mat-spinner>
@@ -119,7 +230,9 @@
       } @else if (error) {
         <div class="error-container">
           <p>{{ error }}</p>
-          <button mat-stroked-button (click)="loadProperties()">Try Again</button>
+          <button mat-stroked-button (click)="loadProperties()">
+            Try Again
+          </button>
         </div>
       } @else {
         @if (filteredProperties.length === 0) {
@@ -127,8 +240,13 @@
             <mat-icon>search_off</mat-icon>
             <h3>No properties found</h3>
             <p>Try adjusting your filters</p>
+
             @if (hasActiveFilters) {
-              <button mat-raised-button color="primary" (click)="clearFilters()">
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="clearFilters()"
+              >
                 Clear Filters
               </button>
             }
@@ -141,15 +259,39 @@
           </div>
 
           @if (totalProperties > pageSize) {
-            <mat-paginator
-              [length]="totalProperties"
-              [pageSize]="pageSize"
-              [pageIndex]="pageIndex"
-              [pageSizeOptions]="[6, 12, 15]"
-              (page)="onPageChange($event)"
-              showFirstLastButtons
-            >
-            </mat-paginator>
+            <nav class="pagination-shell" aria-label="Property pagination">
+              <button
+                type="button"
+                class="pagination-button"
+                [disabled]="pageIndex === 0"
+                (click)="previousPage()"
+              >
+                Previous
+              </button>
+
+              <div class="pagination-pages" aria-label="Pages">
+                @for (page of visiblePages; track page) {
+                  <button
+                    type="button"
+                    class="pagination-page"
+                    [class.active]="page === currentPage"
+                    [attr.aria-current]="page === currentPage ? 'page' : null"
+                    (click)="goToPage(page)"
+                  >
+                    {{ page }}
+                  </button>
+                }
+              </div>
+
+              <button
+                type="button"
+                class="pagination-button"
+                [disabled]="currentPage === totalPages"
+                (click)="nextPage()"
+              >
+                Next
+              </button>
+            </nav>
           }
         }
       }

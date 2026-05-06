@@ -178,6 +178,14 @@
                           </div>
                         }
 
+                        @if (getSlotConflictCount(appointment) > 0) {
+                          <div class="slot-conflict-note">
+                            <mat-icon>event_busy</mat-icon>
+                            {{ getSlotConflictCount(appointment) + 1 }}
+                            requests are holding this same time slot.
+                          </div>
+                        }
+
                         @if (
                           appointment.isRescheduling &&
                           appointment.rescheduleForm

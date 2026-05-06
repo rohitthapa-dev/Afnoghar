@@ -15,6 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
 import { AuthService } from '../../../core/services/auth.service';
+import { UserRole } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-register',
@@ -35,9 +36,9 @@ import { AuthService } from '../../../core/services/auth.service';
   styleUrl: './register.component.scss',
 })
 export class RegisterComponent {
-  private fb = inject(FormBuilder);
-  private authService = inject(AuthService);
-  private router = inject(Router);
+  private readonly fb = inject(FormBuilder);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   registerForm: FormGroup = this.fb.group(
     {
@@ -49,7 +50,7 @@ export class RegisterComponent {
       ],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
-      role: ['buyer', [Validators.required]],
+      role: [UserRole.Buyer, [Validators.required]],
       terms: [false, [Validators.requiredTrue]],
     },
     { validators: this.passwordMatchValidator },
@@ -137,15 +138,15 @@ export class RegisterComponent {
       });
   }
 
-  private redirectByRole(role: string): void {
+  private redirectByRole(role: UserRole): void {
     switch (role) {
-      case 'seller':
+      case UserRole.Seller:
         this.router.navigate(['/seller/dashboard']);
         break;
-      case 'admin':
+      case UserRole.Admin:
         this.router.navigate(['/admin/dashboard']);
         break;
-      case 'buyer':
+      case UserRole.Buyer:
       default:
         this.router.navigate(['/buyer/home']);
     }

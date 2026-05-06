@@ -77,6 +77,18 @@ export class BuyerPropertyDetailComponent implements OnInit {
   submitting = false;
   appointmentSuccess = false;
   minAppointmentDate = new Date();
+  unavailableSlots = new Set<string>();
+  readonly timeSlots = [
+    '09:00 AM',
+    '10:00 AM',
+    '11:00 AM',
+    '12:00 PM',
+    '01:00 PM',
+    '02:00 PM',
+    '03:00 PM',
+    '04:00 PM',
+    '05:00 PM',
+  ];
 
   readonly fallbackImage =
     'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200';
@@ -143,6 +155,11 @@ export class BuyerPropertyDetailComponent implements OnInit {
       return;
     }
     this.loadProperty(id);
+
+    this.appointmentForm.get('date')?.valueChanges.subscribe(() => {
+      this.refreshUnavailableSlots();
+      this.clearUnavailableSelectedTime();
+    });
   }
 
   private loadProperty(id: number): void {
@@ -154,6 +171,7 @@ export class BuyerPropertyDetailComponent implements OnInit {
         this.property = property;
         this.loading = false;
         this.loadSellerInfo(property.sellerId);
+        this.refreshUnavailableSlots();
       },
       error: () => {
         this.error = 'Failed to load property details. Please try again.';
@@ -249,6 +267,21 @@ export class BuyerPropertyDetailComponent implements OnInit {
     );
     const selectedTime = this.appointmentForm.value.time;
 
+    if (this.isTimeSlotUnavailable(selectedTime)) {
+      this.submitting = false;
+      this.appointmentForm.get('time')?.setErrors({ slotTaken: true });
+      this.snackBar.open(
+        'This time slot is already full. Please choose another time.',
+        'Close',
+        {
+          duration: 4000,
+          horizontalPosition: 'start',
+          verticalPosition: 'bottom',
+        },
+      );
+      return;
+    }
+
     const appointment = {
       propertyId: this.property.id,
       userId: userId,
@@ -277,15 +310,73 @@ export class BuyerPropertyDetailComponent implements OnInit {
           verticalPosition: 'bottom',
         });
       },
-      error: () => {
+      error: (errorResponse) => {
         this.submitting = false;
-        this.snackBar.open('Failed to book appointment. Please try again.', 'Close', {
-          duration: 5000,
-          horizontalPosition: 'start',
-          verticalPosition: 'bottom',
-        });
+        this.refreshUnavailableSlots();
+        this.snackBar.open(
+          errorResponse?.error?.message ||
+            'Failed to book appointment. Please try again.',
+          'Close',
+          {
+            duration: 5000,
+            horizontalPosition: 'start',
+            verticalPosition: 'bottom',
+          },
+        );
       },
     });
+  }
+
+  isTimeSlotUnavailable(time: string): boolean {
+    const date = this.getSelectedAppointmentDate();
+    if (!date || !time) return false;
+    return this.unavailableSlots.has(`${date}|${time}`);
+  }
+
+  private refreshUnavailableSlots(): void {
+    if (!this.property) return;
+    const date = this.getSelectedAppointmentDate();
+    if (!date) {
+      this.unavailableSlots = new Set();
+      return;
+    }
+
+    this.appointmentService.getAppointments({
+      propertyId: this.property.id,
+      date,
+    }).subscribe({
+      next: (appointments) => {
+        const unavailable = appointments
+          .filter(
+            (appointment) =>
+              appointment.propertyId === this.property!.id &&
+              appointment.date === date &&
+              this.isHoldingAppointmentStatus(appointment.status),
+          )
+          .map((appointment) => `${appointment.date}|${appointment.time}`);
+
+        this.unavailableSlots = new Set(unavailable);
+        this.clearUnavailableSelectedTime();
+      },
+      error: () => {
+        this.unavailableSlots = new Set();
+      },
+    });
+  }
+
+  private clearUnavailableSelectedTime(): void {
+    const selectedTime = this.appointmentForm.get('time')?.value;
+    if (!selectedTime || !this.isTimeSlotUnavailable(selectedTime)) return;
+    this.appointmentForm.get('time')?.reset();
+  }
+
+  private getSelectedAppointmentDate(): string {
+    const value = this.appointmentForm.get('date')?.value;
+    return value ? this.formatAppointmentDate(value) : '';
+  }
+
+  private isHoldingAppointmentStatus(status: string): boolean {
+    return !['cancelled', 'declined', 'completed'].includes(status);
   }
 
   private notifySellerOfBooking(

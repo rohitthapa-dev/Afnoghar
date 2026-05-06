@@ -20,11 +20,18 @@ export class PriceFormatPipe implements PipeTransform {
       const lakhs = value / 100000;
       if (lakhs >= 100) {
         const crores = lakhs / 100;
-        return `Rs. ${crores} Crores`;
+        return `Rs. ${this.formatCompactAmount(crores)} Crores`;
       }
-      return `Rs. ${lakhs} Lakhs`;
+      return `Rs. ${this.formatCompactAmount(lakhs)} Lakhs`;
     }
 
     return `Rs. ${value.toLocaleString('en-NP')}`;
+  }
+
+  private formatCompactAmount(value: number): string {
+    return value.toLocaleString('en-NP', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    });
   }
 }

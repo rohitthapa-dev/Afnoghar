@@ -1,14 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map, of } from 'rxjs';
-import { Property } from '../models/property.model';
+import { Property, PropertyStatus } from '../models/property.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PropertyService {
-  private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000';
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = 'http://localhost:3000';
 
   getProperties(): Observable<Property[]> {
     return this.http.get<Property[]>(`${this.apiUrl}/properties`);
@@ -52,7 +52,7 @@ export class PropertyService {
       .pipe(
         map((properties) =>
           properties
-            .filter((p) => p.status === 'approved' && p.isFeatured === true)
+            .filter((p) => p.status === PropertyStatus.Approved && p.isFeatured === true)
             .slice(0, limit),
         ),
       );
@@ -62,7 +62,9 @@ export class PropertyService {
     return this.http
       .get<Property[]>(`${this.apiUrl}/properties`)
       .pipe(
-        map((properties) => properties.filter((p) => p.status === 'approved')),
+        map((properties) =>
+          properties.filter((p) => p.status === PropertyStatus.Approved),
+        ),
       );
   }
 
@@ -72,7 +74,9 @@ export class PropertyService {
       .get<Property[]>(`${this.apiUrl}/properties`)
       .pipe(
         map((properties) =>
-          properties.filter((p) => ids.includes(p.id) && p.status === 'approved')
+          properties.filter(
+            (p) => ids.includes(p.id) && p.status === PropertyStatus.Approved,
+          )
         ),
       );
   }

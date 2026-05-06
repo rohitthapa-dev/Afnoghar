@@ -22,7 +22,6 @@
         <ul>
           <li><a routerLink="/">Home</a></li>
           <li><a routerLink="/buyer/properties">Properties</a></li>
-          <li><a routerLink="/about">About</a></li>
           @if (isLoggedIn && userRole === "buyer") {
             <li><a routerLink="/buyer/favorites">Favorites</a></li>
             <li><a routerLink="/buyer/appointments">Appointments</a></li>

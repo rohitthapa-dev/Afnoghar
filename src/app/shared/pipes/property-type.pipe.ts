@@ -5,14 +5,14 @@ import { Pipe, PipeTransform } from '@angular/core';
   standalone: true,
 })
 export class PropertyTypePipe implements PipeTransform {
-  private typeMap: Record<string, string> = {
+  private readonly typeMap: Record<string, string> = {
     house: 'House',
     apartment: 'Apartment',
     land: 'Land',
     commercial: 'Commercial',
   };
 
-  private listingTypeMap: Record<string, string> = {
+  private readonly listingTypeMap: Record<string, string> = {
     sale: 'For Sale',
     rent: 'For Rent',
   };
