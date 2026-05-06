@@ -18,7 +18,7 @@
       "password": "seller123",
       "role": "seller",
       "phone": "9800000002",
-      "avatar": "http://localhost:3000/assets/avatars/user-2-1777919302265-test-avatar.jpg",
+      "avatar": "http://localhost:3000/assets/avatars/user-2-1778030860239-portrait-white-man-isolated-53876-40306.avif",
       "createdAt": "2025-01-02T00:00:00.000Z",
       "isActive": true
     },
@@ -29,7 +29,7 @@
       "password": "buyer123",
       "role": "buyer",
       "phone": "9800000003",
-      "avatar": "",
+      "avatar": "http://localhost:3000/assets/avatars/user-3-1777983049455-horizontal-portrait-smiling-happy-young-.avif",
       "createdAt": "2025-01-03T00:00:00.000Z",
       "isActive": true
     },
@@ -830,15 +830,25 @@
       "buyerId": 5,
       "status": "declined",
       "createdAt": "2026-05-04T12:12:29.740Z"
+    },
+    {
+      "id": 13,
+      "propertyId": 1,
+      "userId": 5,
+      "sellerId": 2,
+      "propertyTitle": "Modern Villa in Bansbari",
+      "buyerName": "Anita Rai",
+      "date": "2026-05-07",
+      "time": "11:00 AM",
+      "message": "",
+      "notes": "",
+      "buyerId": 5,
+      "status": "pending",
+      "createdAt": "2026-05-06T01:18:29.323Z",
+      "rescheduledBy": "seller"
     }
   ],
   "favorites": [
-    {
-      "id": 5,
-      "buyerId": 5,
-      "propertyId": 14,
-      "createdAt": "2025-03-24T00:00:00.000Z"
-    },
     {
       "id": 6,
       "buyerId": 3,
@@ -850,6 +860,12 @@
       "buyerId": 3,
       "propertyId": 5,
       "createdAt": "2026-05-04T12:26:25.544Z"
+    },
+    {
+      "id": 8,
+      "buyerId": 5,
+      "propertyId": 1,
+      "createdAt": "2026-05-06T01:18:34.994Z"
     }
   ],
   "notifications": [
@@ -1171,6 +1187,28 @@
       "propertyTitle": "Modern Villa in Bansbari",
       "read": true,
       "createdAt": "2026-05-04T12:29:08.956Z"
+    },
+    {
+      "id": 30,
+      "userId": 2,
+      "type": "booked",
+      "title": "New Tour Request",
+      "message": "Anita Rai requested a tour for Modern Villa in Bansbari on Thu, May 7, 2026 at 11:00 AM.",
+      "appointmentId": 13,
+      "propertyTitle": "Modern Villa in Bansbari",
+      "read": true,
+      "createdAt": "2026-05-06T01:18:29.331Z"
+    },
+    {
+      "id": 31,
+      "userId": 5,
+      "type": "rescheduled",
+      "title": "Appointment Rescheduled",
+      "message": "Your visit to Modern Villa in Bansbari has been rescheduled to Thu, May 7, 2026 at 11:00 AM.",
+      "appointmentId": 13,
+      "propertyTitle": "Modern Villa in Bansbari",
+      "read": false,
+      "createdAt": "2026-05-06T01:23:30.316Z"
     }
   ]
 }

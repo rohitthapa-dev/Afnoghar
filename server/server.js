@@ -5,6 +5,8 @@ const fs = require("fs");
 const path = require("path");
 const cors = require("cors");
 const multer = require("multer");
+require("dotenv").config({ path: path.join(__dirname, ".env") });
+const { GoogleGenAI, Type } = require("@google/genai");
 
 const app = express();
 const PORT = 3000;
@@ -15,6 +17,10 @@ const ASSETS_DIR = path.join(PUBLIC_DIR, "assets");
 const PROPERTY_ASSETS_DIR = path.join(ASSETS_DIR, "properties");
 const AVATAR_ASSETS_DIR = path.join(ASSETS_DIR, "avatars");
 const PUBLIC_ASSET_BASE_URL = "http://localhost:3000";
+
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
 
 fs.mkdirSync(PROPERTY_ASSETS_DIR, { recursive: true });
 fs.mkdirSync(AVATAR_ASSETS_DIR, { recursive: true });
@@ -57,6 +63,32 @@ const imageUrlToFilePath = (imageUrl) => {
 
 const deleteManagedImage = (imageUrl) => {
   const filePath = imageUrlToFilePath(imageUrl);
+  if (!filePath || !fs.existsSync(filePath)) return;
+  fs.unlinkSync(filePath);
+};
+
+const isManagedAvatar = (avatarUrl = "") => {
+  if (typeof avatarUrl !== "string") return false;
+
+  return (
+    avatarUrl.startsWith("/assets/avatars/") ||
+    avatarUrl.startsWith(`${PUBLIC_ASSET_BASE_URL}/assets/avatars/`)
+  );
+};
+
+const avatarUrlToFilePath = (avatarUrl) => {
+  if (!isManagedAvatar(avatarUrl)) return null;
+
+  const relativeUrl = avatarUrl.replace(PUBLIC_ASSET_BASE_URL, "");
+  const relativePath = relativeUrl.replace(/^\/assets\/avatars\//, "");
+  const filePath = path.normalize(path.join(AVATAR_ASSETS_DIR, relativePath));
+
+  if (!filePath.startsWith(AVATAR_ASSETS_DIR)) return null;
+  return filePath;
+};
+
+const deleteManagedAvatar = (avatarUrl) => {
+  const filePath = avatarUrlToFilePath(avatarUrl);
   if (!filePath || !fs.existsSync(filePath)) return;
   fs.unlinkSync(filePath);
 };
@@ -205,14 +237,17 @@ const avatarStorage = multer.diskStorage({
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "")
       .slice(0, 40);
-    cb(null, `user-${req.user.id}-${Date.now()}-${safeName || "avatar"}${extension}`);
+    cb(
+      null,
+      `user-${req.user.id}-${Date.now()}-${safeName || "avatar"}${extension}`,
+    );
   },
 });
 
 const uploadAvatar = multer({
   storage: avatarStorage,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB
+    fileSize: 5 * 1024 * 1024,
   },
   fileFilter: (req, file, cb) => {
     if (!file.mimetype.startsWith("image/")) {
@@ -289,7 +324,7 @@ app.post("/login", (req, res) => {
       user: userWithoutPassword,
     });
   } catch (error) {
-    console.error('Login error:', error);
+    console.error("Login error:", error);
     res.status(500).json({ message: "Server error during login." });
   }
 });
@@ -383,10 +418,14 @@ app.patch("/users/me", verifyToken, (req, res) => {
 
     if (password) {
       if (!currentPassword) {
-        return res.status(400).json({ message: "Current password is required to change password." });
+        return res.status(400).json({
+          message: "Current password is required to change password.",
+        });
       }
       if (currentPassword !== user.password) {
-        return res.status(401).json({ message: "Current password is incorrect." });
+        return res
+          .status(401)
+          .json({ message: "Current password is incorrect." });
       }
     }
 
@@ -424,8 +463,11 @@ app.post(
         return res.status(400).json({ message: "No avatar file uploaded." });
       }
 
-      const avatarUrl = toPublicAssetUrl(`/assets/avatars/${req.file.filename}`);
+      const avatarUrl = toPublicAssetUrl(
+        `/assets/avatars/${req.file.filename}`,
+      );
 
+      deleteManagedAvatar(db.users[index].avatar);
       db.users[index].avatar = avatarUrl;
       saveDB(db);
 
@@ -436,6 +478,26 @@ app.post(
     }
   },
 );
+
+app.delete("/users/me/avatar", verifyToken, (req, res) => {
+  try {
+    const db = getDB();
+    const index = db.users.findIndex((u) => u.id === req.user.id);
+
+    if (index === -1) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    deleteManagedAvatar(db.users[index].avatar);
+    db.users[index].avatar = "";
+    saveDB(db);
+
+    const { password: _, ...userWithoutPassword } = db.users[index];
+    res.json(userWithoutPassword);
+  } catch (error) {
+    res.status(500).json({ message: "Error removing avatar." });
+  }
+});
 
 app.delete("/users/me", verifyToken, (req, res) => {
   try {
@@ -603,7 +665,11 @@ app.post("/properties", verifyToken, (req, res) => {
     };
 
     db.properties.push(newProperty);
-    notifyAdminsOfPropertySubmission(db, newProperty, "New Property Submission");
+    notifyAdminsOfPropertySubmission(
+      db,
+      newProperty,
+      "New Property Submission",
+    );
 
     saveDB(db);
 
@@ -693,8 +759,10 @@ app.patch("/properties/:id", verifyToken, (req, res) => {
       db.notifications.push({
         id: nextNotificationId,
         userId: sellerId,
-        type: newStatus === "approved" ? "property_approved" : "property_rejected",
-        title: newStatus === "approved" ? "Property Approved" : "Property Rejected",
+        type:
+          newStatus === "approved" ? "property_approved" : "property_rejected",
+        title:
+          newStatus === "approved" ? "Property Approved" : "Property Rejected",
         message:
           newStatus === "approved"
             ? `Your property "${propertyTitle}" has been approved and is now live.`
@@ -955,7 +1023,9 @@ app.post("/notifications", verifyToken, (req, res) => {
     let targetUserId = Number(req.body.userId);
 
     if (!targetUserId || Number.isNaN(targetUserId)) {
-      return res.status(400).json({ message: "Notification user id is required." });
+      return res
+        .status(400)
+        .json({ message: "Notification user id is required." });
     }
 
     if (req.user.role !== "admin") {
@@ -973,12 +1043,17 @@ app.post("/notifications", verifyToken, (req, res) => {
       const sellerId = Number(appointment.sellerId);
       const senderId = Number(req.user.id);
       const expectedTargetId =
-        senderId === buyerId ? sellerId : senderId === sellerId ? buyerId : null;
+        senderId === buyerId
+          ? sellerId
+          : senderId === sellerId
+            ? buyerId
+            : null;
 
       if (!expectedTargetId || targetUserId !== expectedTargetId) {
-        return res
-          .status(403)
-          .json({ message: "Notifications can only be sent to the other appointment participant." });
+        return res.status(403).json({
+          message:
+            "Notifications can only be sent to the other appointment participant.",
+        });
       }
 
       targetUserId = expectedTargetId;
@@ -1152,6 +1227,120 @@ app.use((error, req, res, next) => {
   }
 
   next(error);
+});
+
+app.post("/ai/buyer-chat", verifyToken, async (req, res) => {
+  try {
+    const { message } = req.body;
+
+    if (!message || !message.trim()) {
+      return res.status(400).json({ message: "Message is required" });
+    }
+
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: `
+Extract real estate search filters from this buyer message.
+
+Buyer message:
+"${message}"
+
+Return JSON only.
+
+Rules:
+- 1 lakh = 100000
+- 80 lakhs = 8000000
+- 1 crore = 10000000
+- If user says "under", use maxPrice.
+- If user says "above", use minPrice.
+- If unknown, return null.
+      `,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            location: { type: Type.STRING, nullable: true },
+            minPrice: { type: Type.NUMBER, nullable: true },
+            maxPrice: { type: Type.NUMBER, nullable: true },
+            bedrooms: { type: Type.NUMBER, nullable: true },
+            propertyType: { type: Type.STRING, nullable: true },
+            parking: { type: Type.BOOLEAN, nullable: true },
+          },
+          required: [
+            "location",
+            "minPrice",
+            "maxPrice",
+            "bedrooms",
+            "propertyType",
+            "parking",
+          ],
+        },
+      },
+    });
+
+    const filters = JSON.parse(response.text);
+
+    const db = getDB();
+    let properties = db.properties || [];
+
+    properties = properties.filter((p) => {
+      if (p.status !== "approved") return false;
+
+      const city = String(p.location?.city || "").toLowerCase();
+      const district = String(p.location?.district || "").toLowerCase();
+      const address = String(p.location?.address || "").toLowerCase();
+      const locationText = `${city} ${district} ${address}`;
+
+      if (
+        filters.location &&
+        !locationText.includes(filters.location.toLowerCase())
+      ) {
+        return false;
+      }
+
+      if (filters.minPrice && Number(p.price) < filters.minPrice) {
+        return false;
+      }
+
+      if (filters.maxPrice && Number(p.price) > filters.maxPrice) {
+        return false;
+      }
+
+      if (filters.bedrooms && Number(p.bedrooms || 0) < filters.bedrooms) {
+        return false;
+      }
+
+      if (
+        filters.propertyType &&
+        String(p.type || "").toLowerCase() !==
+          filters.propertyType.toLowerCase()
+      ) {
+        return false;
+      }
+
+      const amenitiesText = Array.isArray(p.amenities)
+        ? p.amenities.join(" ").toLowerCase()
+        : String(p.amenities || "").toLowerCase();
+
+      if (filters.parking === true && !amenitiesText.includes("parking")) {
+        return false;
+      }
+
+      return true;
+    });
+
+    res.json({
+      reply: properties.length
+        ? `I found ${properties.length} matching properties.`
+        : "I couldn't find exact matches. Try changing location, budget, or bedrooms.",
+      filters,
+      properties: properties.slice(0, 6),
+    });
+  } catch (error) {
+    console.error("AI buyer assistant error:", error);
+    res.status(500).json({ message: "AI buyer assistant failed" });
+  }
 });
 
 const server = app.listen(PORT, () => {
