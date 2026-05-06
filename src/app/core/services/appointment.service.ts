@@ -2,6 +2,20 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 
+export enum AppointmentStatus {
+  Pending = 'pending',
+  Accepted = 'accepted',
+  Declined = 'declined',
+  Cancelled = 'cancelled',
+  Confirmed = 'confirmed',
+  Completed = 'completed',
+}
+
+export enum AppointmentActor {
+  Buyer = 'buyer',
+  Seller = 'seller',
+}
+
 export interface Appointment {
   id?: number;
   propertyId: number;
@@ -15,15 +29,9 @@ export interface Appointment {
   time: string;
   message?: string;
   notes?: string;
-  rescheduledBy?: 'buyer' | 'seller';
+  rescheduledBy?: AppointmentActor;
 
-  status:
-    | 'pending'
-    | 'accepted'
-    | 'declined'
-    | 'cancelled'
-    | 'confirmed'
-    | 'completed';
+  status: AppointmentStatus;
 
   createdAt?: string;
 }
@@ -32,8 +40,8 @@ export interface Appointment {
   providedIn: 'root',
 })
 export class AppointmentService {
-  private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000';
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = 'http://localhost:3000';
   getAppointments(filters?: {
     propertyId?: number;
     date?: string;
@@ -93,8 +101,8 @@ export class AppointmentService {
             a.propertyId === propertyId &&
             a.date === date &&
             a.time === time &&
-            a.status !== 'cancelled' &&
-            a.status !== 'declined' &&
+            a.status !== AppointmentStatus.Cancelled &&
+            a.status !== AppointmentStatus.Declined &&
             a.id !== excludeId,
         ),
       ),

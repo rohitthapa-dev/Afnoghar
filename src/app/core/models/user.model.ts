@@ -1,8 +1,14 @@
+export enum UserRole {
+  Buyer = 'buyer',
+  Seller = 'seller',
+  Admin = 'admin',
+}
+
 export interface User {
   id: number;
   name: string;
   email: string;
-  role: 'buyer' | 'seller' | 'admin';
+  role: UserRole;
   phone: string;
   avatar: string;
   createdAt: string;
@@ -25,5 +31,5 @@ export interface RegisterPayload {
   email: string;
   password: string;
   phone: string;
-  role: 'buyer' | 'seller';
+  role: UserRole.Buyer | UserRole.Seller;
 }
