@@ -1,5 +1,5 @@
-@use "../../../styles/variables" as *;
-@use "../../../styles/mixins" as *;
+@use "../../../../styles/variables" as *;
+@use "../../../../styles/mixins" as *;
 
 :host {
   display: block;
@@ -7,8 +7,13 @@
 
 .dialog-container {
   padding: $space-6;
-  min-width: 400px;
+  width: min(460px, calc(100vw - 32px));
+  min-width: 0;
   max-width: 460px;
+
+  @include respond-to(sm) {
+    padding: $space-4;
+  }
 }
 
 .dialog-header {
@@ -23,6 +28,7 @@
     font-family: $font-heading;
     font-size: $text-lg;
     font-weight: $font-bold;
+    overflow-wrap: anywhere;
   }
 }
 
@@ -76,6 +82,7 @@
   font-size: $text-base;
   color: $text-primary;
   line-height: $leading-relaxed;
+  overflow-wrap: anywhere;
 
   strong {
     color: $error;

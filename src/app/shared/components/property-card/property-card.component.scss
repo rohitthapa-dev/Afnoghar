@@ -3,19 +3,19 @@
 
 .property-card {
   background: $surface;
-  border-radius: $radius-xl;
+  border-radius: $radius-md;
   overflow: hidden;
   box-shadow: $shadow-card;
   transition: $transition-base;
   cursor: pointer;
   @include flex(column, flex-start, stretch);
   height: 100%;
-  border: 1px solid transparent;
+  border: 1px solid rgba($border, 0.72);
 
   &:hover {
     box-shadow: $shadow-card-hover;
-    transform: translateY(-4px);
-    border-color: $primary-light;
+    transform: translateY(-3px);
+    border-color: rgba($primary, 0.28);
 
     .card-image img {
       transform: scale(1.06);
@@ -44,7 +44,6 @@
     transition: transform 0.6s ease;
   }
 
-  // Subtle bottom gradient for text readability
   &::after {
     content: "";
     position: absolute;
@@ -131,10 +130,10 @@
 .property-price {
   font-family: $font-heading;
   font-size: $text-xl;
-  font-weight: $font-bold;
+  font-weight: $font-extrabold;
   color: $primary;
   margin-bottom: $space-2;
-  line-height: 1;
+  line-height: $leading-tight;
 
   .price-period {
     font-family: $font-primary;
@@ -147,7 +146,7 @@
 .property-title {
   font-family: $font-heading;
   font-size: $text-md;
-  font-weight: $font-semibold;
+  font-weight: $font-bold;
   color: $text-primary;
   margin-bottom: $space-2;
   line-height: $leading-snug;

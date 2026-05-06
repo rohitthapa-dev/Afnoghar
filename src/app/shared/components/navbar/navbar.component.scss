@@ -69,6 +69,14 @@
 .auth-section {
   @include flex(row, flex-end, center, $space-3);
   flex-shrink: 0;
+
+  @include respond-to(md) {
+    gap: $space-2;
+
+    > .btn {
+      display: none;
+    }
+  }
 }
 
 .navbar-icon-button,
@@ -596,6 +604,12 @@
     margin-top: $space-4;
     padding-top: $space-4;
     border-top: 1px solid $divider;
+
+    .btn {
+      width: 100%;
+      height: 44px;
+      justify-content: center;
+    }
   }
 
   .mobile-user-info {

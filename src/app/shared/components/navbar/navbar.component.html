@@ -14,7 +14,6 @@
         <a routerLink="/buyer/properties" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Properties</a>
         <a (click)="navigateToMapSearch('sale')">Buy</a>
         <a (click)="navigateToMapSearch('rent')">Rent</a>
-        <a routerLink="/about">About</a>
       } @else if (userRole === "buyer") {
         <a routerLink="/buyer/properties" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Properties</a>
         <a (click)="navigateToMapSearch('sale')">Buy</a>
@@ -214,7 +213,6 @@
         <a routerLink="/buyer/properties" (click)="closeMobileMenu()">Properties</a>
         <a (click)="navigateToMapSearch('sale'); closeMobileMenu()">Buy</a>
         <a (click)="navigateToMapSearch('rent'); closeMobileMenu()">Rent</a>
-        <a routerLink="/about" (click)="closeMobileMenu()">About</a>
         <div class="mobile-auth-buttons">
           <a
             routerLink="/login"

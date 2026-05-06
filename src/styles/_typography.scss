@@ -12,26 +12,33 @@ h6 {
   color: $text-primary;
   line-height: $leading-tight;
   font-weight: $font-bold;
+  letter-spacing: $tracking-normal;
   margin: 0;
 }
 
 h1 {
   font-size: $text-4xl;
+  font-weight: $font-extrabold;
 }
 h2 {
   font-size: $text-3xl;
+  font-weight: $font-extrabold;
 }
 h3 {
   font-size: $text-2xl;
+  font-weight: $font-bold;
 }
 h4 {
   font-size: $text-xl;
+  font-weight: $font-bold;
 }
 h5 {
   font-size: $text-lg;
+  font-weight: $font-semibold;
 }
 h6 {
   font-size: $text-md;
+  font-weight: $font-semibold;
 }
 
 p {

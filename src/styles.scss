@@ -44,10 +44,13 @@ app-buyer-map-search {
 :root {
   --color-primary: #{$primary};
   --color-primary-dark: #{$primary-dark};
+  --color-accent: #{$accent};
+  --color-accent-dark: #{$accent-dark};
   --color-info: #{$info};
   --color-info-dark: #1558a3;
   --color-surface: #{$surface};
   --pulse-primary: #{rgba($primary, 0.5)};
+  --pulse-accent: #{rgba($accent, 0.42)};
   --pulse-info: #{rgba($info, 0.5)};
 }
 

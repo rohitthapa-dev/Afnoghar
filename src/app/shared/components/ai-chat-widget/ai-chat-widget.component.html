@@ -1,0 +1,118 @@
+<section class="ai-widget" [class.open]="isOpen" aria-live="polite">
+  @if (isOpen) {
+    <div class="chat-panel" role="dialog" aria-label="AI property assistant">
+      <header class="chat-header">
+        <div class="assistant-mark">
+          <svg class="gemini-logo" viewBox="0 0 48 48" aria-hidden="true">
+            <defs>
+              <linearGradient id="geminiHeaderGradient" x1="7" y1="41" x2="40" y2="8">
+                <stop offset="0" stop-color="#4285f4" />
+                <stop offset="0.48" stop-color="#a142f4" />
+                <stop offset="1" stop-color="#fbbc04" />
+              </linearGradient>
+            </defs>
+            <path
+              fill="url(#geminiHeaderGradient)"
+              d="M24 4c2.4 10.5 8.9 17 20 20-11.1 3-17.6 9.5-20 20-2.4-10.5-8.9-17-20-20 11.1-3 17.6-9.5 20-20Z"
+            />
+          </svg>
+        </div>
+        <div>
+          <span>Gemini Assistant</span>
+          <p>Ask me anything about properties.</p>
+        </div>
+        <button
+          type="button"
+          class="icon-button"
+          aria-label="Close chat"
+          (click)="closeChat()"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </header>
+
+      <div #messageLog class="message-log">
+        @for (chatMessage of messages; track $index) {
+          <div class="message" [class.user-message]="chatMessage.role === 'user'">
+            <p>{{ chatMessage.text }}</p>
+          </div>
+        }
+
+        @if (isLoading) {
+          <div class="message loading-message">
+            <mat-spinner diameter="18"></mat-spinner>
+            <p>Finding matches...</p>
+          </div>
+        }
+
+        @if (recommendedProperties.length) {
+          <div class="property-suggestions">
+            @for (property of recommendedProperties; track property.id) {
+              <a
+                class="suggestion-card"
+                [routerLink]="['/buyer/properties', property.id]"
+                (click)="closeChat()"
+              >
+                <img
+                  [src]="
+                    property.images[0] ||
+                    'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=300'
+                  "
+                  [alt]="property.title"
+                />
+                <div>
+                  <strong>{{ property.title }}</strong>
+                  <span>{{ property.location.city }}, {{ property.location.district }}</span>
+                  <small>{{ property.price | priceFormat: property.listingType }}</small>
+                </div>
+              </a>
+            }
+          </div>
+        }
+      </div>
+
+      <form class="chat-input" (ngSubmit)="askAI()">
+        <input
+          name="aiMessage"
+          [(ngModel)]="message"
+          placeholder="House in Lalitpur under 80 lakhs"
+          autocomplete="off"
+          [disabled]="isLoading"
+        />
+        <button
+          mat-icon-button
+          type="submit"
+          aria-label="Send message"
+          [disabled]="isLoading || !message.trim()"
+        >
+          <mat-icon>send</mat-icon>
+        </button>
+      </form>
+    </div>
+  }
+
+  <button
+    type="button"
+    class="chat-fab"
+    [attr.aria-label]="isOpen ? 'Close AI property assistant' : 'Open AI property assistant'"
+    (click)="toggleChat()"
+  >
+    @if (isOpen) {
+      <mat-icon>close</mat-icon>
+    } @else {
+      <svg class="gemini-logo" viewBox="0 0 48 48" aria-hidden="true">
+        <defs>
+          <linearGradient id="geminiFabGradient" x1="7" y1="41" x2="40" y2="8">
+            <stop offset="0" stop-color="#4285f4" />
+            <stop offset="0.48" stop-color="#a142f4" />
+            <stop offset="1" stop-color="#fbbc04" />
+          </linearGradient>
+        </defs>
+        <path
+          fill="url(#geminiFabGradient)"
+          d="M24 4c2.4 10.5 8.9 17 20 20-11.1 3-17.6 9.5-20 20-2.4-10.5-8.9-17-20-20 11.1-3 17.6-9.5 20-20Z"
+        />
+      </svg>
+    }
+  </button>
+</section>
