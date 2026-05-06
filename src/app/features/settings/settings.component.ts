@@ -11,8 +11,10 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
-import { ConfirmDeleteDialogComponent } from '../../shared/components/confirm-delete-dialog.component';
-import { ConfirmDeleteDialogData } from '../../shared/components/confirm-delete-dialog.component';
+import {
+  ConfirmDeleteDialogComponent,
+  ConfirmDeleteDialogData,
+} from '../../shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 
 @Component({
   selector: 'app-settings',
@@ -95,7 +97,7 @@ export class SettingsComponent {
           verticalPosition: 'bottom',
         });
         this.authService.logout();
-        this.router.navigate(['/login']);
+        this.router.navigate(['/']);
       },
       error: () => {
         this.snackBar.open('Failed to delete account', 'Close', {

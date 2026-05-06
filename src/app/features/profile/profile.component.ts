@@ -1,4 +1,11 @@
-import { Component, OnInit, inject, signal, ViewChild, ElementRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  inject,
+  signal,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormsModule,
@@ -15,6 +22,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AuthService } from '../../core/services/auth.service';
+import { UserRole } from '../../core/models/user.model';
 
 @Component({
   selector: 'app-profile',
@@ -36,12 +44,12 @@ import { AuthService } from '../../core/services/auth.service';
 export class ProfileComponent implements OnInit {
   @ViewChild('avatarInput') avatarInput?: ElementRef<HTMLInputElement>;
 
-  private fb = inject(FormBuilder);
-    private authService = inject(AuthService);
-    private snackBar = inject(MatSnackBar);
-    private router = inject(Router);
+  private readonly fb = inject(FormBuilder);
+  private readonly authService = inject(AuthService);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly router = inject(Router);
 
-    readonly user = signal(this.authService.getCurrentUser());
+  readonly user = signal(this.authService.getCurrentUser());
   readonly loading = signal(false);
   readonly avatarLoading = signal(false);
   readonly editingProfile = signal(false);
@@ -68,9 +76,9 @@ export class ProfileComponent implements OnInit {
 
   get userRoleColor(): string {
     switch (this.user()?.role) {
-      case 'seller':
+      case UserRole.Seller:
         return 'role-seller';
-      case 'admin':
+      case UserRole.Admin:
         return 'role-admin';
       default:
         return 'role-buyer';
@@ -122,6 +130,30 @@ export class ProfileComponent implements OnInit {
       },
     });
     input.value = '';
+  }
+
+  removeAvatar(): void {
+    if (!this.user()?.avatar || this.avatarLoading()) return;
+
+    this.avatarLoading.set(true);
+    this.authService.removeAvatar().subscribe({
+      next: (updatedUser) => {
+        this.authService.updateCurrentUser(updatedUser);
+        this.user.set(updatedUser);
+        this.avatarLoading.set(false);
+        this.snackBar.open('Avatar removed successfully', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'start',
+          verticalPosition: 'bottom',
+        });
+      },
+      error: () => {
+        this.avatarLoading.set(false);
+        this.snackBar.open('Failed to remove avatar', 'Close', {
+          duration: 3000,
+        });
+      },
+    });
   }
 
   toggleEditProfile(): void {

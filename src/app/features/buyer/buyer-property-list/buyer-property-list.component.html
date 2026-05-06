@@ -75,11 +75,15 @@
         <button
           type="button"
           class="price-dropdown-trigger"
-          [class.active]="priceDropdownOpen || minPrice != null || maxPrice != null"
+          [class.active]="
+            priceDropdownOpen || minPrice != null || maxPrice != null
+          "
           (click)="togglePriceDropdown()"
         >
           <span>{{ priceRangeLabel }}</span>
-          <mat-icon>{{ priceDropdownOpen ? "expand_less" : "expand_more" }}</mat-icon>
+          <mat-icon>
+            {{ priceDropdownOpen ? "expand_less" : "expand_more" }}
+          </mat-icon>
         </button>
 
         @if (priceDropdownOpen) {
@@ -90,7 +94,9 @@
                 <strong>{{ tempPriceRangeLabel }}</strong>
               </div>
               @if (minPrice != null || maxPrice != null) {
-                <button type="button" (click)="clearPriceFilter()">Reset</button>
+                <button type="button" (click)="clearPriceFilter()">
+                  Reset
+                </button>
               }
             </div>
 
@@ -143,18 +149,24 @@
                   matInput
                   type="number"
                   [ngModel]="tempMinPrice"
-                  (ngModelChange)="onTempMinPriceChange($event || availableMinPrice)"
+                  (ngModelChange)="
+                    onTempMinPriceChange($event || availableMinPrice)
+                  "
                   placeholder="No min"
                 />
               </mat-form-field>
+
               <span class="price-divider">-</span>
+
               <mat-form-field appearance="outline" class="half-width">
                 <mat-label>Max</mat-label>
                 <input
                   matInput
                   type="number"
                   [ngModel]="tempMaxPrice"
-                  (ngModelChange)="onTempMaxPriceChange($event || availableMaxPrice)"
+                  (ngModelChange)="
+                    onTempMaxPriceChange($event || availableMaxPrice)
+                  "
                   placeholder="No max"
                 />
               </mat-form-field>
@@ -175,10 +187,7 @@
       <div class="filter-section">
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Bedrooms</mat-label>
-          <mat-select
-            [(value)]="bedrooms"
-            (selectionChange)="onFilterChange()"
-          >
+          <mat-select [(value)]="bedrooms" (selectionChange)="onFilterChange()">
             <mat-option [value]="null">Any</mat-option>
             <mat-option [value]="1">1+</mat-option>
             <mat-option [value]="2">2+</mat-option>
@@ -192,7 +201,9 @@
       @if (hasActiveFilters) {
         <div class="active-filters">
           <mat-icon>tune</mat-icon>
-          <span class="filter-count">{{ filteredProperties.length }} properties found</span>
+          <span class="filter-count">
+            {{ filteredProperties.length }} properties found
+          </span>
         </div>
       }
     </div>
@@ -203,6 +214,7 @@
           <span>Showing</span>
           <strong>{{ filteredProperties.length }} properties</strong>
         </div>
+
         @if (selectedListingType) {
           <mat-chip class="listing-chip">
             {{ selectedListingType === "sale" ? "For Sale" : "For Rent" }}
@@ -218,7 +230,9 @@
       } @else if (error) {
         <div class="error-container">
           <p>{{ error }}</p>
-          <button mat-stroked-button (click)="loadProperties()">Try Again</button>
+          <button mat-stroked-button (click)="loadProperties()">
+            Try Again
+          </button>
         </div>
       } @else {
         @if (filteredProperties.length === 0) {
@@ -226,8 +240,13 @@
             <mat-icon>search_off</mat-icon>
             <h3>No properties found</h3>
             <p>Try adjusting your filters</p>
+
             @if (hasActiveFilters) {
-              <button mat-raised-button color="primary" (click)="clearFilters()">
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="clearFilters()"
+              >
                 Clear Filters
               </button>
             }
@@ -249,6 +268,7 @@
               >
                 Previous
               </button>
+
               <div class="pagination-pages" aria-label="Pages">
                 @for (page of visiblePages; track page) {
                   <button
@@ -262,6 +282,7 @@
                   </button>
                 }
               </div>
+
               <button
                 type="button"
                 class="pagination-button"

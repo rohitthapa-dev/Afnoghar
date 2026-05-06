@@ -132,6 +132,45 @@
   @include flex(row, center, center);
 }
 
+.avatar-actions {
+  @include flex(row, center, center, $space-2);
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.avatar-action-btn {
+  min-height: 34px;
+  border-color: $border !important;
+  border-radius: $radius-md !important;
+  color: $text-secondary !important;
+  font-family: $font-primary;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+
+  mat-icon {
+    width: 15px;
+    height: 15px;
+    margin-right: $space-1;
+    font-size: 15px;
+  }
+
+  &:hover:not(:disabled) {
+    border-color: $primary !important;
+    background: $primary-tint !important;
+    color: $primary !important;
+  }
+}
+
+.remove-avatar-btn {
+  color: $error !important;
+
+  &:hover:not(:disabled) {
+    border-color: rgba($error, 0.36) !important;
+    background: $error-light !important;
+    color: $error !important;
+  }
+}
+
 .sidebar-name {
   font-family: $font-heading;
   font-size: $text-lg;
@@ -226,9 +265,10 @@
     margin: 0;
     color: $text-primary;
     font-family: $font-heading;
-    font-size: $text-lg;
-    font-weight: $font-bold;
-    letter-spacing: $tracking-tight;
+    font-size: $text-xl;
+    font-weight: $font-extrabold;
+    line-height: $leading-tight;
+    letter-spacing: $tracking-normal;
   }
 }
 

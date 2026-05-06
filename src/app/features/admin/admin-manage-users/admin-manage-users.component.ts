@@ -8,11 +8,13 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { User } from '../../../core/models/user.model';
+import { User, UserRole } from '../../../core/models/user.model';
 import { AdminService } from '../../../core/services/admin.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { ConfirmDeleteDialogComponent } from '../../../shared/components/confirm-delete-dialog.component';
-import { ConfirmDeleteDialogData } from '../../../shared/components/confirm-delete-dialog.component';
+import {
+  ConfirmDeleteDialogComponent,
+  ConfirmDeleteDialogData,
+} from '../../../shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 
 type UserRoleFilter = 'all' | User['role'];
 type UserStatusFilter = 'all' | 'active' | 'inactive';
@@ -40,16 +42,16 @@ interface UserTab {
   styleUrl: './admin-manage-users.component.scss',
 })
 export class AdminManageUsersComponent implements OnInit {
-  private adminService = inject(AdminService);
-  private authService = inject(AuthService);
-  private snackBar = inject(MatSnackBar);
-  private dialog = inject(MatDialog);
+  private readonly adminService = inject(AdminService);
+  private readonly authService = inject(AuthService);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly dialog = inject(MatDialog);
 
   readonly tabs: UserTab[] = [
     { label: 'All', value: 'all', icon: 'groups' },
-    { label: 'Buyers', value: 'buyer', icon: 'person_search' },
-    { label: 'Sellers', value: 'seller', icon: 'real_estate_agent' },
-    { label: 'Admins', value: 'admin', icon: 'admin_panel_settings' },
+    { label: 'Buyers', value: UserRole.Buyer, icon: 'person_search' },
+    { label: 'Sellers', value: UserRole.Seller, icon: 'real_estate_agent' },
+    { label: 'Admins', value: UserRole.Admin, icon: 'admin_panel_settings' },
   ];
 
   readonly users = signal<User[]>([]);
@@ -90,8 +92,8 @@ export class AdminManageUsersComponent implements OnInit {
   readonly inactiveCount = computed(
     () => this.users().length - this.activeCount(),
   );
-  readonly sellerCount = computed(() => this.getRoleCount('seller'));
-  readonly buyerCount = computed(() => this.getRoleCount('buyer'));
+  readonly sellerCount = computed(() => this.getRoleCount(UserRole.Seller));
+  readonly buyerCount = computed(() => this.getRoleCount(UserRole.Buyer));
 
   ngOnInit(): void {
     this.loadUsers();
@@ -168,7 +170,7 @@ export class AdminManageUsersComponent implements OnInit {
   }
 
   onRoleChange(user: User, event: Event): void {
-    const role = (event.target as HTMLSelectElement).value as User['role'];
+    const role = (event.target as HTMLSelectElement).value as UserRole;
     if (role === user.role) return;
 
     this.patchUser(user, { role }, 'Role updated');
@@ -221,7 +223,7 @@ export class AdminManageUsersComponent implements OnInit {
     });
   }
 
-  private getRoleCount(role: User['role']): number {
+  private getRoleCount(role: UserRole): number {
     return this.users().filter((user) => user.role === role).length;
   }
 

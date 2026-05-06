@@ -239,7 +239,6 @@
       font-weight: $font-semibold;
     }
   }
-
 }
 
 .price-dropdown-trigger {
@@ -592,8 +591,13 @@
 
 .pagination-shell {
   @include flex(row, center, center, $space-4);
+  flex-wrap: wrap;
   margin-top: $space-2;
   padding: $space-2 0;
+
+  @include respond-to(sm) {
+    gap: $space-2;
+  }
 }
 
 .pagination-button {
@@ -624,6 +628,8 @@
 
 .pagination-pages {
   @include flex(row, center, center, $space-2);
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
 .pagination-page {

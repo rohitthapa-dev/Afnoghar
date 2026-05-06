@@ -11,12 +11,15 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatSliderModule } from '@angular/material/slider';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 import { PropertyService } from '../../../core/services/property.service';
+
 import {
   Property,
   PropertyType,
   ListingType,
 } from '../../../core/models/property.model';
+
 import { PropertyCardComponent } from '../../../shared/components/property-card/property-card.component';
 
 @Component({
@@ -52,19 +55,20 @@ export class BuyerPropertyListComponent implements OnInit {
   pageSize = 6;
   pageIndex = 0;
 
-  // Filter state
   searchTerm = '';
   selectedType: '' | PropertyType = '';
   selectedListingType: '' | ListingType = '';
   minPrice?: number;
   maxPrice?: number;
   bedrooms?: number;
+
   priceDropdownOpen = false;
   tempMinPrice?: number;
   tempMaxPrice?: number;
 
   readonly priceBucketCount = 24;
   private readonly fallbackMaxPrice = 50000000;
+
   readonly formatSliderLabel = (value: number): string =>
     this.formatPrice(value);
 
@@ -85,8 +89,11 @@ export class BuyerPropertyListComponent implements OnInit {
       .subscribe((params) => {
         const previousListingType = this.selectedListingType;
         const listingType = params.get('listingType');
+
         this.selectedListingType =
-          listingType === 'sale' || listingType === 'rent' ? listingType : '';
+          listingType === ListingType.Sale || listingType === ListingType.Rent
+            ? listingType
+            : '';
 
         if (!this.loading && previousListingType !== this.selectedListingType) {
           this.resetPriceRange();
@@ -161,7 +168,9 @@ export class BuyerPropertyListComponent implements OnInit {
 
   get priceStep(): number {
     const prices = this.priceScopeProperties.map((property) => property.price);
-    const maxPrice = prices.length ? Math.max(...prices) : this.fallbackMaxPrice;
+    const maxPrice = prices.length
+      ? Math.max(...prices)
+      : this.fallbackMaxPrice;
 
     if (this.selectedListingType === 'rent' || maxPrice <= 500000) {
       return 1000;
@@ -179,6 +188,7 @@ export class BuyerPropertyListComponent implements OnInit {
     if (properties.length === 0) return this.fallbackMaxPrice;
 
     const max = Math.max(...properties.map((property) => property.price));
+
     return Math.max(
       this.availableMinPrice + this.priceStep,
       Math.ceil(max / this.priceStep) * this.priceStep,
@@ -235,6 +245,7 @@ export class BuyerPropertyListComponent implements OnInit {
           Math.floor(((property.price - min) / range) * this.priceBucketCount),
         ),
       );
+
       buckets[bucketIndex] += 1;
     });
 
@@ -290,8 +301,10 @@ export class BuyerPropertyListComponent implements OnInit {
       value,
       this.tempPriceSliderMax - this.priceStep,
     );
+
     this.tempMinPrice =
       boundedValue <= this.availableMinPrice ? undefined : boundedValue;
+
     this.minPrice = this.tempMinPrice;
     this.maxPrice = this.tempMaxPrice;
     this.onFilterChange();
@@ -302,8 +315,10 @@ export class BuyerPropertyListComponent implements OnInit {
       value,
       this.tempPriceSliderMin + this.priceStep,
     );
+
     this.tempMaxPrice =
       boundedValue >= this.availableMaxPrice ? undefined : boundedValue;
+
     this.minPrice = this.tempMinPrice;
     this.maxPrice = this.tempMaxPrice;
     this.onFilterChange();
@@ -338,6 +353,7 @@ export class BuyerPropertyListComponent implements OnInit {
     this.priceDropdownOpen = false;
     this.pageIndex = 0;
     this.filteredProperties = [...this.allProperties];
+
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {},
@@ -368,10 +384,13 @@ export class BuyerPropertyListComponent implements OnInit {
 
   private getRangeLabel(minPrice?: number, maxPrice?: number): string {
     if (minPrice == null && maxPrice == null) return 'Any price';
+
     if (minPrice != null && maxPrice != null) {
       return `${this.formatPrice(minPrice)} - ${this.formatPrice(maxPrice)}`;
     }
+
     if (minPrice != null) return `${this.formatPrice(minPrice)}+`;
+
     return `Up to ${this.formatPrice(maxPrice)}`;
   }
 
@@ -406,11 +425,12 @@ export class BuyerPropertyListComponent implements OnInit {
 
     if (this.searchTerm) {
       const term = this.searchTerm.toLowerCase();
+
       filtered = filtered.filter(
         (p) =>
           p.title.toLowerCase().includes(term) ||
           p.location?.city?.toLowerCase().includes(term) ||
-          p.location?.district?.toLowerCase().includes(term)
+          p.location?.district?.toLowerCase().includes(term),
       );
     }
 
@@ -420,7 +440,7 @@ export class BuyerPropertyListComponent implements OnInit {
 
     if (this.selectedListingType) {
       filtered = filtered.filter(
-        (p) => p.listingType === this.selectedListingType
+        (p) => p.listingType === this.selectedListingType,
       );
     }
 

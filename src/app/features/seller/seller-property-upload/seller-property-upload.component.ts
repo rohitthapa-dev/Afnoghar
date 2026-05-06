@@ -58,12 +58,12 @@ export class SellerPropertyUploadComponent
 {
   @ViewChild('locationMap') locationMapContainer?: ElementRef<HTMLDivElement>;
 
-  private fb = inject(FormBuilder);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  private authService = inject(AuthService);
-  private propertyService = inject(PropertyService);
-  private snackBar = inject(MatSnackBar);
+  private readonly fb = inject(FormBuilder);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
+  private readonly propertyService = inject(PropertyService);
+  private readonly snackBar = inject(MatSnackBar);
   private locationMap?: L.Map;
   private locationMarker?: L.Marker;
   private mapInitTimeout?: ReturnType<typeof setTimeout>;
@@ -73,15 +73,15 @@ export class SellerPropertyUploadComponent
   private readonly tileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 
   readonly propertyTypes: SelectOption<PropertyType>[] = [
-    { label: 'House', value: 'house' },
-    { label: 'Apartment', value: 'apartment' },
-    { label: 'Land', value: 'land' },
-    { label: 'Commercial', value: 'commercial' },
+    { label: 'House', value: PropertyType.House },
+    { label: 'Apartment', value: PropertyType.Apartment },
+    { label: 'Land', value: PropertyType.Land },
+    { label: 'Commercial', value: PropertyType.Commercial },
   ];
 
   readonly listingTypes: SelectOption<ListingType>[] = [
-    { label: 'For Sale', value: 'sale' },
-    { label: 'For Rent', value: 'rent' },
+    { label: 'For Sale', value: ListingType.Sale },
+    { label: 'For Rent', value: ListingType.Rent },
   ];
 
   readonly loading = signal(false);
@@ -104,11 +104,11 @@ export class SellerPropertyUploadComponent
       nonNullable: true,
       validators: [Validators.required, Validators.minLength(24)],
     }),
-    type: this.fb.control<PropertyType>('house', {
+    type: this.fb.control<PropertyType>(PropertyType.House, {
       nonNullable: true,
       validators: Validators.required,
     }),
-    listingType: this.fb.control<ListingType>('sale', {
+    listingType: this.fb.control<ListingType>(ListingType.Sale, {
       nonNullable: true,
       validators: Validators.required,
     }),

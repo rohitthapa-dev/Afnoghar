@@ -313,6 +313,15 @@
   border-radius: $radius-md;
   background: $surface;
 
+  @include respond-to(sm) {
+    grid-template-columns: 42px minmax(0, 1fr);
+
+    > span {
+      grid-column: 2;
+      justify-self: start;
+    }
+  }
+
   h3 {
     @include truncate(1);
     margin: 0 0 $space-1;
@@ -327,6 +336,7 @@
     color: $text-secondary;
     font-family: $font-primary;
     font-size: $text-xs;
+    overflow-wrap: anywhere;
   }
 
   > span {

@@ -6,6 +6,10 @@
   margin: 0 auto;
   padding: $space-8 $space-6;
   min-height: calc(100vh - #{$navbar-height});
+
+  @include respond-to(sm) {
+    padding: $space-5 $space-4;
+  }
 }
 
 .page-title {
@@ -90,6 +94,11 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax($card-width, 1fr));
   gap: $space-6;
+
+  @include respond-to(sm) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: $space-4;
+  }
 }
 
 .property-item {

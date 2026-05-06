@@ -67,6 +67,11 @@ export class BuyerMapSearchComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       const previousListingType = this.selectedListingType;
+      const requestedPropertyId = Number(params['propertyId']);
+      const hasRequestedProperty = Number.isFinite(requestedPropertyId);
+
+      this.viewMode = params['view'] === 'map' ? 'map' : 'list';
+
       if (params['type'] === 'sale') {
         this.selectedListingType = 'sale';
       } else if (params['type'] === 'rent') {
@@ -85,7 +90,14 @@ export class BuyerMapSearchComponent implements OnInit, OnDestroy {
       this.propertyService.getApprovedProperties().subscribe({
         next: (properties) => {
           this.allProperties = properties;
+          this.selectedPropertyId = hasRequestedProperty
+            ? requestedPropertyId
+            : undefined;
           this.applyFilters();
+          if (this.selectedPropertyId !== undefined) {
+            this.showPropertyPage(this.selectedPropertyId);
+            this.scrollToProperty(this.selectedPropertyId);
+          }
           this.isLoading = false;
           this.initialLoadDone = true;
         },

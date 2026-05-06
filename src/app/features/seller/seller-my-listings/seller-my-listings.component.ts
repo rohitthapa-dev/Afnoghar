@@ -46,16 +46,16 @@ interface ListingTab {
   styleUrl: './seller-my-listings.component.scss',
 })
 export class SellerMyListingsComponent implements OnInit {
-  private propertyService = inject(PropertyService);
-  private authService = inject(AuthService);
-  private router = inject(Router);
-  private snackBar = inject(MatSnackBar);
+  private readonly propertyService = inject(PropertyService);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly snackBar = inject(MatSnackBar);
 
   readonly tabs: ListingTab[] = [
     { label: 'All', value: 'all', icon: 'grid_view' },
-    { label: 'Approved', value: 'approved', icon: 'verified' },
-    { label: 'Pending', value: 'pending', icon: 'schedule' },
-    { label: 'Rejected', value: 'rejected', icon: 'error_outline' },
+    { label: 'Approved', value: PropertyStatus.Approved, icon: 'verified' },
+    { label: 'Pending', value: PropertyStatus.Pending, icon: 'schedule' },
+    { label: 'Rejected', value: PropertyStatus.Rejected, icon: 'error_outline' },
   ];
 
   readonly fallbackImage =
@@ -84,9 +84,9 @@ export class SellerMyListingsComponent implements OnInit {
     });
   });
 
-  readonly approvedCount = computed(() => this.getStatusCount('approved'));
-  readonly pendingCount = computed(() => this.getStatusCount('pending'));
-  readonly rejectedCount = computed(() => this.getStatusCount('rejected'));
+  readonly approvedCount = computed(() => this.getStatusCount(PropertyStatus.Approved));
+  readonly pendingCount = computed(() => this.getStatusCount(PropertyStatus.Pending));
+  readonly rejectedCount = computed(() => this.getStatusCount(PropertyStatus.Rejected));
 
   readonly totalPortfolioValue = computed(() =>
     this.listings().reduce((sum, listing) => sum + listing.price, 0),

@@ -34,6 +34,30 @@
             style="display: none"
             (change)="onAvatarSelected($event)"
           />
+          <div class="avatar-actions">
+            <button
+              mat-stroked-button
+              type="button"
+              class="avatar-action-btn"
+              [disabled]="avatarLoading()"
+              (click)="avatarInput.click()"
+            >
+              <mat-icon>photo_camera</mat-icon>
+              Change
+            </button>
+            @if (user()?.avatar) {
+              <button
+                mat-stroked-button
+                type="button"
+                class="avatar-action-btn remove-avatar-btn"
+                [disabled]="avatarLoading()"
+                (click)="removeAvatar()"
+              >
+                <mat-icon>delete_outline</mat-icon>
+                Remove
+              </button>
+            }
+          </div>
           <h2 class="sidebar-name">{{ user()?.name }}</h2>
         <p class="sidebar-email">{{ user()?.email }}</p>
         <span class="role-badge" [ngClass]="userRoleColor">

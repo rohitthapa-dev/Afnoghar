@@ -533,19 +533,13 @@
 }
 
 .property-item {
-  border-radius: $radius-xl;
+  border-radius: $radius-md;
   transition: $transition-base;
   cursor: pointer;
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-
-  &:hover {
-    outline-color: $primary-light;
-  }
+  box-shadow: 0 0 0 0 rgba($primary, 0);
 
   &.is-selected {
-    outline-color: $primary;
-    outline-width: 2.5px;
+    box-shadow: 0 0 0 2px rgba($primary, 0.32);
   }
 }
 
@@ -670,8 +664,9 @@
   }
 
   .filter-chips {
-    flex-wrap: nowrap;
-    overflow-x: auto;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: visible;
     padding-bottom: 2px;
     scrollbar-width: none;
 
@@ -683,15 +678,18 @@
   .filter-select,
   .price-filter,
   .clear-btn {
-    flex: 0 0 auto;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .price-dropdown-trigger {
+    width: 100%;
   }
 
   .price-dropdown-panel {
-    position: fixed;
-    top: calc(#{$navbar-height} + 132px);
-    left: $space-4;
-    right: $space-4;
-    width: auto;
+    left: 0;
+    right: 0;
+    width: min(320px, calc(100vw - 32px));
   }
 
   .main-content {
@@ -758,12 +756,16 @@
 }
 
 @include respond-to(xs) {
+  .filter-chips {
+    grid-template-columns: 1fr;
+  }
+
   .filter-select {
-    max-width: 148px;
+    max-width: none;
   }
 
   .price-dropdown-trigger {
-    width: 152px;
+    width: 100%;
   }
 }
 

@@ -44,15 +44,15 @@ interface ListingTab {
   styleUrl: './admin-manage-listings.component.scss',
 })
 export class AdminManageListingsComponent implements OnInit {
-  private adminService = inject(AdminService);
-  private router = inject(Router);
-  private snackBar = inject(MatSnackBar);
+  private readonly adminService = inject(AdminService);
+  private readonly router = inject(Router);
+  private readonly snackBar = inject(MatSnackBar);
 
   readonly tabs: ListingTab[] = [
     { label: 'All', value: 'all', icon: 'grid_view' },
-    { label: 'Pending', value: 'pending', icon: 'schedule' },
-    { label: 'Approved', value: 'approved', icon: 'verified' },
-    { label: 'Rejected', value: 'rejected', icon: 'block' },
+    { label: 'Pending', value: PropertyStatus.Pending, icon: 'schedule' },
+    { label: 'Approved', value: PropertyStatus.Approved, icon: 'verified' },
+    { label: 'Rejected', value: PropertyStatus.Rejected, icon: 'block' },
     { label: 'Featured', value: 'featured', icon: 'workspace_premium' },
   ];
 
@@ -85,9 +85,9 @@ export class AdminManageListingsComponent implements OnInit {
     });
   });
 
-  readonly pendingCount = computed(() => this.getStatusCount('pending'));
-  readonly approvedCount = computed(() => this.getStatusCount('approved'));
-  readonly rejectedCount = computed(() => this.getStatusCount('rejected'));
+  readonly pendingCount = computed(() => this.getStatusCount(PropertyStatus.Pending));
+  readonly approvedCount = computed(() => this.getStatusCount(PropertyStatus.Approved));
+  readonly rejectedCount = computed(() => this.getStatusCount(PropertyStatus.Rejected));
   readonly featuredCount = computed(
     () => this.listings().filter((listing) => listing.isFeatured).length,
   );
@@ -169,11 +169,19 @@ export class AdminManageListingsComponent implements OnInit {
   }
 
   approveListing(listing: Property): void {
-    this.patchListing(listing, { status: 'approved' }, 'Listing approved');
+    this.patchListing(
+      listing,
+      { status: PropertyStatus.Approved },
+      'Listing approved',
+    );
   }
 
   rejectListing(listing: Property): void {
-    this.patchListing(listing, { status: 'rejected' }, 'Listing rejected');
+    this.patchListing(
+      listing,
+      { status: PropertyStatus.Rejected },
+      'Listing rejected',
+    );
   }
 
   toggleFeatured(listing: Property): void {

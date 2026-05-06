@@ -90,6 +90,12 @@ export class BuyerHomeComponent implements OnInit {
     this.router.navigate(['/buyer/properties']);
   }
 
+  onViewMap(): void {
+    this.router.navigate(['/buyer/map-search'], {
+      queryParams: { view: 'map' },
+    });
+  }
+
   getAgentInitials(name: string): string {
     const parts = name.split(' ');
     if (parts.length >= 2) {
