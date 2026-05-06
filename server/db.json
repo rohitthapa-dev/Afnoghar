@@ -7,7 +7,7 @@
       "password": "admin123",
       "role": "admin",
       "phone": "9800000001",
-      "avatar": "",
+      "avatar": "http://localhost:3000/assets/avatars/user-1-1778070421077-person-3.png",
       "createdAt": "2025-01-01T00:00:00.000Z",
       "isActive": true
     },
@@ -46,35 +46,24 @@
     },
     {
       "id": 5,
-      "name": "Anita Rai",
+      "name": "Sneha Gautam",
       "email": "anita@gmail.com",
       "password": "anita123",
       "role": "buyer",
       "phone": "9800000005",
-      "avatar": "http://localhost:3000/assets/avatars/user-5-1777918275251-horizontal-portrait-smiling-happy-young-.avif",
+      "avatar": "http://localhost:3000/assets/avatars/user-5-1778070104830-horizontal-portrait-smiling-happy-young-.avif",
       "createdAt": "2025-01-05T00:00:00.000Z",
       "isActive": true
     },
     {
       "id": 6,
-      "name": "Hari Tamang",
-      "email": "hari@example.com",
-      "password": "hari@123",
-      "role": "buyer",
-      "phone": "9800000000",
-      "avatar": "",
-      "createdAt": "2026-04-27T11:00:17.721Z",
-      "isActive": true
-    },
-    {
-      "id": 7,
-      "name": "Rohit ",
-      "email": "hari01@example.com",
-      "password": "hari@123",
+      "name": "Rohit Magar",
+      "email": "rohit@afnoghar.com",
+      "password": "rohit123",
       "role": "seller",
-      "phone": "9800000001",
+      "phone": "9845454545",
       "avatar": "",
-      "createdAt": "2026-04-27T12:15:11.989Z",
+      "createdAt": "2026-05-06T17:39:49.660Z",
       "isActive": true
     }
   ],
@@ -146,7 +135,7 @@
       ],
       "sellerId": 2,
       "status": "approved",
-      "isFeatured": true,
+      "isFeatured": false,
       "createdAt": "2025-02-05T00:00:00.000Z"
     },
     {
@@ -249,7 +238,7 @@
       ],
       "sellerId": 2,
       "status": "approved",
-      "isFeatured": true,
+      "isFeatured": false,
       "createdAt": "2025-02-20T00:00:00.000Z"
     },
     {
@@ -349,7 +338,7 @@
         "Quiet Area"
       ],
       "sellerId": 4,
-      "status": "pending",
+      "status": "approved",
       "isFeatured": false,
       "createdAt": "2025-03-10T00:00:00.000Z"
     },
@@ -654,6 +643,149 @@
       "status": "approved",
       "isFeatured": false,
       "createdAt": "2026-05-04T12:20:36.058Z"
+    },
+    {
+      "id": 18,
+      "title": "Luxury Apartment in Baluwatar",
+      "description": "A premium apartment located in Baluwatar, Kathmandu. Comes with modern interiors, elevator access, and 24/7 security. Ideal for professionals and small families.",
+      "type": "apartment",
+      "listingType": "sale",
+      "price": 18000000,
+      "area": 1500,
+      "aana": 3.5,
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "floors": 1,
+      "location": {
+        "district": "Kathmandu",
+        "city": "Baluwatar",
+        "address": "Baluwatar Height, Ward No. 2",
+        "lat": 27.723329,
+        "lng": 85.320484
+      },
+      "images": [
+        "http://localhost:3000/assets/properties/18/1778089517014-20190930-dji-0886-1571217783-qnmuoatsbk.jpg",
+        "http://localhost:3000/assets/properties/18/1778089517016-746953223.jpg",
+        "http://localhost:3000/assets/properties/18/1778089517017-traditional-style-house-plan-3739-second.jpg"
+      ],
+      "features": [
+        "Parking",
+        "Lift",
+        "Security",
+        "Backup Power",
+        "Water Tank"
+      ],
+      "sellerId": 6,
+      "status": "approved",
+      "isFeatured": true,
+      "createdAt": "2026-05-06T17:45:17.002Z"
+    },
+    {
+      "id": 19,
+      "title": "Traditional House in Bhaktapur Durbar Square",
+      "description": "A beautifully designed traditional-style house near Bhaktapur Durbar Square. Combines classic Newari architecture with modern amenities. Ideal for families who value culture and comfort.",
+      "type": "house",
+      "listingType": "sale",
+      "price": 19500000,
+      "area": 1800,
+      "aana": 4.5,
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "floors": 2,
+      "location": {
+        "district": "Bhaktapur",
+        "city": "Bhaktapur",
+        "address": "Near Durbar Square, Ward No. 5",
+        "lat": 27.670701,
+        "lng": 85.411685
+      },
+      "images": [
+        "http://localhost:3000/assets/properties/19/1778090368457-best-house-design-in-nepal-1024x858.png",
+        "http://localhost:3000/assets/properties/19/1778090368458-e4d938ea.avif",
+        "http://localhost:3000/assets/properties/19/1778090368458-traditional-style-house-plan-3739-second.jpg"
+      ],
+      "features": [
+        "Parking",
+        "Balcony",
+        "Water Tank",
+        "Cultural Design"
+      ],
+      "sellerId": 6,
+      "status": "approved",
+      "isFeatured": false,
+      "createdAt": "2026-05-06T17:59:28.452Z"
+    },
+    {
+      "id": 20,
+      "title": "Modern Apartment in Thimi",
+      "description": "A modern apartment in Thimi with good road access and peaceful surroundings. Suitable for small families and working professionals.",
+      "type": "apartment",
+      "listingType": "rent",
+      "price": 28000,
+      "area": 950,
+      "aana": 2,
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "location": {
+        "district": "Bhaktapur Thimi",
+        "city": "Madhyapur Thimi",
+        "address": "Thimi Main Road, Ward No. 3",
+        "lat": 27.679329,
+        "lng": 85.386472
+      },
+      "images": [
+        "http://localhost:3000/assets/properties/20/1778090678672-prestige-apartment.jpg",
+        "http://localhost:3000/assets/properties/20/1778090678673-presidential-apartment-in-kgh.webp",
+        "http://localhost:3000/assets/properties/20/1778090678674-traditional-style-house-plan-3739-second.jpg"
+      ],
+      "features": [
+        "Parking",
+        "WiFi",
+        "Water Tank",
+        "Balcony"
+      ],
+      "sellerId": 6,
+      "status": "approved",
+      "isFeatured": false,
+      "createdAt": "2026-05-06T18:04:38.663Z"
+    },
+    {
+      "id": 21,
+      "title": "Modern Family House in Jadibuti",
+      "description": "A well-built modern house located in Jadibuti, Kathmandu. Features spacious living areas, good road access, and a peaceful residential environment. Suitable for families looking for comfort and convenience.",
+      "type": "house",
+      "listingType": "sale",
+      "price": 21000000,
+      "area": 2100,
+      "aana": 5,
+      "bedrooms": 4,
+      "bathrooms": 3,
+      "floors": 2,
+      "location": {
+        "district": "Bhaktapur",
+        "city": "Jadibuti",
+        "address": "Jadibuti Chowk, Ward No. 32",
+        "lat": 27.676022,
+        "lng": 85.356345
+      },
+      "images": [
+        "http://localhost:3000/assets/properties/21/1778090894750-kupandole-house-sale-1-680x510.jpeg",
+        "http://localhost:3000/assets/properties/21/1778090894750-e4d938ea.avif",
+        "http://localhost:3000/assets/properties/21/1778090894751-746953223.jpg",
+        "http://localhost:3000/assets/properties/21/1778090894751-traditional-style-house-plan-3739-second.jpg"
+      ],
+      "features": [
+        "Parking",
+        "Balcony",
+        "Garden",
+        "Water Tank",
+        "Road Access"
+      ],
+      "sellerId": 6,
+      "status": "approved",
+      "isFeatured": true,
+      "createdAt": "2026-05-06T18:08:14.741Z"
     }
   ],
   "appointments": [
@@ -808,13 +940,14 @@
       "sellerId": 2,
       "propertyTitle": "Modern Villa in Bansbari",
       "buyerName": "Sita Thapa",
-      "date": "2026-05-04",
+      "date": "2026-05-08",
       "time": "09:00 AM",
       "message": "",
       "notes": "",
       "buyerId": 3,
       "status": "pending",
-      "createdAt": "2026-05-04T11:28:40.354Z"
+      "createdAt": "2026-05-04T11:28:40.354Z",
+      "rescheduledBy": "seller"
     },
     {
       "id": 12,
@@ -846,6 +979,21 @@
       "status": "pending",
       "createdAt": "2026-05-06T01:18:29.323Z",
       "rescheduledBy": "seller"
+    },
+    {
+      "id": 14,
+      "propertyId": 1,
+      "userId": 5,
+      "sellerId": 2,
+      "propertyTitle": "Modern Villa in Bansbari",
+      "buyerName": "Anita Rai",
+      "date": "2026-05-07",
+      "time": "09:00 AM",
+      "message": "",
+      "notes": "",
+      "buyerId": 5,
+      "status": "pending",
+      "createdAt": "2026-05-06T12:20:18.167Z"
     }
   ],
   "favorites": [
@@ -865,7 +1013,7 @@
       "id": 8,
       "buyerId": 5,
       "propertyId": 1,
-      "createdAt": "2026-05-06T01:18:34.994Z"
+      "createdAt": "2026-05-06T12:19:31.534Z"
     }
   ],
   "notifications": [
@@ -1207,8 +1355,129 @@
       "message": "Your visit to Modern Villa in Bansbari has been rescheduled to Thu, May 7, 2026 at 11:00 AM.",
       "appointmentId": 13,
       "propertyTitle": "Modern Villa in Bansbari",
-      "read": false,
+      "read": true,
       "createdAt": "2026-05-06T01:23:30.316Z"
+    },
+    {
+      "id": 32,
+      "userId": 2,
+      "type": "booked",
+      "title": "New Tour Request",
+      "message": "Anita Rai requested a tour for Modern Villa in Bansbari on Thu, May 7, 2026 at 09:00 AM.",
+      "appointmentId": 14,
+      "propertyTitle": "Modern Villa in Bansbari",
+      "read": true,
+      "createdAt": "2026-05-06T12:20:18.182Z"
+    },
+    {
+      "id": 33,
+      "userId": 3,
+      "type": "rescheduled",
+      "title": "Appointment Rescheduled",
+      "message": "Your visit to Modern Villa in Bansbari has been rescheduled to Fri, May 8, 2026 at 09:00 AM.",
+      "appointmentId": 11,
+      "propertyTitle": "Modern Villa in Bansbari",
+      "read": false,
+      "createdAt": "2026-05-06T12:24:44.818Z"
+    },
+    {
+      "id": 34,
+      "userId": 1,
+      "type": "property_submitted",
+      "title": "New Property Submission",
+      "message": "New Property Submission: \"Luxury Apartment in Baluwatar\" is ready for review.",
+      "propertyId": 18,
+      "propertyTitle": "Luxury Apartment in Baluwatar",
+      "read": true,
+      "createdAt": "2026-05-06T17:45:17.002Z"
+    },
+    {
+      "id": 35,
+      "userId": 6,
+      "type": "property_approved",
+      "title": "Property Approved",
+      "message": "Your property \"Luxury Apartment in Baluwatar\" has been approved and is now live.",
+      "propertyId": 18,
+      "propertyTitle": "Luxury Apartment in Baluwatar",
+      "read": true,
+      "createdAt": "2026-05-06T17:46:33.891Z"
+    },
+    {
+      "id": 36,
+      "userId": 4,
+      "type": "property_approved",
+      "title": "Property Approved",
+      "message": "Your property \"Land Plot in Bhaktapur Suryabinayak\" has been approved and is now live.",
+      "propertyId": 8,
+      "propertyTitle": "Land Plot in Bhaktapur Suryabinayak",
+      "read": false,
+      "createdAt": "2026-05-06T17:50:19.767Z"
+    },
+    {
+      "id": 37,
+      "userId": 1,
+      "type": "property_submitted",
+      "title": "New Property Submission",
+      "message": "New Property Submission: \"Traditional House in Bhaktapur Durbar Square\" is ready for review.",
+      "propertyId": 19,
+      "propertyTitle": "Traditional House in Bhaktapur Durbar Square",
+      "read": true,
+      "createdAt": "2026-05-06T17:59:28.452Z"
+    },
+    {
+      "id": 38,
+      "userId": 1,
+      "type": "property_submitted",
+      "title": "New Property Submission",
+      "message": "New Property Submission: \"Modern Apartment in Thimi\" is ready for review.",
+      "propertyId": 20,
+      "propertyTitle": "Modern Apartment in Thimi",
+      "read": true,
+      "createdAt": "2026-05-06T18:04:38.663Z"
+    },
+    {
+      "id": 39,
+      "userId": 1,
+      "type": "property_submitted",
+      "title": "New Property Submission",
+      "message": "New Property Submission: \"Modern Family House in Jadibuti\" is ready for review.",
+      "propertyId": 21,
+      "propertyTitle": "Modern Family House in Jadibuti",
+      "read": true,
+      "createdAt": "2026-05-06T18:08:14.741Z"
+    },
+    {
+      "id": 40,
+      "userId": 6,
+      "type": "property_approved",
+      "title": "Property Approved",
+      "message": "Your property \"Modern Family House in Jadibuti\" has been approved and is now live.",
+      "propertyId": 21,
+      "propertyTitle": "Modern Family House in Jadibuti",
+      "read": false,
+      "createdAt": "2026-05-06T18:09:05.882Z"
+    },
+    {
+      "id": 41,
+      "userId": 6,
+      "type": "property_approved",
+      "title": "Property Approved",
+      "message": "Your property \"Modern Apartment in Thimi\" has been approved and is now live.",
+      "propertyId": 20,
+      "propertyTitle": "Modern Apartment in Thimi",
+      "read": false,
+      "createdAt": "2026-05-06T18:09:09.200Z"
+    },
+    {
+      "id": 42,
+      "userId": 6,
+      "type": "property_approved",
+      "title": "Property Approved",
+      "message": "Your property \"Traditional House in Bhaktapur Durbar Square\" has been approved and is now live.",
+      "propertyId": 19,
+      "propertyTitle": "Traditional House in Bhaktapur Durbar Square",
+      "read": false,
+      "createdAt": "2026-05-06T18:09:20.846Z"
     }
   ]
 }

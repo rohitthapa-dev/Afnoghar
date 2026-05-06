@@ -7,7 +7,17 @@
 
   <div class="settings-layout">
     <aside class="account-panel">
-      <div class="avatar">{{ userInitials() }}</div>
+      <div class="avatar">
+        @if (user()?.avatar) {
+          <img
+            [src]="user()?.avatar"
+            [alt]="user()?.name || 'Profile avatar'"
+            class="avatar-img"
+          />
+        } @else {
+          <span>{{ userInitials() }}</span>
+        }
+      </div>
       <div class="account-copy">
         <h2>{{ user()?.name }}</h2>
         <p>{{ user()?.email }}</p>

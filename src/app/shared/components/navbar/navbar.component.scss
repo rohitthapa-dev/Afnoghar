@@ -607,8 +607,30 @@
 
     .btn {
       @include flex(row, center, center);
-      flex:1;
-      height: 38px;
+      flex: 1;
+      min-height: 42px;
+      padding: 0 $space-3;
+      border-radius: $radius-md;
+      font-size: $text-sm;
+      font-weight: $font-semibold;
+      line-height: 1;
+      text-align: center;
+      box-shadow: none;
+
+      &:hover {
+        transform: none;
+      }
+    }
+
+    .btn-outline {
+      background: $surface;
+      color: $text-primary;
+      border-color: $border;
+    }
+
+    .btn-primary {
+      color: $surface;
+      box-shadow: 0 8px 18px rgba($primary, 0.16);
     }
   }
 

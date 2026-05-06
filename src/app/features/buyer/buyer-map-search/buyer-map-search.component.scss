@@ -686,10 +686,19 @@
     width: 100%;
   }
 
+  .price-filter.dropdown-open {
+    grid-column: 1 / -1;
+  }
+
   .price-dropdown-panel {
-    left: 0;
-    right: 0;
-    width: min(320px, calc(100vw - 32px));
+    position: static;
+    width: 100%;
+    margin-top: $space-2;
+    box-shadow: 0 12px 30px rgba(28, 28, 28, 0.12);
+  }
+
+  .price-histogram {
+    height: 64px;
   }
 
   .main-content {

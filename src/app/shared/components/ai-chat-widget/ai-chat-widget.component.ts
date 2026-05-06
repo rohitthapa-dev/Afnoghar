@@ -49,7 +49,7 @@ export class AiChatWidgetComponent {
   messages: ChatMessage[] = [
     {
       role: 'assistant',
-      text: 'Hi, how can I help you find a property today?',
+      text: 'Hi, I am AfnoGhar Chat. How can I help you find a property today?',
     },
   ];
 
@@ -76,7 +76,7 @@ export class AiChatWidgetComponent {
     if (!this.isLoggedIn) {
       this.messages.push({
         role: 'assistant',
-        text: 'Please log in to use the AI property assistant.',
+        text: 'Please log in to use AfnoGhar Chat.',
       });
       this.router.navigate(['/login'], {
         queryParams: { returnUrl: this.router.url },

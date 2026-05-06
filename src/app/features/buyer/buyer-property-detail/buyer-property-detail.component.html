@@ -234,122 +234,170 @@
 
         <aside class="property-sidebar">
           <section class="sidebar-card contact-card">
-            <div class="contact-heading">
-              <span class="section-kicker">Contact</span>
-              <h2>Schedule a Visit</h2>
-            </div>
-
-            <div class="seller-info">
-              <div class="seller-avatar">
-                {{ sellerName ? sellerName.charAt(0).toUpperCase() : "S" }}
+            @if (isOwner) {
+              <div class="contact-heading">
+                <span class="section-kicker">Owner View</span>
+                <h2>Your listing</h2>
               </div>
-              <div class="seller-details">
-                <span class="seller-name">{{ sellerName || "Verified seller" }}</span>
-                <span class="seller-phone">
-                  <mat-icon>phone</mat-icon>
-                  {{ sellerPhone || "Available after request" }}
-                </span>
-              </div>
-            </div>
 
-            @if (isLoggedIn && isBuyer) {
-              @if (!appointmentSuccess) {
-                <form
-                  [formGroup]="appointmentForm"
-                  (ngSubmit)="onSubmitAppointment()"
-                  class="appointment-form"
-                >
-                  <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Preferred Date</mat-label>
-                    <input
-                      matInput
-                      [matDatepicker]="appointmentPicker"
-                      [min]="minAppointmentDate"
-                      formControlName="date"
-                      readonly
-                    />
-                    <mat-datepicker-toggle
-                      matIconSuffix
-                      [for]="appointmentPicker"
-                    ></mat-datepicker-toggle>
-                    <mat-datepicker #appointmentPicker></mat-datepicker>
-                    @if (
-                      appointmentForm.get("date")?.invalid &&
-                      appointmentForm.get("date")?.touched
-                    ) {
-                      <mat-error>Date is required</mat-error>
-                    }
-                  </mat-form-field>
-
-                  <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Preferred Time</mat-label>
-                    <mat-select formControlName="time">
-                      @for (time of timeSlots; track time) {
-                        <mat-option
-                          [value]="time"
-                          [disabled]="isTimeSlotUnavailable(time)"
-                        >
-                          {{ time }}
-                          @if (isTimeSlotUnavailable(time)) {
-                            <span class="slot-full-label">Slot full</span>
-                          }
-                        </mat-option>
-                      }
-                    </mat-select>
-                    @if (
-                      appointmentForm.get("time")?.invalid &&
-                      appointmentForm.get("time")?.touched
-                    ) {
-                      @if (appointmentForm.get("time")?.hasError("slotTaken")) {
-                        <mat-error>This slot is already full.</mat-error>
-                      } @else {
-                        <mat-error>Time is required</mat-error>
-                      }
-                    }
-                  </mat-form-field>
-
-                  <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Message</mat-label>
-                    <textarea
-                      matInput
-                      formControlName="message"
-                      rows="3"
-                      placeholder="I would like to tour this property..."
-                    ></textarea>
-                  </mat-form-field>
-
+              <div class="owner-state">
+                <div class="owner-icon">
+                  <mat-icon>home_work</mat-icon>
+                </div>
+                <h3>You own this property</h3>
+                <p>
+                  Buyers see your contact and tour request options here. Use
+                  listing tools to update details, photos, price, or status.
+                </p>
+                <div class="owner-actions">
                   <button
                     mat-flat-button
+                    type="button"
                     class="submit-btn"
-                    type="submit"
-                    [disabled]="appointmentForm.invalid || submitting"
+                    (click)="editOwnListing()"
                   >
-                    @if (submitting) {
-                      <mat-spinner diameter="20"></mat-spinner>
-                    } @else {
-                      <ng-container>
-                        <mat-icon>calendar_month</mat-icon>
-                        Request Tour
-                      </ng-container>
-                    }
+                    <mat-icon>edit</mat-icon>
+                    Edit listing
                   </button>
-                </form>
-              } @else {
-                <div class="appointment-success">
-                  <mat-icon class="success-icon">check_circle</mat-icon>
-                  <h3>Request Sent</h3>
-                  <p>The seller will review your preferred schedule.</p>
-                  <button mat-button routerLink="/buyer/appointments">
-                    View appointments
+                  <button
+                    mat-stroked-button
+                    type="button"
+                    class="secondary-owner-btn"
+                    (click)="goToMyListings()"
+                  >
+                    <mat-icon>list_alt</mat-icon>
+                    My listings
                   </button>
                 </div>
-              }
-            } @else if (!isLoggedIn) {
-              <div class="login-prompt">
-                <mat-icon>lock</mat-icon>
-                <p>Log in as a buyer to request a tour.</p>
-                <button mat-flat-button routerLink="/login">Log in</button>
               </div>
+            } @else {
+              <div class="contact-heading">
+                <span class="section-kicker">Contact</span>
+                <h2>Schedule a Visit</h2>
+              </div>
+
+              <div class="seller-info">
+                <div class="seller-avatar">
+                  {{ sellerName ? sellerName.charAt(0).toUpperCase() : "S" }}
+                </div>
+                <div class="seller-details">
+                  <span class="seller-name">{{ sellerName || "Verified seller" }}</span>
+                  <span class="seller-phone">
+                    <mat-icon>phone</mat-icon>
+                    {{ sellerPhone || "Available after request" }}
+                  </span>
+                </div>
+              </div>
+
+              @if (isLoggedIn && isBuyer) {
+                @if (!appointmentSuccess) {
+                  <form
+                    [formGroup]="appointmentForm"
+                    (ngSubmit)="onSubmitAppointment()"
+                    class="appointment-form"
+                  >
+                    <mat-form-field appearance="outline" class="full-width">
+                      <mat-label>Preferred Date</mat-label>
+                      <input
+                        matInput
+                        [matDatepicker]="appointmentPicker"
+                        [min]="minAppointmentDate"
+                        formControlName="date"
+                        readonly
+                      />
+                      <mat-datepicker-toggle
+                        matIconSuffix
+                        [for]="appointmentPicker"
+                      ></mat-datepicker-toggle>
+                      <mat-datepicker #appointmentPicker></mat-datepicker>
+                      @if (
+                        appointmentForm.get("date")?.invalid &&
+                        appointmentForm.get("date")?.touched
+                      ) {
+                        <mat-error>Date is required</mat-error>
+                      }
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="full-width">
+                      <mat-label>Preferred Time</mat-label>
+                      <mat-select formControlName="time">
+                        @for (time of timeSlots; track time) {
+                          <mat-option
+                            [value]="time"
+                            [disabled]="isTimeSlotUnavailable(time)"
+                          >
+                            {{ time }}
+                            @if (isTimeSlotUnavailable(time)) {
+                              <span class="slot-full-label">Slot full</span>
+                            }
+                          </mat-option>
+                        }
+                      </mat-select>
+                      @if (
+                        appointmentForm.get("time")?.invalid &&
+                        appointmentForm.get("time")?.touched
+                      ) {
+                        @if (appointmentForm.get("time")?.hasError("slotTaken")) {
+                          <mat-error>This slot is already full.</mat-error>
+                        } @else {
+                          <mat-error>Time is required</mat-error>
+                        }
+                      }
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="full-width">
+                      <mat-label>Message</mat-label>
+                      <textarea
+                        matInput
+                        formControlName="message"
+                        rows="3"
+                        placeholder="I would like to tour this property..."
+                      ></textarea>
+                    </mat-form-field>
+
+                    <button
+                      mat-flat-button
+                      class="submit-btn"
+                      type="submit"
+                      [disabled]="appointmentForm.invalid || submitting"
+                    >
+                      @if (submitting) {
+                        <mat-spinner diameter="20"></mat-spinner>
+                      } @else {
+                        <ng-container>
+                          <mat-icon>calendar_month</mat-icon>
+                          Request Tour
+                        </ng-container>
+                      }
+                    </button>
+                  </form>
+                } @else {
+                  <div class="appointment-success">
+                    <mat-icon class="success-icon">check_circle</mat-icon>
+                    <h3>Request Sent</h3>
+                    <p>The seller will review your preferred schedule.</p>
+                    <button mat-button routerLink="/buyer/appointments">
+                      View appointments
+                    </button>
+                  </div>
+                }
+              } @else if (!isLoggedIn) {
+                <div class="login-prompt">
+                  <mat-icon>lock</mat-icon>
+                  <p>Log in as a buyer to request a tour.</p>
+                  <button mat-flat-button routerLink="/login">Log in</button>
+                </div>
+              } @else {
+                <div class="login-prompt">
+                  <mat-icon>info</mat-icon>
+                  <p>Tour requests are available to buyer accounts.</p>
+                  @if (!isBuyer) {
+                    <button mat-flat-button routerLink="/buyer/properties">
+                      Browse properties
+                    </button>
+                  }
+                </div>
+              }
             }
           </section>
         </aside>

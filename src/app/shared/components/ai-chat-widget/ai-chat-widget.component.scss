@@ -37,6 +37,11 @@
     font-size: 23px;
   }
 
+  i {
+    font-size: 23px;
+    line-height: 1;
+  }
+
   &:hover {
     background: $primary-tint;
     transform: translateY(-1px);
@@ -104,12 +109,10 @@
   box-shadow: $shadow-xs;
   flex: 0 0 auto;
 
-}
-
-.gemini-logo {
-  width: 25px;
-  height: 25px;
-  display: block;
+  i {
+    font-size: 18px;
+    line-height: 1;
+  }
 }
 
 .icon-button {
