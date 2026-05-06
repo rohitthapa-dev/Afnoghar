@@ -41,6 +41,10 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   private initTimeout?: ReturnType<typeof setTimeout>;
   private invalidateTimeout?: ReturnType<typeof setTimeout>;
   private resizeObserver?: ResizeObserver;
+  private previewCloseTimeout?: ReturnType<typeof setTimeout>;
+
+  private readonly FALLBACK_IMAGE =
+    'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600';
 
   private get css() {
     const s = getComputedStyle(document.documentElement);
@@ -88,6 +92,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   ngOnDestroy(): void {
     clearTimeout(this.initTimeout);
     clearTimeout(this.invalidateTimeout);
+    clearTimeout(this.previewCloseTimeout);
     this.resizeObserver?.disconnect();
     if (this.map) {
       this.map.remove();
@@ -150,10 +155,16 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
         icon: this.createCustomIcon(isSelected, property.listingType),
       });
 
+      this.bindPreviewPopup(marker, property);
+
       marker.on('click', () => {
         this.markerClick.emit(property.id);
         this.flyToProperty(property);
+        this.openPreview(marker);
       });
+
+      marker.on('mouseover', () => this.openPreview(marker));
+      marker.on('mouseout', () => this.schedulePreviewClose());
 
       if (this.mode === 'search' && this.clusterGroup) {
         this.clusterGroup.addLayer(marker);
@@ -173,6 +184,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   }
 
   private clearMarkers(): void {
+    clearTimeout(this.previewCloseTimeout);
     if (this.mode === 'search' && this.clusterGroup) {
       this.clusterGroup.clearLayers();
     } else if (this.markersLayer) {
@@ -259,6 +271,198 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
     this.map.flyTo([property.location.lat, property.location.lng], 15, {
       animate: true,
     });
+  }
+
+  private bindPreviewPopup(marker: L.Marker, property: Property): void {
+    marker.bindPopup(this.createPreviewPopupContent(property), {
+      closeButton: false,
+      className: 'property-preview-popup',
+      offset: L.point(0, -10),
+      autoPanPadding: L.point(24, 24),
+    });
+
+    marker.on('popupopen', (event) => {
+      this.setupPreviewPopup(event.popup, property);
+    });
+  }
+
+  private openPreview(marker: L.Marker): void {
+    clearTimeout(this.previewCloseTimeout);
+    marker.openPopup();
+  }
+
+  private schedulePreviewClose(): void {
+    clearTimeout(this.previewCloseTimeout);
+    this.previewCloseTimeout = setTimeout(() => {
+      this.map?.closePopup();
+    }, 180);
+  }
+
+  private setupPreviewPopup(popup: L.Popup, property: Property): void {
+    const element = popup.getElement();
+    if (!element) return;
+
+    L.DomEvent.disableClickPropagation(element);
+    L.DomEvent.disableScrollPropagation(element);
+
+    if (element.dataset['previewReady'] === String(property.id)) return;
+    element.dataset['previewReady'] = String(property.id);
+
+    element.addEventListener('mouseenter', () => {
+      clearTimeout(this.previewCloseTimeout);
+    });
+    element.addEventListener('mouseleave', () => {
+      this.schedulePreviewClose();
+    });
+
+    const images = this.getPreviewImages(property);
+    if (images.length <= 1) return;
+
+    let currentIndex = 0;
+    const image = element.querySelector<HTMLImageElement>(
+      '.preview-carousel-image',
+    );
+    const counter = element.querySelector<HTMLElement>('.preview-image-count');
+    const dots = Array.from(
+      element.querySelectorAll<HTMLElement>('.preview-dot'),
+    );
+
+    const renderImage = () => {
+      if (!image) return;
+      image.src = images[currentIndex];
+      image.alt = `${property.title} photo ${currentIndex + 1}`;
+      if (counter) {
+        counter.textContent = `${currentIndex + 1}/${images.length}`;
+      }
+      dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentIndex);
+      });
+    };
+
+    image?.addEventListener('error', () => {
+      image.src = this.FALLBACK_IMAGE;
+    });
+
+    element
+      .querySelectorAll<HTMLElement>('[data-preview-step]')
+      .forEach((button) => {
+        button.addEventListener('click', (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          const step = Number(button.dataset['previewStep']);
+          currentIndex = (currentIndex + step + images.length) % images.length;
+          renderImage();
+        });
+      });
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        currentIndex = index;
+        renderImage();
+      });
+    });
+  }
+
+  private createPreviewPopupContent(property: Property): string {
+    const images = this.getPreviewImages(property);
+    const firstImage = this.escapeAttr(images[0]);
+    const title = this.escapeHtml(property.title);
+    const price = this.escapeHtml(
+      this.formatPreviewPrice(property.price, property.listingType),
+    );
+    const location = this.escapeHtml(
+      [property.location?.city, property.location?.district]
+        .filter(Boolean)
+        .join(', '),
+    );
+    const imageControls =
+      images.length > 1
+        ? `<button type="button" class="preview-nav preview-prev" data-preview-step="-1" aria-label="Previous photo">
+            <i class="bi bi-chevron-left" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="preview-nav preview-next" data-preview-step="1" aria-label="Next photo">
+            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+          </button>
+          <span class="preview-image-count">1/${images.length}</span>
+          <div class="preview-dots" aria-hidden="true">
+            ${images
+              .map(
+                (_, index) =>
+                  `<button type="button" class="preview-dot ${index === 0 ? 'active' : ''}" aria-label="Show photo ${index + 1}"></button>`,
+              )
+              .join('')}
+          </div>`
+        : '';
+
+    return `<article class="map-property-preview">
+      <div class="preview-carousel">
+        <img class="preview-carousel-image" src="${firstImage}" alt="${title} photo 1" loading="lazy" />
+        ${imageControls}
+      </div>
+      <div class="preview-body">
+        <div class="preview-meta">
+          <span>${this.escapeHtml(property.type)}</span>
+          <span>${this.escapeHtml(property.listingType)}</span>
+        </div>
+        <h3>${title}</h3>
+        <p>${location}</p>
+        <strong>${price}</strong>
+      </div>
+    </article>`;
+  }
+
+  private getPreviewImages(property: Property): string[] {
+    const images = (property.images || [])
+      .map((image) => image.trim())
+      .filter(Boolean);
+    return images.length ? images : [this.FALLBACK_IMAGE];
+  }
+
+  private formatPreviewPrice(
+    value: number,
+    listingType: Property['listingType'],
+  ): string {
+    if (!value) return 'Price on request';
+
+    if (listingType === 'rent') {
+      return `Rs. ${value.toLocaleString('en-NP')}/month`;
+    }
+
+    if (value >= 10000000) {
+      return `Rs. ${this.formatCompactAmount(value / 10000000)} Cr`;
+    }
+
+    if (value >= 100000) {
+      return `Rs. ${this.formatCompactAmount(value / 100000)} Lakh`;
+    }
+
+    return `Rs. ${value.toLocaleString('en-NP')}`;
+  }
+
+  private formatCompactAmount(value: number): string {
+    return value.toLocaleString('en-NP', {
+      maximumFractionDigits: value >= 10 ? 1 : 2,
+      minimumFractionDigits: 0,
+    });
+  }
+
+  private escapeHtml(value: string): string {
+    return value.replace(/[&<>"']/g, (character) => {
+      const entities: Record<string, string> = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+      };
+      return entities[character];
+    });
+  }
+
+  private escapeAttr(value: string): string {
+    return this.escapeHtml(value);
   }
 
   invalidateMapSize(): void {

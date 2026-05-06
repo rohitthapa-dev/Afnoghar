@@ -600,15 +600,15 @@
   }
 
   .mobile-auth-buttons {
-    @include flex(column, stretch, stretch, $space-3);
+    @include flex(row, center, center, $space-3);
     margin-top: $space-4;
     padding-top: $space-4;
     border-top: 1px solid $divider;
 
     .btn {
-      width: 100%;
-      height: 44px;
-      justify-content: center;
+      @include flex(row, center, center);
+      flex:1;
+      height: 38px;
     }
   }
 
