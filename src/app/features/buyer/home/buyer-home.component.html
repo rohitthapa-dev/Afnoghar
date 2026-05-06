@@ -219,50 +219,6 @@
   </div>
 </section>
 
-<section class="agents-section">
-  <div class="section-container">
-    <div class="section-header">
-      <span class="section-tag">Our Team</span>
-      <h2 class="section-title">Meet Our Trusted Sellers</h2>
-      <p class="section-subtitle">
-        Experienced professionals ready to help you find the perfect home
-      </p>
-    </div>
-
-    <div class="agents-grid">
-      @for (agent of agents; track agent.id) {
-        <div class="agent-card">
-          <div class="agent-avatar">
-            <img
-              src="https://ui-avatars.com/api/?name={{
-                agent.name
-              }}&background=14919b&color=fff&size=128&bold=true"
-              [alt]="agent.name"
-            />
-          </div>
-          <h3 class="agent-name">{{ agent.name }}</h3>
-          <p class="agent-experience">{{ agent.experience }} experience</p>
-          <div class="agent-stats">
-            <div class="agent-stat">
-              <span class="agent-stat-number">{{ agent.propertiesSold }}</span>
-              <span class="agent-stat-label">Listings</span>
-            </div>
-            <div class="agent-stat-divider"></div>
-            <div class="agent-stat">
-              <span class="agent-stat-number">{{ agent.rating }}</span>
-              <span class="agent-stat-label">Rating</span>
-            </div>
-          </div>
-          <button mat-stroked-button class="contact-btn">
-            <mat-icon>phone</mat-icon>
-            Contact
-          </button>
-        </div>
-      }
-    </div>
-  </div>
-</section>
-
 <section class="cta-section">
   <div class="section-container">
     <div class="cta-card">

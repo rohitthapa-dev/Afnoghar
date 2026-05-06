@@ -70,7 +70,9 @@
               "buildTarget": "afnoghar:build:production"
             },
             "development": {
-              "buildTarget": "afnoghar:build:development"
+              "buildTarget": "afnoghar:build:development",
+              "liveReload": true,
+              "hmr": false
             }
           },
           "defaultConfiguration": "development"
