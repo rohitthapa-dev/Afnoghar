@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap, map } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import {
   User,
   UserRole,
@@ -15,7 +16,7 @@ import {
 export class AuthService {
   private readonly http = inject(HttpClient);
 
-  private readonly apiUrl = 'http://localhost:3000';
+  private readonly apiUrl = environment.apiUrl;
 
   private readonly currentUserSubject = new BehaviorSubject<User | null>(null);
   readonly currentUser$ = this.currentUserSubject.asObservable();

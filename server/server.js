@@ -9,15 +9,18 @@ require("dotenv").config({ path: path.join(__dirname, ".env") });
 const { GoogleGenAI, Type } = require("@google/genai");
 
 const app = express();
-const PORT = 3000;
-const JWT_SECRET = "afnoghar-secret-key-2025";
+const PORT = process.env.PORT || 3000;
+const JWT_SECRET = process.env.JWT_SECRET || "afnoghar-secret-key-2025";
 const DB_PATH = path.join(__dirname, "db.json");
 const PUBLIC_DIR = path.join(__dirname, "public");
 const ASSETS_DIR = path.join(PUBLIC_DIR, "assets");
 const PROPERTY_ASSETS_DIR = path.join(ASSETS_DIR, "properties");
 const AVATAR_ASSETS_DIR = path.join(ASSETS_DIR, "avatars");
-const PUBLIC_ASSET_BASE_URL = "http://localhost:3000";
-
+const PUBLIC_BASE_URL =
+  process.env.PUBLIC_BASE_URL || process.env.BASE_URL || "";
+const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN
+  ? process.env.FRONTEND_ORIGIN.split(",").map((origin) => origin.trim())
+  : ["http://localhost:4200"];
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
@@ -25,35 +28,107 @@ const ai = new GoogleGenAI({
 fs.mkdirSync(PROPERTY_ASSETS_DIR, { recursive: true });
 fs.mkdirSync(AVATAR_ASSETS_DIR, { recursive: true });
 
-app.use(cors());
+app.use(
+  cors({
+    origin: FRONTEND_ORIGIN,
+    credentials: true,
+  }),
+);
 app.use(bodyParser.json());
 app.use("/assets", express.static(ASSETS_DIR));
 
+const emptyDB = () => ({
+  users: [],
+  properties: [],
+  appointments: [],
+  notifications: [],
+  favorites: [],
+});
+
 const getDB = () => {
-  const data = fs.readFileSync(DB_PATH, "utf8");
-  return JSON.parse(data);
+  try {
+    if (!fs.existsSync(DB_PATH)) {
+      const initialDB = emptyDB();
+      saveDB(initialDB);
+      return initialDB;
+    }
+
+    const data = fs.readFileSync(DB_PATH, "utf8").trim();
+    if (!data) {
+      const initialDB = emptyDB();
+      saveDB(initialDB);
+      return initialDB;
+    }
+
+    const db = JSON.parse(data);
+    return {
+      ...emptyDB(),
+      ...db,
+      users: Array.isArray(db.users) ? db.users.map(normalizeDBRecord) : [],
+      properties: Array.isArray(db.properties)
+        ? db.properties.map(normalizeDBRecord)
+        : [],
+      appointments: Array.isArray(db.appointments) ? db.appointments : [],
+      notifications: Array.isArray(db.notifications) ? db.notifications : [],
+      favorites: Array.isArray(db.favorites) ? db.favorites : [],
+    };
+  } catch (error) {
+    console.error("Failed to read db.json, resetting to safe defaults.");
+    const fallbackDB = emptyDB();
+    saveDB(fallbackDB);
+    return fallbackDB;
+  }
 };
 
 const saveDB = (db) => {
+  fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
   fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2), "utf8");
 };
 
+const normalizePublicUrl = (value) => {
+  if (
+    typeof value === "string" &&
+    PUBLIC_BASE_URL &&
+    value.startsWith("http://localhost:3000/")
+  ) {
+    return value.replace("http://localhost:3000", PUBLIC_BASE_URL);
+  }
+
+  return value;
+};
+
+const normalizeDBRecord = (record) => {
+  if (!record || typeof record !== "object") return record;
+
+  const next = { ...record };
+  if (Array.isArray(next.images)) {
+    next.images = next.images.map(normalizePublicUrl);
+  }
+  if (typeof next.avatar === "string") {
+    next.avatar = normalizePublicUrl(next.avatar);
+  }
+
+  return next;
+};
+
 const toPublicAssetUrl = (relativeUrl) =>
-  `${PUBLIC_ASSET_BASE_URL}${relativeUrl}`;
+  `${PUBLIC_BASE_URL}${relativeUrl}`;
 
 const isManagedPropertyImage = (imageUrl = "") => {
   if (typeof imageUrl !== "string") return false;
 
   return (
     imageUrl.startsWith("/assets/properties/") ||
-    imageUrl.startsWith(`${PUBLIC_ASSET_BASE_URL}/assets/properties/`)
+    imageUrl.startsWith(`${PUBLIC_BASE_URL}/assets/properties/`)
   );
 };
 
 const imageUrlToFilePath = (imageUrl) => {
   if (!isManagedPropertyImage(imageUrl)) return null;
 
-  const relativeUrl = imageUrl.replace(PUBLIC_ASSET_BASE_URL, "");
+  const relativeUrl = PUBLIC_BASE_URL
+    ? imageUrl.replace(PUBLIC_BASE_URL, "")
+    : imageUrl;
   const relativePath = relativeUrl.replace(/^\/assets\/properties\//, "");
   const filePath = path.normalize(path.join(PROPERTY_ASSETS_DIR, relativePath));
 
@@ -72,14 +147,16 @@ const isManagedAvatar = (avatarUrl = "") => {
 
   return (
     avatarUrl.startsWith("/assets/avatars/") ||
-    avatarUrl.startsWith(`${PUBLIC_ASSET_BASE_URL}/assets/avatars/`)
+    avatarUrl.startsWith(`${PUBLIC_BASE_URL}/assets/avatars/`)
   );
 };
 
 const avatarUrlToFilePath = (avatarUrl) => {
   if (!isManagedAvatar(avatarUrl)) return null;
 
-  const relativeUrl = avatarUrl.replace(PUBLIC_ASSET_BASE_URL, "");
+  const relativeUrl = PUBLIC_BASE_URL
+    ? avatarUrl.replace(PUBLIC_BASE_URL, "")
+    : avatarUrl;
   const relativePath = relativeUrl.replace(/^\/assets\/avatars\//, "");
   const filePath = path.normalize(path.join(AVATAR_ASSETS_DIR, relativePath));
 

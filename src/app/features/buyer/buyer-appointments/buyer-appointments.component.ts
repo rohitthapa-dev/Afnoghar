@@ -25,6 +25,7 @@ import {
 import { ListingType, PropertyType } from '../../../core/models/property.model';
 import { PriceFormatPipe } from '../../../shared/pipes/price-format.pipe';
 import { PropertyTypePipe } from '../../../shared/pipes/property-type.pipe';
+import { environment } from '../../../../environments/environment';
 
 type AppointmentFilter =
   | 'all'
@@ -458,7 +459,7 @@ export class BuyerAppointmentsComponent implements OnInit {
   }
 
   private loadSellerNames(): void {
-    this.http.get<UserSummary[]>('http://localhost:3000/agents').subscribe({
+    this.http.get<UserSummary[]>(`${environment.apiUrl}/agents`).subscribe({
       next: (sellers) => {
         this.sellerNames = new Map(
           sellers.map((seller) => [seller.id, seller.name]),

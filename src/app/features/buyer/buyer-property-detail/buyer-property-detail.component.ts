@@ -28,6 +28,7 @@ import { NotificationService } from '../../../core/services/notification.service
 import { Property } from '../../../core/models/property.model';
 import { PriceFormatPipe } from '../../../shared/pipes/price-format.pipe';
 import { PropertyTypePipe } from '../../../shared/pipes/property-type.pipe';
+import { environment } from '../../../../environments/environment';
 import { MapViewComponent } from '../../../shared/components/map-view/map-view.component';
 
 @Component({
@@ -206,7 +207,7 @@ export class BuyerPropertyDetailComponent implements OnInit {
   }
 
   private loadSellerInfo(sellerId: number): void {
-    this.http.get<any[]>(`http://localhost:3000/agents`).subscribe({
+    this.http.get<any[]>(`${environment.apiUrl}/agents`).subscribe({
       next: (users) => {
         const seller = users.find((u) => u.id === sellerId);
         if (seller) {

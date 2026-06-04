@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export enum AppointmentStatus {
   Pending = 'pending',
@@ -41,7 +42,7 @@ export interface Appointment {
 })
 export class AppointmentService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:3000';
+  private readonly apiUrl = environment.apiUrl;
   getAppointments(filters?: {
     propertyId?: number;
     date?: string;

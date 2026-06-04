@@ -1,13 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Property } from '../models/property.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AiBuyerService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:3000/ai/buyer-chat';
+  private readonly apiUrl = `${environment.apiUrl}/ai/buyer-chat`;
 
   ask(message: string) {
     return this.http.post<{

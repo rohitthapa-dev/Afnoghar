@@ -35,6 +35,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { PropertyTypePipe } from '../../../shared/pipes/property-type.pipe';
 import { ListingType, PropertyType } from '../../../core/models/property.model';
 import { switchMap, of } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 type AppointmentFilter =
   | 'all'
@@ -478,7 +479,7 @@ export class SellerAppointmentsComponent implements OnInit {
   }
 
   private loadBuyerNames(): void {
-    this.http.get<UserSummary[]>('http://localhost:3000/users').subscribe({
+    this.http.get<UserSummary[]>(`${environment.apiUrl}/users`).subscribe({
       next: (users) => {
         this.buyerNames = new Map(users.map((user) => [user.id, user.name]));
 

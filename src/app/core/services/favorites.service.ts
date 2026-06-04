@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap, switchMap, of, throwError, map } from 'rxjs';
 import { Property } from '../models/property.model';
 import { PropertyService } from './property.service';
+import { environment } from '../../../environments/environment';
 
 export interface Favorite {
   id?: number;
@@ -15,7 +16,7 @@ export interface Favorite {
 export class FavoritesService {
   private http = inject(HttpClient);
   private propertyService = inject(PropertyService);
-  private apiUrl = 'http://localhost:3000';
+  private apiUrl = environment.apiUrl;
 
   private favorites = signal<Favorite[]>([]);
 

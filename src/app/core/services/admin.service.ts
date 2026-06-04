@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Property } from '../models/property.model';
 import { User } from '../models/user.model';
+import { environment } from '../../../environments/environment';
 
 export type AdminUserUpdate = Partial<
   Pick<User, 'name' | 'email' | 'phone' | 'role' | 'isActive'>
@@ -13,7 +14,7 @@ export type AdminUserUpdate = Partial<
 })
 export class AdminService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000';
+  private apiUrl = environment.apiUrl;
 
   getUsers(): Observable<User[]> {
     return this.http.get<User[]>(`${this.apiUrl}/users`);
