@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, DestroyRef, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../core/services/auth.service';
 import {
   ConfirmDeleteDialogComponent,
@@ -37,6 +38,7 @@ export class SettingsComponent {
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
   private dialog = inject(MatDialog);
+  private destroyRef = inject(DestroyRef);
 
   readonly user = signal(this.authService.getCurrentUser());
 
@@ -66,6 +68,12 @@ export class SettingsComponent {
     currency: 'NPR',
     theme: 'system',
   };
+
+  constructor() {
+    this.authService.currentUser$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((user) => this.user.set(user));
+  }
 
   openDeleteDialog(): void {
     const dialogRef = this.dialog.open(ConfirmDeleteDialogComponent, {

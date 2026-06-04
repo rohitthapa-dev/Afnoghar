@@ -50,6 +50,7 @@ testem.log
 
 # Environment files
 /src/environments/*.local.ts
+/server/.env
 
 # Runtime property uploads
 /server/public/assets/properties/*

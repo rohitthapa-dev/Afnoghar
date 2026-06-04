@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
@@ -18,6 +18,8 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { HttpClient } from '@angular/common/http';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { distinctUntilChanged, map } from 'rxjs';
 import { PropertyService } from '../../../core/services/property.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { FavoritesService } from '../../../core/services/favorites.service';
@@ -63,6 +65,7 @@ export class BuyerPropertyDetailComponent implements OnInit {
   private fb = inject(FormBuilder);
   private snackBar = inject(MatSnackBar);
   private http = inject(HttpClient);
+  private destroyRef = inject(DestroyRef);
 
   property?: Property;
   loading = true;
@@ -118,6 +121,11 @@ export class BuyerPropertyDetailComponent implements OnInit {
     return this.authService.isBuyer();
   }
 
+  get isOwner(): boolean {
+    const currentUserId = this.authService.getCurrentUser()?.id;
+    return !!currentUserId && this.property?.sellerId === currentUserId;
+  }
+
   get isFavorite(): boolean {
     return this.property ? this.favoritesService.isFavorite(this.property.id) : false;
   }
@@ -147,24 +155,41 @@ export class BuyerPropertyDetailComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const idParam = this.route.snapshot.paramMap.get('id');
-    const id = idParam ? Number(idParam) : NaN;
-    if (!id || isNaN(id)) {
-      this.error = 'Invalid property ID';
-      this.loading = false;
-      return;
-    }
-    this.loadProperty(id);
+    this.route.paramMap
+      .pipe(
+        map((params) => Number(params.get('id'))),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((id) => {
+        if (!id || isNaN(id)) {
+          this.error = 'Invalid property ID';
+          this.loading = false;
+          return;
+        }
 
-    this.appointmentForm.get('date')?.valueChanges.subscribe(() => {
-      this.refreshUnavailableSlots();
-      this.clearUnavailableSelectedTime();
-    });
+        this.loadProperty(id);
+      });
+
+    this.appointmentForm
+      .get('date')
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.refreshUnavailableSlots();
+        this.clearUnavailableSelectedTime();
+      });
   }
 
   private loadProperty(id: number): void {
     this.loading = true;
     this.error = '';
+    this.property = undefined;
+    this.currentImageIndex = 0;
+    this.sellerName = '';
+    this.sellerPhone = '';
+    this.sellerEmail = '';
+    this.appointmentSuccess = false;
+    this.unavailableSlots = new Set();
 
     this.propertyService.getPropertyById(id).subscribe({
       next: (property) => {
@@ -218,6 +243,15 @@ export class BuyerPropertyDetailComponent implements OnInit {
     const icon = this.featureIconMap[normalizedFeature] || 'bi-check2-circle';
 
     return `bi ${icon}`;
+  }
+
+  editOwnListing(): void {
+    if (!this.property) return;
+    this.router.navigate(['/seller/properties', this.property.id, 'edit']);
+  }
+
+  goToMyListings(): void {
+    this.router.navigate(['/seller/properties']);
   }
 
   toggleFavorite(): void {

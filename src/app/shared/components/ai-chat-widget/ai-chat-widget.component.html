@@ -1,25 +1,13 @@
 <section class="ai-widget" [class.open]="isOpen" aria-live="polite">
   @if (isOpen) {
-    <div class="chat-panel" role="dialog" aria-label="AI property assistant">
+    <div class="chat-panel" role="dialog" aria-label="AfnoGhar Chat">
       <header class="chat-header">
         <div class="assistant-mark">
-          <svg class="gemini-logo" viewBox="0 0 48 48" aria-hidden="true">
-            <defs>
-              <linearGradient id="geminiHeaderGradient" x1="7" y1="41" x2="40" y2="8">
-                <stop offset="0" stop-color="#4285f4" />
-                <stop offset="0.48" stop-color="#a142f4" />
-                <stop offset="1" stop-color="#fbbc04" />
-              </linearGradient>
-            </defs>
-            <path
-              fill="url(#geminiHeaderGradient)"
-              d="M24 4c2.4 10.5 8.9 17 20 20-11.1 3-17.6 9.5-20 20-2.4-10.5-8.9-17-20-20 11.1-3 17.6-9.5 20-20Z"
-            />
-          </svg>
+          <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>
         </div>
         <div>
-          <span>Gemini Assistant</span>
-          <p>Ask me anything about properties.</p>
+          <span>AfnoGhar Chat</span>
+          <p>Ask me to find homes, land, or rentals.</p>
         </div>
         <button
           type="button"
@@ -94,25 +82,13 @@
   <button
     type="button"
     class="chat-fab"
-    [attr.aria-label]="isOpen ? 'Close AI property assistant' : 'Open AI property assistant'"
+    [attr.aria-label]="isOpen ? 'Close AfnoGhar Chat' : 'Open AfnoGhar Chat'"
     (click)="toggleChat()"
   >
     @if (isOpen) {
       <mat-icon>close</mat-icon>
     } @else {
-      <svg class="gemini-logo" viewBox="0 0 48 48" aria-hidden="true">
-        <defs>
-          <linearGradient id="geminiFabGradient" x1="7" y1="41" x2="40" y2="8">
-            <stop offset="0" stop-color="#4285f4" />
-            <stop offset="0.48" stop-color="#a142f4" />
-            <stop offset="1" stop-color="#fbbc04" />
-          </linearGradient>
-        </defs>
-        <path
-          fill="url(#geminiFabGradient)"
-          d="M24 4c2.4 10.5 8.9 17 20 20-11.1 3-17.6 9.5-20 20-2.4-10.5-8.9-17-20-20 11.1-3 17.6-9.5 20-20Z"
-        />
-      </svg>
+      <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>
     }
   </button>
 </section>

@@ -343,26 +343,40 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
       image.src = this.FALLBACK_IMAGE;
     });
 
-    element
-      .querySelectorAll<HTMLElement>('[data-preview-step]')
-      .forEach((button) => {
-        button.addEventListener('click', (event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          const step = Number(button.dataset['previewStep']);
-          currentIndex = (currentIndex + step + images.length) % images.length;
-          renderImage();
-        });
-      });
-
-    dots.forEach((dot, index) => {
-      dot.addEventListener('click', (event) => {
+    element.addEventListener('pointerdown', (event) => {
+      if (
+        (event.target as HTMLElement).closest(
+          '[data-preview-step], .preview-dot',
+        )
+      ) {
         event.preventDefault();
         event.stopPropagation();
-        currentIndex = index;
-        renderImage();
-      });
+        clearTimeout(this.previewCloseTimeout);
+      }
     });
+
+    element.addEventListener('click', (event) => {
+      const target = event.target as HTMLElement;
+      const stepButton = target.closest<HTMLElement>('[data-preview-step]');
+      const dotButton = target.closest<HTMLElement>('.preview-dot');
+
+      if (!stepButton && !dotButton) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      clearTimeout(this.previewCloseTimeout);
+
+      if (stepButton) {
+        const step = Number(stepButton.dataset['previewStep']);
+        currentIndex = (currentIndex + step + images.length) % images.length;
+      } else if (dotButton) {
+        currentIndex = dots.indexOf(dotButton);
+      }
+
+      renderImage();
+    });
+
+    renderImage();
   }
 
   private createPreviewPopupContent(property: Property): string {
@@ -467,5 +481,37 @@ export class MapViewComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   invalidateMapSize(): void {
     this.map?.invalidateSize();
+  }
+
+  fitToProperties(properties: Property[] = this.properties): void {
+    if (!this.map) return;
+
+    const coordinates = properties
+      .filter(
+        (property) =>
+          property.location?.lat != null && property.location?.lng != null,
+      )
+      .map(
+        (property) =>
+          [property.location.lat, property.location.lng] as L.LatLngTuple,
+      );
+
+    if (coordinates.length === 0) {
+      this.map.setView(this.DEFAULT_CENTER, this.DEFAULT_ZOOM, {
+        animate: true,
+      });
+      return;
+    }
+
+    if (coordinates.length === 1) {
+      this.map.flyTo(coordinates[0], 15, { animate: true });
+      return;
+    }
+
+    this.map.fitBounds(L.latLngBounds(coordinates), {
+      animate: true,
+      maxZoom: 15,
+      padding: [48, 48],
+    });
   }
 }

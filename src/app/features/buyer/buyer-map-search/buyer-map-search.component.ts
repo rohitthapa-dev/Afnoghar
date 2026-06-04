@@ -35,6 +35,7 @@ export class BuyerMapSearchComponent implements OnInit, OnDestroy {
   private initialLoadDone = false;
   private mapInvalidationFrame?: number;
   private mapInvalidationTimeout?: ReturnType<typeof setTimeout>;
+  private mapFitFrame?: number;
 
   searchTerm = '';
   selectedType: '' | 'house' | 'apartment' | 'land' | 'commercial' = '';
@@ -94,6 +95,7 @@ export class BuyerMapSearchComponent implements OnInit, OnDestroy {
             ? requestedPropertyId
             : undefined;
           this.applyFilters();
+          this.fitMapToFilteredProperties();
           if (this.selectedPropertyId !== undefined) {
             this.showPropertyPage(this.selectedPropertyId);
             this.scrollToProperty(this.selectedPropertyId);
@@ -112,6 +114,9 @@ export class BuyerMapSearchComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.mapInvalidationFrame) {
       cancelAnimationFrame(this.mapInvalidationFrame);
+    }
+    if (this.mapFitFrame) {
+      cancelAnimationFrame(this.mapFitFrame);
     }
     clearTimeout(this.mapInvalidationTimeout);
   }
@@ -144,7 +149,9 @@ export class BuyerMapSearchComponent implements OnInit, OnDestroy {
 
   onFilterChange(): void {
     this.currentPage = 1;
+    this.currentBounds = undefined;
     this.applyFilters();
+    this.fitMapToFilteredProperties();
   }
 
   clearFilters(): void {
@@ -158,6 +165,7 @@ export class BuyerMapSearchComponent implements OnInit, OnDestroy {
     this.currentPage = 1;
     this.selectedPropertyId = undefined;
     this.filteredProperties = [...this.allProperties];
+    this.fitMapToFilteredProperties();
   }
 
   private _viewMode: 'map' | 'list' = 'list';
@@ -189,6 +197,17 @@ export class BuyerMapSearchComponent implements OnInit, OnDestroy {
       this.mapInvalidationTimeout = setTimeout(() => {
         this.mapView?.invalidateMapSize();
       }, 150);
+    });
+  }
+
+  private fitMapToFilteredProperties(): void {
+    if (this.mapFitFrame) {
+      cancelAnimationFrame(this.mapFitFrame);
+    }
+
+    this.mapFitFrame = requestAnimationFrame(() => {
+      this.mapView?.invalidateMapSize();
+      this.mapView?.fitToProperties(this.filteredProperties);
     });
   }
 

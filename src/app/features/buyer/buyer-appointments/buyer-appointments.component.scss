@@ -205,8 +205,11 @@
 }
 
 .stat-card {
+  display: grid;
+  grid-template-rows: auto auto;
+  align-content: start;
   min-width: 0;
-  min-height: 94px;
+  min-height: 82px;
   padding: $space-4;
   border: 1px solid $divider;
   border-radius: $radius-md;
@@ -227,13 +230,19 @@
   }
 
   strong {
-    display: block;
+    display: flex;
+    align-items: flex-start;
     font-family: $font-heading;
     font-size: $text-2xl;
     font-weight: $font-bold;
     color: $text-primary;
     line-height: $leading-tight;
     overflow-wrap: anywhere;
+  }
+
+  &.metric-stat strong {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
   }
 
   &.wide strong {
